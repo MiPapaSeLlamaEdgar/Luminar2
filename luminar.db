@@ -128,6 +128,15 @@ CREATE TABLE Pagos (
     FOREIGN KEY (orden_id) REFERENCES Ordenes(orden_id)
 );
 
+CREATE TABLE Carrito (
+    carrito_id INT PRIMARY KEY AUTO_INCREMENT,
+    cliente_id INT,
+    producto_id INT,
+    cantidad INT,
+    FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id),
+    FOREIGN KEY (producto_id) REFERENCES Productos(producto_id)
+);
+
 INSERT INTO Roles (rol_id, nombre_rol) VALUES 
 (1, 'Cliente'),
 (2, 'Vendedor'),

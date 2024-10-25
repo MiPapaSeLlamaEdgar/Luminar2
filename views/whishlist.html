@@ -1,15 +1,44 @@
-<!-- whishlist.html -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--==FLATICON==-->
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
+
+    <!--==SWIPER CSS==-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <!--==CSS==-->
     <link rel="stylesheet" href="css/style.css">
     <title>Lista de Deseos - LUMINAR</title>
+    <style>
+        .product__item {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+        .product__img {
+            width: 80px; /* Adjust size */
+            height: auto; /* Maintain aspect ratio */
+            margin-right: 10px; /* Space between image and text */
+        }
+        
+        .btn-add-to-cart {
+            background-color: #28a745; /* Green for add to cart button */
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px; /* Rounded corners */
+        }
+        .btn-add-to-cart:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+    </style>
 </head>
 
 <body>
@@ -18,39 +47,36 @@
         <div class="header__top">
             <div class="header__container container">
                 <div class="header__contact">
-                    <span>(+00) - 000 - 000</span>
-                    <span>Locación</span>
+                    <span>luminaropa@gmail.com</span>
+                    <span>+57 3134717406</span>
                 </div>
 
-                <p class="header__alert-news">BLA-BLA-BLA</p>
+                <p class="header__alert-news">LUMINAR</p>
 
                 <a href="/" class="header__top-action">
-                    Log In / Sign up
+                    Iniciar sesión / Registrarse
                 </a>
             </div>
         </div>
 
         <nav class="nav container">
             <a href="/index" class="nav__logo">
-                <img src="assets/img/Logo-Luminar.svg" alt="Luminar Logo" class="nav__logo-img">
+                <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
             </a>
 
             <div class="nav__menu" id="nav__menu">
                 <ul class="nav__list">
                     <li class="nav__item">
-                        <a href="/index" class="nav__link active-link">HOME</a>
+                        <a href="/index" class="nav__link active-link">INICIO</a>
                     </li>
                     <li class="nav__item">
-                        <a href="/shop" class="nav__link">Shop</a>
+                        <a href="/shop" class="nav__link">Tienda</a>
                     </li>
                     <li class="nav__item">
                         <a href="/accounts" class="nav__link">Mi cuenta</a>
                     </li>
                     <li class="nav__item">
-                        <a href="compare.html" class="nav__link">Comparar</a>
-                    </li>
-                    <li class="nav__item">
-                        <a href="/" class="nav__link">Login</a>
+                        <a href="/orders" class="nav__link">Pedidos</a>
                     </li>
                 </ul>
 
@@ -64,7 +90,7 @@
 
             <div class="header__user-actions">
                 <a href="/whishlist" class="header__action-btn">
-                    <img src="assets/img/icon-heart.svg" alt="Wishlist">
+                    <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
                     <span class="count">3</span>
                 </a>
 
@@ -76,48 +102,125 @@
         </nav>
     </header>
 
-    <!-- WHISHLIST SECTION -->
+    <!-- WISHLIST SECTION -->
     <section class="whishlist section--lg">
         <div class="container">
             <h2 class="section__title">Mi <span>Lista de Deseos</span></h2>
-            <div class="whishlist__content">
-                <div class="product__item">
-                    <a href="#" class="product__images">
-                        <img src="assets/img/product-1.jpg" alt="Producto Deseado 1" class="product__img default">
-                    </a>
-                    <div class="product__content">
-                        <span class="product__category">Categoría</span>
-                        <h3 class="product__title">Nombre del Producto</h3>
-                        <span class="product__price">
-                            <span class="new__price">$30.00</span>
-                        </span>
-                        <button class="btn btn-add-to-cart">Agregar al Carrito</button>
-                    </div>
-                </div>
-                <!-- Más productos deseados aquí -->
+            <div id="wishlistItemsBody" class="whishlist__content">
+                <!-- Dynamic wishlist items will be populated here by JavaScript -->
             </div>
+
+            <!-- Empty Wishlist Message -->
+            <div id="emptyWishlistMessage" style="display:none;">
+                <p>Tu lista de deseos está vacía.</p>
+            </div>
+
         </div>
     </section>
 
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__links">
+                    <h4 class="footer__title">Enlaces Útiles</h4>
+                    <ul class="footer__list">
+                        <li><a href="/shop">Tienda</a></li>
+                        <li><a href="/accounts">Mi Cuenta</a></li>
+                        <li><a href="/whishlist">Lista de Deseos</a></li>
+                        <li><a href="/Orders">Pedidos</a></li>
+                        <li><a href="/cart">Carrito</a></li>
+                        <li><a href="privacy-policy" target="_blank">Políticas de Privacidad</a></li>
+                    </ul>
+                </div>
+    
+                <div class="footer__contact">
+                    <h4 class="footer__title">Contáctanos</h4>
+                    <p>Teléfono: +57 3134717406</p>
+                    <p>Email: luminaropa@gmail.com</p>
+                    <p>Direccion: Neos Centro, Calle 12 B, 9-40</p>
+                </div>
+    
+                <div class="footer__social">
+                    <h4 class="footer__title">Síguenos</h4>
+                    <ul class="footer__social-list">
+                        <li><a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank"><i class="fi fi-rr-facebook"></i> Facebook</a></li>
+                        <li><a href="https://www.tiktok.com/@luminar.2023" target="_blank"><i class="fi fi-rr-tiktok"></i> TikTok</a></li>
+                        <li><a href="https://www.instagram.com/luminar.2023/" target="_blank"><i class="fi fi-rr-instagram"></i> Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+    
+            <div class="footer__bottom">
+                <p>&copy; 2024 Luminar. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
     <!-- SWIPER JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
     <!-- MAIN JS -->
-    <script src="assets/js/main.js"></script>
+    <script src="./assets/js/main.js"></script>
+
+    <!-- Wishlist Functionality Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const wishlistContent = document.querySelector('.whishlist__content');
+            const wishlistItemsBody = document.getElementById('wishlistItemsBody');
+            
+            // Example wishlist items (replace this with API call to fetch actual wishlist items)
+            const wishlistItems = [
+                {
+                    producto_id: 1,
+                    nombre_producto: "Nombre del Producto 1",
+                    precio: 30.00,
+                    imagen: "assets/img/product-1.jpg",
+                    categoria: "Categoría"
+                },
+                {
+                    producto_id: 2,
+                    nombre_producto: "Nombre del Producto 2",
+                    precio: 45.00,
+                    imagen: "assets/img/product-2.jpg",
+                    categoria: "Categoría"
+                }
+                // Add more products as needed
+            ];
 
-            // Manejar el evento de agregar al carrito
-            wishlistContent.addEventListener('click', function(event) {
+            // Populate wishlist items
+            if (wishlistItems.length === 0) {
+                document.getElementById('emptyWishlistMessage').style.display = 'block';
+            } else {
+                wishlistItems.forEach(item => {
+                    const productItem = document.createElement('div');
+                    productItem.classList.add('product__item');
+                    productItem.innerHTML = `
+                        <a href="#" class="product__images">
+                            <img src="${item.imagen}" alt="${item.nombre_producto}" class="product__img default cart__product-img">
+                        </a>
+                        <div class="product__content">
+                            <span class="product__category">${item.categoria}</span>
+                            <h3 class="product__title">${item.nombre_producto}</h3>
+                            <span class="product__price">$${item.precio.toFixed(2)}</span>
+                            <button data-product-id="${item.producto_id}" class='btn btn-add-to-cart'>Agregar al Carrito</button>
+                        </div>`;
+                    
+                    wishlistItemsBody.appendChild(productItem);
+                });
+            }
+
+            // Handle adding to cart
+            wishlistItemsBody.addEventListener('click', function(event) {
                 if (event.target.classList.contains('btn-add-to-cart')) {
-                    const productItem = event.target.closest('.product__item');
-                    const productName = productItem.querySelector('.product__title').textContent;
+                    const productId = event.target.getAttribute('data-product-id');
+                    const productName = event.target.closest('.product__content').querySelector('.product__title').textContent;
+                    
                     alert(`El producto "${productName}" ha sido agregado al carrito.`);
-                    // Aquí podrías agregar lógica adicional para agregar el producto al carrito real
+                    
+                    // Here you could add logic to actually add the product to the cart in your application
                 }
             });
         });
     </script>
+
 </body>
 
 </html>

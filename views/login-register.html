@@ -18,10 +18,9 @@
             <form id="register-form">
                 <h1>Crea tu cuenta</h1>
                 <div class="social-icons">
-                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-google"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                    <a href="" class="social-icon"><i class="fab fa-instagram"></i></a>            
                 </div>
                 <span>Utilice su correo electrónico para registrarse</span>
                 <input type="text" id="register-nombre" placeholder="Nombre" required>
@@ -38,14 +37,13 @@
                 <h1>Iniciar sesión</h1>
                 <div class="social-icons">
                     <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-google"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>   
                 </div>
                 <span>Utiliza tu contraseña de correo electrónico</span>
                 <input type="email" id="login-email" placeholder="Email" required>
                 <input type="password" id="login-password" placeholder="Password" required minlength="6">
-                <a href="#">¿Has olvidado tu contraseña?</a>
+                <a href="/forget-password">¿Has olvidado tu contraseña?</a>
                 <button type="button" id="login">Iniciar sesión</button>
             </form>
         </div>
@@ -109,6 +107,16 @@
 
         // Registro
         registerFormBtn.addEventListener('click', async () => {
+            await registrarUsuario();
+        });
+
+        // Inicio de Sesión
+        loginFormBtn.addEventListener('click', async () => {
+            await iniciarSesion();
+        });
+
+        // Función para registrar usuario
+        async function registrarUsuario() {
             const nombre = document.getElementById('register-nombre').value.trim();
             const apellido = document.getElementById('register-apellido').value.trim();
             const correo_electronico = document.getElementById('register-email').value.trim();
@@ -117,6 +125,13 @@
             // Validación de campos
             if (!nombre || !apellido || !correo_electronico || !contrasena) {
                 alert('Por favor, complete todos los campos para registrarse.');
+                return;
+            }
+
+            // Validar la contraseña (mínimo 6 caracteres y al menos un número y una letra)
+            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+            if (!passwordRegex.test(contrasena)) {
+                alert('La contraseña debe tener al menos 6 caracteres y contener letras y números.');
                 return;
             }
 
@@ -143,10 +158,10 @@
                 console.error('Error en la solicitud de registro:', err);
                 alert('Error del servidor. Por favor, intenta nuevamente más tarde.');
             }
-        });
+        }
 
-        // Inicio de Sesión
-        loginFormBtn.addEventListener('click', async () => {
+        // Función para iniciar sesión
+        async function iniciarSesion() {
             const correo_electronico = document.getElementById('login-email').value.trim();
             const contrasena = document.getElementById('login-password').value.trim();
 
@@ -179,20 +194,23 @@
                 console.error('Error en la solicitud de inicio de sesión:', err);
                 alert('Error del servidor. Por favor, intenta nuevamente más tarde.');
             }
+        }
+
+        // Manejar el evento Enter para el registro y el inicio de sesión
+        document.getElementById('register-form').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Evitar el comportamiento predeterminado
+                registrarUsuario(); // Llamar a la función de registro
+            }
         });
 
-        // Cerrar Sesión
-        const logoutBtn = document.getElementById('logout');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', cerrarSesion);
-        }
-
-        function cerrarSesion() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('rol_id');
-            alert('Has cerrado sesión exitosamente.');
-            window.location.href = '/'; // Redirigir al inicio de sesión
-        }
+        document.getElementById('login-form').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Evitar el comportamiento predeterminado
+                iniciarSesion(); // Llamar a la función de inicio de sesión
+            }
+        });
+        
     </script>
 </body>
 

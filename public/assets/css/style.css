@@ -646,3 +646,38 @@ input{
     display: flex;
     column-gap: flex;
 }
+
+.footer {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    margin-top: 40px;
+}
+.footer__content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.footer__title {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+.footer__list,
+.footer__social-list {
+    list-style-type: none;
+    padding: 0;
+}
+.footer__list li,
+.footer__social-list li {
+    margin-bottom: 5px;
+}
+.footer__list a,
+.footer__social-list a {
+    text-decoration: none;
+    color: #333;
+}
+.footer__bottom {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #666;
+}

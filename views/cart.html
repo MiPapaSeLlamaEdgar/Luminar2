@@ -1,4 +1,3 @@
-<!-- cart.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,6 +9,40 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="css/style.css">
     <title>Carrito de Compras - LUMINAR</title>
+    <style>
+        .cart__table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px; /* Space below table */
+        }
+        .cart__table th,
+        .cart__table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .cart__product-img {
+            width: 50px; /* Adjust size */
+            height: auto; /* Maintain aspect ratio */
+            margin-right: 10px; /* Space between image and text */
+        }
+        .btn {
+            background-color: #dc3545; /* Red for remove button */
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px; /* Rounded corners */
+        }
+        .btn:hover {
+            background-color: #c82333; /* Darker red on hover */
+        }
+        .cart__total {
+            display: flex;
+            justify-content: space-between; /* Align total and button */
+            margin-top: 20px; /* Space above total */
+        }
+    </style>
 </head>
 
 <body>
@@ -18,39 +51,36 @@
         <div class="header__top">
             <div class="header__container container">
                 <div class="header__contact">
-                    <span>(+00) - 000 - 000</span>
-                    <span>Locación</span>
+                    <span>luminaropa@gmail.com</span>
+                    <span>+57 3134717406</span>
                 </div>
 
-                <p class="header__alert-news">BLA-BLA-BLA</p>
+                <p class="header__alert-news">LUMINAR</p>
 
                 <a href="/" class="header__top-action">
-                    Log In / Sign up
+                    Iniciar sesión / Registrarse
                 </a>
             </div>
         </div>
 
         <nav class="nav container">
             <a href="/index" class="nav__logo">
-                <img src="assets/img/Logo-Luminar.svg" alt="Luminar Logo" class="nav__logo-img">
+                <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
             </a>
 
             <div class="nav__menu" id="nav__menu">
                 <ul class="nav__list">
                     <li class="nav__item">
-                        <a href="/index" class="nav__link active-link">HOME</a>
+                        <a href="/index" class="nav__link active-link">INICIO</a>
                     </li>
                     <li class="nav__item">
-                        <a href="/shop" class="nav__link">Shop</a>
+                        <a href="/shop" class="nav__link">Tienda</a>
                     </li>
                     <li class="nav__item">
                         <a href="/accounts" class="nav__link">Mi cuenta</a>
                     </li>
                     <li class="nav__item">
-                        <a href="compare.html" class="nav__link">Comparar</a>
-                    </li>
-                    <li class="nav__item">
-                        <a href="/" class="nav__link">Login</a>
+                        <a href="/orders" class="nav__link">Pedidos</a>
                     </li>
                 </ul>
 
@@ -64,7 +94,7 @@
 
             <div class="header__user-actions">
                 <a href="/whishlist" class="header__action-btn">
-                    <img src="assets/img/icon-heart.svg" alt="Wishlist">
+                    <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
                     <span class="count">3</span>
                 </a>
 
@@ -75,12 +105,14 @@
             </div>
         </nav>
     </header>
-
     <!-- CART SECTION -->
     <section class="cart section--lg">
         <div class="container">
             <h2 class="section__title">Mi <span>Carrito de Compras</span></h2>
+            
+            <!-- Cart Content -->
             <div class="cart__content">
+                <!-- Cart Table -->
                 <table class="cart__table">
                     <thead>
                         <tr>
@@ -91,76 +123,128 @@
                             <th>Acción</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="cart__product">
-                                    <img src="assets/img/product-1.jpg" alt="Producto 1" class="cart__product-img">
-                                    <span class="cart__product-name">Nombre del Producto</span>
-                                </div>
-                            </td>
-                            <td class="cart__price">$30.00</td>
-                            <td>
-                                <input type="number" class="cart__quantity" value="1" min="1">
-                            </td>
-                            <td class="cart__total-item">$30.00</td>
-                            <td>
-                                <button class="btn btn-remove">Eliminar</button>
-                            </td>
-                        </tr>
-                        <!-- Más productos en el carrito -->
+                    <tbody id="cartItemsBody">
+                        <!-- Dynamic rows will be populated here by JavaScript -->
                     </tbody>
                 </table>
+
+                <!-- Cart Total Section -->
                 <div class="cart__total">
-                    <h3>Total: <span id="cartTotalAmount">$90.00</span></h3>
-                    <button class="btn">Proceder al Pago</button>
+                    <h3>Total:
+                        <span id="cartTotalAmount">$30.00</span> <!-- Updated to reflect single product total -->
+                    </h3>
+                    <!-- Proceed to Checkout Button -->
+                    <button id='checkoutButton' class='btn'>Proceder al Pago</button> 
+                </div>
+
+                <!-- Empty Cart Message -->
+                <div id="emptyCartMessage" style="display:none;">
+                    <p>Tu carrito está vacío.</p>
+                </div>
+
+             </div> 
+         </div> 
+     </section>
+     <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__links">
+                    <h4 class="footer__title">Enlaces Útiles</h4>
+                    <ul class="footer__list">
+                        <li><a href="/shop">Tienda</a></li>
+                        <li><a href="/accounts">Mi Cuenta</a></li>
+                        <li><a href="/whishlist">Lista de Deseos</a></li>
+                        <li><a href="/Orders">Pedidos</a></li>
+                        <li><a href="/cart">Carrito</a></li>
+                        <li><a href="privacy-policy" target="_blank">Políticas de Privacidad</a></li>
+                    </ul>
+                </div>
+    
+                <div class="footer__contact">
+                    <h4 class="footer__title">Contáctanos</h4>
+                    <p>Teléfono: +57 3134717406</p>
+                    <p>Email: luminaropa@gmail.com</p>
+                    <p>Direccion: Neos Centro, Calle 12 B, 9-40</p>
+                </div>
+    
+                <div class="footer__social">
+                    <h4 class="footer__title">Síguenos</h4>
+                    <ul class="footer__social-list">
+                        <li><a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank"><i class="fi fi-rr-facebook"></i> Facebook</a></li>
+                        <li><a href="https://www.tiktok.com/@luminar.2023" target="_blank"><i class="fi fi-rr-tiktok"></i> TikTok</a></li>
+                        <li><a href="https://www.instagram.com/luminar.2023/" target="_blank"><i class="fi fi-rr-instagram"></i> Instagram</a></li>
+                    </ul>
                 </div>
             </div>
+    
+            <div class="footer__bottom">
+                <p>&copy; 2024 Luminar. Todos los derechos reservados.</p>
+            </div>
         </div>
-    </section>
+    </footer>
+     <!-- SWIPER JS -->
+     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-    <!-- SWIPER JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <!-- MAIN JS -->
-    <script src="assets/js/main.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const cartContent = document.querySelector('.cart__content');
-            const cartTotalAmount = document.getElementById('cartTotalAmount');
+     <!-- MAIN JS -->
+     <script src="./assets/js/main.js"></script>
 
-            // Actualizar el total del carrito
-            function updateCartTotal() {
-                let total = 0;
-                document.querySelectorAll('.cart__table tbody tr').forEach(function(row) {
-                    const price = parseFloat(row.querySelector('.cart__price').textContent.replace('$', ''));
-                    const quantity = parseInt(row.querySelector('.cart__quantity').value);
-                    const totalItem = price * quantity;
-                    row.querySelector('.cart__total-item').textContent = `$${totalItem.toFixed(2)}`;
-                    total += totalItem;
-                });
-                cartTotalAmount.textContent = `$${total.toFixed(2)}`;
-            }
+     <!-- Cart Functionality Script -->
+     <!-- Include your existing cart functionality script here -->
+     <script>
+         document.addEventListener('DOMContentLoaded', function() {
+             const cartContent = document.querySelector('.cart__content');
+             const cartTotalAmount = document.getElementById('cartTotalAmount');
 
-            // Manejar el cambio de cantidad
-            cartContent.addEventListener('change', function(event) {
-                if (event.target.classList.contains('cart__quantity')) {
-                    updateCartTotal();
-                }
-            });
+             // Function to update the total price of the cart
+             function updateCartTotal() {
+                 let total = 0;
+                 document.querySelectorAll('.cart__table tbody tr').forEach(function(row) {
+                     const price = parseFloat(row.querySelector('.cart__price').textContent.replace('$', ''));
+                     const quantity = parseInt(row.querySelector('.cart__quantity').value);
+                     const totalItem = price * quantity;
 
-            // Manejar la eliminación de un producto
-            cartContent.addEventListener('click', function(event) {
-                if (event.target.classList.contains('btn-remove')) {
-                    const row = event.target.closest('tr');
-                    row.remove();
-                    updateCartTotal();
-                }
-            });
+                     // Update the total item price in the row
+                     row.querySelector('.cart__total-item').textContent = `$${totalItem.toFixed(2)}`;
+                     
+                     // Accumulate the total
+                     total += totalItem;
+                 });
+                 
+                 // Update the total amount displayed
+                 cartTotalAmount.textContent = `$${total.toFixed(2)}`;
+             }
 
-            // Inicializar el total del carrito al cargar la página
-            updateCartTotal();
-        });
-    </script>
-</body>
+             // Event listener for quantity change
+             cartContent.addEventListener('change', function(event) {
+                 if (event.target.classList.contains('cart__quantity')) {
+                     updateCartTotal();
+                 }
+             });
 
-</html>
+             // Event listener for removing a product
+             cartContent.addEventListener('click', function(event) {
+                 if (event.target.classList.contains('btn-remove')) {
+                     const row = event.target.closest('tr');
+                     
+                     // Remove the row from the table
+                     row.remove();
+                     
+                     // Update the total after removal
+                     updateCartTotal();
+                 }
+             });
+
+             // Initialize the total of the cart when the page loads
+             updateCartTotal();
+
+             // Example of showing empty cart message if no items are present
+             const cartItemsBody = document.getElementById('cartItemsBody');
+             if (cartItemsBody.children.length === 0) {
+                 document.getElementById('emptyCartMessage').style.display = 'block';
+             }
+         });
+     </script>
+
+   </body>
+
+   </html>
