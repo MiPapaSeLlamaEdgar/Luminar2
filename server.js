@@ -1,10 +1,10 @@
-require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const { Sequelize } = require('sequelize');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 
@@ -13,7 +13,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     secret: process.env.SESSION_SECRET || 'secret_key',
     resave: false,
@@ -21,9 +21,9 @@ app.use(session({
     cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 
-// Conexión a la base de datos
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
-    host: process.env.DB_HOST,
+// Configuración de la base de datos
+const sequelize = new Sequelize('Luminar', 'root', '1234', {
+    host: 'localhost',
     dialect: 'mysql',
     logging: false,
     pool: {
@@ -34,36 +34,46 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
     }
 });
 
-// Importar y configurar modelos
+// Inicializar modelos
 const initModels = require('./models/init-models');
 const models = initModels(sequelize);
 
-// Middleware para manejar respuestas JSON
+// Middleware para pasar los modelos a las rutas
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    if (req.method === 'OPTIONS') {
-        res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
-        return res.status(200).json({});
-    }
+    req.models = models;
     next();
 });
 
-// Importar rutas
-const authRoutes = require('./controllers/auth');
-const cartRoutes = require('./controllers/cart');
-const wishlistRoutes = require('./controllers/whishlist');
-const crudRoutes = require('./controllers/crudRoutes');
-const inventoryRoutes = require('./controllers/inventorySalesRoutes');
+// Definir rutas disponibles
+const availableRoutes = {
+    'role': '/api/roles',
+    'product': '/api/productos',
+    'cart': '/api/cart',
+    'client': '/api/clients',
+    'order': '/api/orders',
+    'payment': '/api/payments',
+    'category': '/api/categories',
+    'user': '/api/users',
+    'orderDetail': '/api/orderDetails',
+    'whishlist': '/api/wishlist'
+};
 
-// Configurar rutas de API
-app.use('/api/auth', authRoutes(sequelize));
-app.use('/api/cart', cartRoutes(sequelize));
-app.use('/api/wishlist', wishlistRoutes(sequelize));
-app.use('/api/crud', crudRoutes(sequelize));
-app.use('/api/inventory', inventoryRoutes(sequelize));
+// Función para cargar rutas de manera segura
+function loadRoute(routeName) {
+    try {
+        return require(`./routes/${routeName}.routes.js`)(models);
+    } catch (error) {
+        console.warn(`Ruta ${routeName} no encontrada`);
+        return express.Router();
+    }
+}
 
-// Rutas de vistas
+// Configurar rutas API
+Object.entries(availableRoutes).forEach(([routeName, path]) => {
+    app.use(path, loadRoute(routeName));
+});
+
+// Configurar rutas de vistas
 const viewRoutes = {
     '/': 'login-register.html',
     '/index': 'index.html',
@@ -77,20 +87,16 @@ const viewRoutes = {
     '/shop': 'shop.html',
     '/whishlist': 'whishlist.html',
     '/orders': 'orders.html',
-    
-    // Nuevas rutas para la sección de Vendedor
+    '/privacy-policy': 'privacy-policy.html',
     '/vendedor/clientes': 'Vendedor/clientes.html',
     '/vendedor/dashboard': 'Vendedor/dashboard-vendedor.html',
     '/vendedor/dashboards': 'Vendedor/dashboards.html',
     '/vendedor/inventario': 'Vendedor/inventario.html',
     '/vendedor/reportes': 'Vendedor/reportes.html',
     '/vendedor/ventas': 'Vendedor/ventas.html',
-    '/vendedor/editar-perfil': 'Vendedor/editar-perfil.html'
+    '/vendedor/editar-perfil': 'Vendedor/editar-perfil.html',
+    '/admin/roles': 'Admin/roles.html'
 };
-
-
-// Middleware para servir archivos estáticos
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Configurar rutas de vistas
 Object.entries(viewRoutes).forEach(([route, file]) => {
@@ -118,25 +124,18 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Función para inicializar modelos y relaciones
-async function initializeModels() {
+// Función para inicializar el servidor
+async function initializeServer() {
     try {
+        // Verificar conexión a la base de datos
         await sequelize.authenticate();
         console.log('Conexión a la base de datos establecida.');
         
+        // Sincronizar modelos
         await sequelize.sync({ alter: true });
         console.log('Modelos sincronizados.');
-    } catch (error) {
-        console.error('Error al inicializar modelos:', error);
-        throw error;
-    }
-}
-
-// Inicialización del servidor
-async function initializeServer() {
-    try {
-        await initializeModels();
         
+        // Iniciar servidor
         const PORT = process.env.PORT || 5000;
         app.listen(PORT, () => {
             console.log(`Servidor corriendo en puerto ${PORT}`);

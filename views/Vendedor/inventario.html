@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventario | Luminar</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard.css">
     <style>
         :root {
             --primary-color: #D6266F;
@@ -14,12 +15,30 @@
             --text-color: #333333;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
+        /* Información del usuario */
+.user-info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Coloca el contenido a la izquierda */
+    margin-top: 30px; /* Espacio en la parte superior de la imagen */
+    padding-top: 20px;
+    border-top: 1px solid #eee; /* Línea superior */
+}
+
+/* Imagen de perfil */
+.profile-img {
+    width: 40px; /* Tamaño más pequeño */
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px; /* Espacio entre la imagen y el nombre */
+}
+
+.user-info span {
+    color: var(--text-color);
+    font-size: 14px;
+    font-weight: 500;
+}
+
 
         .container {
             display: flex;
@@ -94,6 +113,24 @@
             display: flex;
             gap: 10px;
         }
+        .edit-btn, .delete-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
 
         .add-product-btn {
             background-color: var(--primary-color);
@@ -225,11 +262,11 @@
                 <h2>Panel Vendedor</h2>
             </div>
             <ul class="nav-links">
-                <li><a href="/Vendedor/dashboard-vendedor">Dashboard</a></li>
-                <li><a href="/Vendedor/ventas">Ventas</a></li>
-                <li><a href="/Vendedor/clientes">Clientes</a></li>
-                <li><a href="/Vendedor/inventario" class="active">Inventario</a></li>
-                <li><a href="/Vendedor/reportes">Reportes</a></li>
+                <li><a href="/vendedor/dashboard-vendedor">Inicio</a></li>
+                <li><a href="/vendedor/ventas">Ventas</a></li>
+                <li><a href="/vendedor/clientes" class="active">Clientes</a></li>
+                <li><a href="/vendedor/inventario">Inventario</a></li>
+                <li><a href="/vendedor/reportes">Reportes</a></li>
             </ul>
             <div class="user-info">
                 <img src="/images/foto.png" alt="Profile" class="profile-img">

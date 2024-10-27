@@ -18,11 +18,11 @@
                 <h2>Panel Vendedor</h2>
             </div>
             <ul class="nav-links">
-                <li><a href="/Vendedor/dashboard-vendedor" class="active">Dashboard</a></li>
-                <li><a href="/Vendedor/ventas">Ventas</a></li>
-                <li><a href="/Vendedor/clientes">Clientes</a></li>
-                <li><a href="/Vendedor/inventario">Inventario</a></li>
-                <li><a href="/Vendedor/reportes">Reportes</a></li>
+                <li><a href="/vendedor/dashboard-vendedor">Inicio</a></li>
+                <li><a href="/vendedor/ventas">Ventas</a></li>
+                <li><a href="/vendedor/clientes" class="active">Clientes</a></li>
+                <li><a href="/vendedor/inventario">Inventario</a></li>
+                <li><a href="/vendedor/reportes">Reportes</a></li>
             </ul>
             <div class="user-info">
                 <img src="/images/foto.png" alt="Profile" class="profile-img">
@@ -37,7 +37,7 @@
                     <input type="text" placeholder="Buscar...">
                 </div>
                 <div class="header__user-actions">
-                    <a href="/Vendedor/editar-perfil" class="header__action-btn" title="Editar Perfil">
+                    <a href="/editar-perfil" class="header__action-btn" title="Editar Perfil">
                         <i class="fi fi-sr-user-pen"></i>
                     </a>
                     <a href="/index" class="header__action-btn" title="Cerrar Sesión">
@@ -97,15 +97,85 @@
             </div>
         </main>
     </div>
-    <script src="/js/dashboard.js"></script>
+    <!-- Modal de Cerrar Sesión -->
+<!-- Modal de Cerrar Sesión -->
+<div id="logoutModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Cerrar Sesión</h2>
+        </div>
+        <div class="modal-body">
+            <p>¿Estás seguro que deseas cerrar sesión?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="cancel-btn" onclick="cerrarModal()">Cancelar</button>
+            <button class="confirm-btn" onclick="confirmarCerrarSesion()">Cerrar Sesión</button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos para el Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000; /* Asegúrate de que sea suficientemente alto */
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    margin: 0 auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+</style>
+
+<script>
+    function mostrarModalCerrarSesion(e) {
+        e.preventDefault();
+        document.getElementById('logoutModal').style.display = 'block';
+    }
+
+    function cerrarModal() {
+        document.getElementById('logoutModal').style.display = 'none';
+    }
+
+    function confirmarCerrarSesion() {
+        window.location.href = '/index';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const logoutBtn = document.querySelector('.header__user-actions a[title="Cerrar Sesión"]');
+        if(logoutBtn) {
+            logoutBtn.addEventListener('click', mostrarModalCerrarSesion);
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('logoutModal');
+            if (event.target == modal) {
+                cerrarModal();
+            }
+        }
+    });
+</script>
+
 </body>
 </html>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // Configuración de colores de Luminar
-    const primaryColor = '#D6266F';
-    const secondaryColor = '#4A2828';
-
+    // script.js
+document.addEventListener('DOMContentLoaded', function() {
     // Datos de ejemplo
     const ventasData = {
         labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
@@ -131,7 +201,7 @@
             datasets: [{
                 label: 'Ventas Mensuales',
                 data: ventasData.ventas,
-                borderColor: primaryColor,
+                borderColor: '#3498db',
                 tension: 0.1,
                 fill: false
             }]
@@ -154,7 +224,7 @@
             datasets: [{
                 label: 'Unidades Vendidas',
                 data: productosData.cantidades,
-                backgroundColor: secondaryColor
+                backgroundColor: '#2ecc71'
             }]
         },
         options: {
@@ -201,18 +271,10 @@
             row.style.display = text.includes(searchTerm) ? '' : 'none';
         });
     });
+});
     // Agregar al final de tu script
-function cerrarSesion() {
-    if(confirm('¿Estás seguro que deseas cerrar sesión?')) {
-        window.location.href = '/index';
-    }
-}
+    // Modificar la función de cerrar sesión
+    
 
-// Agregar el event listener
-document.querySelector('a[href="/index"]').addEventListener('click', function(e) {
-    e.preventDefault();
-    cerrarSesion();
-});
-});
-
+    
 </script>

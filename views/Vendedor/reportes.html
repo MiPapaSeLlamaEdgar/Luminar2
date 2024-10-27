@@ -6,6 +6,7 @@
     <title>Reportes | Luminar</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/css/dashboard.css">
     <style>
         :root {
             --primary-color: #D6266F;
@@ -14,13 +15,30 @@
             --card-color: #ffffff;
             --text-color: #333333;
         }
+/* Información del usuario */
+.user-info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Coloca el contenido a la izquierda */
+    margin-top: 30px; /* Espacio en la parte superior de la imagen */
+    padding-top: 20px;
+    border-top: 1px solid #eee; /* Línea superior */
+}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
+/* Imagen de perfil */
+.profile-img {
+    width: 40px; /* Tamaño más pequeño */
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px; /* Espacio entre la imagen y el nombre */
+}
+
+.user-info span {
+    color: var(--text-color);
+    font-size: 14px;
+    font-weight: 500;
+}
+
 
         .container {
             display: flex;
@@ -184,11 +202,11 @@
                 <h2>Panel Vendedor</h2>
             </div>
             <ul class="nav-links">
-                <li><a href="/Vendedor/dashboard-vendedor">Dashboard</a></li>
-                <li><a href="/Vendedor/ventas">Ventas</a></li>
-                <li><a href="/Vendedor/clientes">Clientes</a></li>
-                <li><a href="/Vendedor/inventario">Inventario</a></li>
-                <li><a href="/Vendedor/reportes" class="active">Reportes</a></li>
+                <li><a href="/vendedor/dashboard-vendedor">Inicio</a></li>
+                <li><a href="/vendedor/ventas">Ventas</a></li>
+                <li><a href="/vendedor/clientes" class="active">Clientes</a></li>
+                <li><a href="/vendedor/inventario">Inventario</a></li>
+                <li><a href="/vendedor/reportes">Reportes</a></li>
             </ul>
             <div class="user-info">
                 <img src="/images/foto.png" alt="Profile" class="profile-img">
