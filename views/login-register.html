@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="css/login.css">
-    <title>Login</title>
+    <title>Login - LUMINAR</title>
 </head>
-
 <body>
     <h1>Luminar Login</h1>
 
@@ -18,15 +17,17 @@
             <form id="register-form">
                 <h1>Crea tu cuenta</h1>
                 <div class="social-icons">
-                    <a href="" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                    <a href="" class="social-icon"><i class="fab fa-tiktok"></i></a>
-                    <a href="" class="social-icon"><i class="fab fa-instagram"></i></a>            
+                    <a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.tiktok.com/@luminar.2023" target="_blank" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.instagram.com/luminar.2023/" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>            
                 </div>
                 <span>Utilice su correo electrónico para registrarse</span>
                 <input type="text" id="register-nombre" placeholder="Nombre" required>
                 <input type="text" id="register-apellido" placeholder="Apellido" required>
                 <input type="email" id="register-email" placeholder="Email" required>
                 <input type="password" id="register-password" placeholder="Password" required minlength="6">
+                <input type="tel" id="register-telefono" placeholder="Teléfono" required>
+                <input type="text" id="register-direccion" placeholder="Dirección" required>
                 <button type="button" id="register">Registrarte</button>
             </form>
         </div>
@@ -36,11 +37,11 @@
             <form id="login-form">
                 <h1>Iniciar sesión</h1>
                 <div class="social-icons">
-                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>   
+                    <a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.tiktok.com/@luminar.2023" target="_blank" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.instagram.com/luminar.2023/" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
                 </div>
-                <span>Utiliza tu contraseña de correo electrónico</span>
+                <span>Utiliza tu correo electrónico y contraseña</span>
                 <input type="email" id="login-email" placeholder="Email" required>
                 <input type="password" id="login-password" placeholder="Password" required minlength="6">
                 <a href="/forget-password">¿Has olvidado tu contraseña?</a>
@@ -52,166 +53,195 @@
         <div class="toggle-container">
             <div class="toggle">
                 <div class="toggle-panel toggle-left">
-                    <h1>Bienvenido</h1>
-                    <p>Ingrese los datos solicitados</p>
+                    <h1>¡Bienvenido de nuevo!</h1>
+                    <p>Inicia sesión con tus datos para acceder a tu cuenta</p>
                     <button class="hidden" id="signIn">Iniciar sesión</button>
                 </div>
                 <div class="toggle-panel toggle-right">
-                    <h1>Bienvenido</h1>
-                    <p>Ingrese los datos solicitados</p>
+                    <h1>¡Hola!</h1>
+                    <p>Regístrate para acceder a todos nuestros servicios</p>
                     <button class="hidden" id="signUp">Registrarse</button>
                 </div>
             </div>
         </div>
     </div>
+<!-- En login-register.html, reemplaza todo el script interno por: -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/auth.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // Elementos DOM
-        const container = document.getElementById('container');
-        const registerBtn = document.getElementById('signUp');
-        const loginBtn = document.getElementById('signIn');
-        const registerFormBtn = document.getElementById('register');
-        const loginFormBtn = document.getElementById('login');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos DOM
+            const container = document.getElementById('container');
+            const registerBtn = document.getElementById('signUp');
+            const loginBtn = document.getElementById('signIn');
+            const registerFormBtn = document.getElementById('register');
+            const loginFormBtn = document.getElementById('login');
 
-        // Mostrar formulario de Registro
-        registerBtn.addEventListener('click', () => {
-            container.classList.add("active");
-        });
+            // Mostrar/Ocultar formularios
+            registerBtn.addEventListener('click', () => container.classList.add("active"));
+            loginBtn.addEventListener('click', () => container.classList.remove("active"));
 
-        // Mostrar formulario de Inicio de Sesión
-        loginBtn.addEventListener('click', () => {
-            container.classList.remove("active");
-        });
+            // Función para registrar usuario
+            async function registrarUsuario() {
+                try {
+                    const formData = {
+                        nombre: document.getElementById('register-nombre').value.trim(),
+                        apellido: document.getElementById('register-apellido').value.trim(),
+                        correo_electronico: document.getElementById('register-email').value.trim(),
+                        contrasena: document.getElementById('register-password').value.trim(),
+                        telefono: document.getElementById('register-telefono').value.trim(),
+                        direccion: document.getElementById('register-direccion').value.trim()
+                    };
 
-        // Función para guardar sesión
-        function guardarSesion(token, rolId) {
-            localStorage.setItem('token', token);
-            localStorage.setItem('rol_id', rolId);
+                    // Validaciones
+                    if (Object.values(formData).some(value => !value)) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Por favor, complete todos los campos'
+                        });
+                        return;
+                    }
 
-            // Redirigir según el rol
-            switch (parseInt(rolId)) {
-                case 1:
-                    window.location.href = '/dashboard-cliente';
-                    break;
-                case 2:
-                    window.location.href = '/dashboard-vendedor';
-                    break;
-                case 3:
-                    window.location.href = '/dashboard-admin';
-                    break;
-                default:
-                    alert('Rol desconocido. No tienes permisos para acceder a esta página.');
-                    window.location.href = '/';
-            }
-        }
+                    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+                    if (!passwordRegex.test(formData.contrasena)) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Contraseña inválida',
+                            text: 'La contraseña debe tener al menos 6 caracteres, incluyendo letras y números'
+                        });
+                        return;
+                    }
 
-        // Registro
-        registerFormBtn.addEventListener('click', async () => {
-            await registrarUsuario();
-        });
+                    const response = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
 
-        // Inicio de Sesión
-        loginFormBtn.addEventListener('click', async () => {
-            await iniciarSesion();
-        });
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.msg || 'Error en el registro');
+                    }
 
-        // Función para registrar usuario
-        async function registrarUsuario() {
-            const nombre = document.getElementById('register-nombre').value.trim();
-            const apellido = document.getElementById('register-apellido').value.trim();
-            const correo_electronico = document.getElementById('register-email').value.trim();
-            const contrasena = document.getElementById('register-password').value.trim();
+                    const data = await response.json();
 
-            // Validación de campos
-            if (!nombre || !apellido || !correo_electronico || !contrasena) {
-                alert('Por favor, complete todos los campos para registrarse.');
-                return;
-            }
+                    // Guardar datos en localStorage
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('rol_id', data.rol_id);
+                    localStorage.setItem('nombre', data.nombre);
 
-            // Validar la contraseña (mínimo 6 caracteres y al menos un número y una letra)
-            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
-            if (!passwordRegex.test(contrasena)) {
-                alert('La contraseña debe tener al menos 6 caracteres y contener letras y números.');
-                return;
-            }
+                    await Swal.fire({
+                        icon: 'success',
+                        title: '¡Registro exitoso!',
+                        text: `Bienvenido, ${formData.nombre}!`,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
 
-            const data = { nombre, apellido, correo_electronico, contrasena, rol_id: 1 };
-
-            try {
-                const response = await fetch('/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    guardarSesion(result.token, result.rol_id);
-                    alert(`Registro exitoso! Bienvenido, ${nombre}. Ya puedes acceder a nuestros servicios.`);
-                } else {
-                    const error = await response.json();
-                    alert('Error en el registro: ' + (error.msg || 'Error desconocido.'));
+                    // Redirigir según el rol
+                    switch (parseInt(data.rol_id)) {
+                        case 1: window.location.href = '/dashboard-cliente'; break;
+                        case 2: window.location.href = '/dashboard-vendedor'; break;
+                        case 3: window.location.href = '/dashboard-admin'; break;
+                        default: throw new Error('Rol no válido');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message || 'Error al registrar usuario'
+                    });
                 }
-            } catch (err) {
-                console.error('Error en la solicitud de registro:', err);
-                alert('Error del servidor. Por favor, intenta nuevamente más tarde.');
-            }
-        }
-
-        // Función para iniciar sesión
-        async function iniciarSesion() {
-            const correo_electronico = document.getElementById('login-email').value.trim();
-            const contrasena = document.getElementById('login-password').value.trim();
-
-            // Validación de campos
-            if (!correo_electronico || !contrasena) {
-                alert('Por favor, complete todos los campos para iniciar sesión.');
-                return;
             }
 
-            const data = { correo_electronico, contrasena };
+            // Función para iniciar sesión
+            async function iniciarSesion() {
+                try {
+                    const formData = {
+                        correo_electronico: document.getElementById('login-email').value.trim(),
+                        contrasena: document.getElementById('login-password').value.trim()
+                    };
 
-            try {
-                const response = await fetch('/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
+                    if (!formData.correo_electronico || !formData.contrasena) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Por favor, complete todos los campos'
+                        });
+                        return;
+                    }
 
-                if (response.ok) {
-                    const result = await response.json();
-                    guardarSesion(result.token, result.rol_id);
-                    alert(`Inicio de sesión exitoso! Bienvenido de nuevo, ${correo_electronico}.`);
-                } else {
-                    const error = await response.json();
-                    alert('Error al iniciar sesión: ' + (error.msg || 'Error desconocido.'));
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.msg || 'Credenciales inválidas');
+                    }
+
+                    const data = await response.json();
+
+                    // Guardar datos en localStorage
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('rol_id', data.rol_id);
+                    localStorage.setItem('nombre', data.nombre);
+
+                    await Swal.fire({
+                        icon: 'success',
+                        title: '¡Bienvenido!',
+                        text: 'Inicio de sesión exitoso',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+
+                    // Redirigir según el rol
+                    switch (parseInt(data.rol_id)) {
+                        case 1: window.location.href = '/dashboard-cliente'; break;
+                        case 2: window.location.href = '/dashboard-vendedor'; break;
+                        case 3: window.location.href = '/dashboard-admin'; break;
+                        default: throw new Error('Rol no válido');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message || 'Error al iniciar sesión'
+                    });
                 }
-            } catch (err) {
-                console.error('Error en la solicitud de inicio de sesión:', err);
-                alert('Error del servidor. Por favor, intenta nuevamente más tarde.');
             }
-        }
 
-        // Manejar el evento Enter para el registro y el inicio de sesión
-        document.getElementById('register-form').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault(); // Evitar el comportamiento predeterminado
-                registrarUsuario(); // Llamar a la función de registro
-            }
-        });
+            // Event Listeners
+            registerFormBtn.addEventListener('click', registrarUsuario);
+            loginFormBtn.addEventListener('click', iniciarSesion);
 
-        document.getElementById('login-form').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault(); // Evitar el comportamiento predeterminado
-                iniciarSesion(); // Llamar a la función de inicio de sesión
-            }
+            // Manejar evento Enter
+            document.getElementById('register-form').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    registrarUsuario();
+                }
+            });
+
+            document.getElementById('login-form').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    iniciarSesion();
+                }
+            });
         });
-        
     </script>
-</body>
-
-</html>

@@ -159,11 +159,132 @@
     </footer>
 
     <!-- SWIPER JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-    <!-- MAIN JS -->
-    <script src="./assets/js/main.js"></script>
+<!-- SWEETALERT2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<!-- MAIN JS -->
+<script src="./assets/js/main.js"></script>
+
+<!-- Orders Functionality Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para mostrar notificaciones
+    const showNotification = (message, type = 'success') => {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        Toast.fire({
+            icon: type,
+            title: message
+        });
+    };
+
+    // Función para actualizar contadores
+    const updateCounters = async () => {
+        try {
+            // Actualizar contador de wishlist
+            const wishlistResponse = await fetch('/api/wishlist/count');
+            const wishlistData = await wishlistResponse.json();
+            
+            // Actualizar contador de carrito
+            const cartResponse = await fetch('/api/cart/count');
+            const cartData = await cartResponse.json();
+            
+            // Actualizar los contadores en el DOM
+            document.querySelectorAll('.header__action-btn .count').forEach(counter => {
+                if (counter.closest('a[href="/whishlist"]')) {
+                    counter.textContent = wishlistData.count;
+                } else if (counter.closest('a[href="/cart"]')) {
+                    counter.textContent = cartData.count;
+                }
+            });
+        } catch (error) {
+            console.error('Error al actualizar contadores:', error);
+        }
+    };
+
+    // Función para ver detalles del pedido
+    const viewOrderDetails = async (orderId) => {
+        try {
+            const response = await fetch(`/api/orders/${orderId}`);
+            const data = await response.json();
+            
+            Swal.fire({
+                title: `Detalles del Pedido #${orderId}`,
+                html: `
+                    <div class="order-details">
+                        <p><strong>Fecha:</strong> ${data.fecha_pedido}</p>
+                        <p><strong>Estado:</strong> ${data.estado}</p>
+                        <p><strong>Total:</strong> $${data.total}</p>
+                        <hr>
+                        <h4>Productos:</h4>
+                        ${data.productos.map(prod => `
+                            <div class="product-item">
+                                <p>${prod.nombre_producto} x ${prod.cantidad}</p>
+                                <p>$${prod.precio}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `,
+                confirmButtonText: 'Cerrar',
+                width: '600px'
+            });
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Error al cargar los detalles del pedido', 'error');
+        }
+    };
+
+    // Función para reordenar
+    const reorder = async (orderId) => {
+        try {
+            const response = await fetch(`/api/orders/reorder/${orderId}`, {
+                method: 'POST'
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                showNotification('Productos añadidos al carrito correctamente');
+                updateCounters();
+            } else {
+                throw new Error(data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Error al reordenar los productos', 'error');
+        }
+    };
+
+    // Agregar event listeners a los botones de la tabla
+    document.querySelectorAll('button[aria-label="View Details"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const orderId = this.closest('tr').querySelector('a').textContent;
+            viewOrderDetails(orderId);
+        });
+    });
+
+    document.querySelectorAll('button[aria-label="Reorder"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const orderId = this.closest('tr').querySelector('a').textContent;
+            reorder(orderId);
+        });
+    });
+
+    // Inicializar contadores
+    updateCounters();
+});
+</script>
 </body>
 
 </html>

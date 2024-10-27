@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -11,34 +11,12 @@
     <!--==SWIPER CSS==-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
+    <!--==SWEETALERT2==-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
     <!--==CSS==-->
     <link rel="stylesheet" href="css/style.css">
     <title>Lista de Deseos - LUMINAR</title>
-    <style>
-        .product__item {
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid #ddd;
-            padding: 10px 0;
-        }
-        .product__img {
-            width: 80px; /* Adjust size */
-            height: auto; /* Maintain aspect ratio */
-            margin-right: 10px; /* Space between image and text */
-        }
-        
-        .btn-add-to-cart {
-            background-color: #28a745; /* Green for add to cart button */
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
-            border-radius: 5px; /* Rounded corners */
-        }
-        .btn-add-to-cart:hover {
-            background-color: #218838; /* Darker green on hover */
-        }
-    </style>
 </head>
 
 <body>
@@ -67,7 +45,7 @@
             <div class="nav__menu" id="nav__menu">
                 <ul class="nav__list">
                     <li class="nav__item">
-                        <a href="/index" class="nav__link active-link">INICIO</a>
+                        <a href="/index" class="nav__link">INICIO</a>
                     </li>
                     <li class="nav__item">
                         <a href="/shop" class="nav__link">Tienda</a>
@@ -91,33 +69,39 @@
             <div class="header__user-actions">
                 <a href="/whishlist" class="header__action-btn">
                     <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
-                    <span class="count">3</span>
+                    <span class="count">0</span>
                 </a>
 
                 <a href="/cart" class="header__action-btn">
                     <img src="assets/img/icon-cart.svg" alt="Carrito">
-                    <span class="count">3</span>
+                    <span class="count">0</span>
                 </a>
             </div>
         </nav>
     </header>
 
     <!-- WISHLIST SECTION -->
-    <section class="whishlist section--lg">
-        <div class="container">
-            <h2 class="section__title">Mi <span>Lista de Deseos</span></h2>
-            <div id="wishlistItemsBody" class="whishlist__content">
-                <!-- Dynamic wishlist items will be populated here by JavaScript -->
+    <!-- En la sección de wishlist -->
+<section class="whishlist section--lg">
+    <div class="container">
+        <h2 class="section__title">Mi <span>Lista de Deseos</span></h2>
+        <div id="wishlistItemsBody" class="whishlist__content products__grid">
+            <!-- Agregar un loader o mensaje de carga -->
+            <div id="loadingMessage" class="loading-message">
+                Cargando productos...
             </div>
-
-            <!-- Empty Wishlist Message -->
-            <div id="emptyWishlistMessage" style="display:none;">
-                <p>Tu lista de deseos está vacía.</p>
-            </div>
-
         </div>
-    </section>
 
+        <!-- Mensaje de lista vacía -->
+        <div id="emptyWishlistMessage" style="display:none;" class="empty-message">
+            <p>Tu lista de deseos está vacía.</p>
+            <a href="/shop" class="btn">Ir a la tienda</a>
+        </div>
+    </div>
+</section>
+
+
+    <!-- FOOTER -->
     <footer class="footer">
         <div class="container">
             <div class="footer__content">
@@ -127,9 +111,9 @@
                         <li><a href="/shop">Tienda</a></li>
                         <li><a href="/accounts">Mi Cuenta</a></li>
                         <li><a href="/whishlist">Lista de Deseos</a></li>
-                        <li><a href="/Orders">Pedidos</a></li>
+                        <li><a href="/orders">Pedidos</a></li>
                         <li><a href="/cart">Carrito</a></li>
-                        <li><a href="privacy-policy" target="_blank">Políticas de Privacidad</a></li>
+                        <li><a href="/privacy-policy">Políticas de Privacidad</a></li>
                     </ul>
                 </div>
     
@@ -137,7 +121,7 @@
                     <h4 class="footer__title">Contáctanos</h4>
                     <p>Teléfono: +57 3134717406</p>
                     <p>Email: luminaropa@gmail.com</p>
-                    <p>Direccion: Neos Centro, Calle 12 B, 9-40</p>
+                    <p>Dirección: Neos Centro, Calle 12 B, 9-40</p>
                 </div>
     
                 <div class="footer__social">
@@ -155,72 +139,179 @@
             </div>
         </div>
     </footer>
+
     <!-- SWIPER JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-    <!-- MAIN JS -->
-    <script src="./assets/js/main.js"></script>
+<!-- SWEETALERT2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Wishlist Functionality Script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const wishlistItemsBody = document.getElementById('wishlistItemsBody');
-            
-            // Example wishlist items (replace this with API call to fetch actual wishlist items)
-            const wishlistItems = [
-                {
-                    producto_id: 1,
-                    nombre_producto: "Nombre del Producto 1",
-                    precio: 30.00,
-                    imagen: "assets/img/product-1.jpg",
-                    categoria: "Categoría"
-                },
-                {
-                    producto_id: 2,
-                    nombre_producto: "Nombre del Producto 2",
-                    precio: 45.00,
-                    imagen: "assets/img/product-2.jpg",
-                    categoria: "Categoría"
-                }
-                // Add more products as needed
-            ];
+<!-- MAIN JS -->
+<script src="assets/js/main.js"></script>
 
-            // Populate wishlist items
-            if (wishlistItems.length === 0) {
-                document.getElementById('emptyWishlistMessage').style.display = 'block';
-            } else {
-                wishlistItems.forEach(item => {
-                    const productItem = document.createElement('div');
-                    productItem.classList.add('product__item');
-                    productItem.innerHTML = `
-                        <a href="#" class="product__images">
-                            <img src="${item.imagen}" alt="${item.nombre_producto}" class="product__img default cart__product-img">
-                        </a>
-                        <div class="product__content">
-                            <span class="product__category">${item.categoria}</span>
-                            <h3 class="product__title">${item.nombre_producto}</h3>
-                            <span class="product__price">$${item.precio.toFixed(2)}</span>
-                            <button data-product-id="${item.producto_id}" class='btn btn-add-to-cart'>Agregar al Carrito</button>
-                        </div>`;
-                    
-                    wishlistItemsBody.appendChild(productItem);
-                });
+<!-- Wishlist Functionality Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const wishlistContainer = document.getElementById('wishlistItemsBody');
+    const emptyMessage = document.getElementById('emptyWishlistMessage');
+
+    // Función para mostrar notificaciones
+    const showNotification = (message, type = 'success') => {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        Toast.fire({
+            icon: type,
+            title: message
+        });
+    };
+
+    // Función para actualizar el contador
+    const updateWishlistCount = async () => {
+        try {
+            const response = await fetch('/api/wishlist/count');
+            const data = await response.json();
+            document.querySelectorAll('.count').forEach(element => {
+                element.textContent = data.count;
+            });
+        } catch (error) {
+            console.error('Error al actualizar contador:', error);
+        }
+    };
+
+    // Función para cargar los items de la lista de deseos
+    const loadWishlistItems = async () => {
+        try {
+            const response = await fetch('/api/wishlist/items');
+            const items = await response.json();
+
+            if (items.length === 0) {
+                wishlistContainer.style.display = 'none';
+                emptyMessage.style.display = 'block';
+                return;
             }
 
-            // Handle adding to cart
-            wishlistItemsBody.addEventListener('click', function(event) {
-                if (event.target.classList.contains('btn-add-to-cart')) {
-                    const productId = event.target.getAttribute('data-product-id');
-                    const productName = event.target.closest('.product__content').querySelector('.product__title').textContent;
+            wishlistContainer.style.display = 'grid';
+            emptyMessage.style.display = 'none';
+
+            wishlistContainer.innerHTML = items.map(item => `
+                <div class="product__item" data-id="${item.producto_id}">
+                    <div class="product__banner">
+                        <a href="/product/${item.producto_id}" class="product__images">
+                            <img src="${item.imagen_url}" alt="${item.nombre_producto}" class="product__img">
+                        </a>
+                    </div>
+                    <div class="product__content">
+                        <span class="product__category">${item.categoria}</span>
+                        <a href="/product/${item.producto_id}">
+                            <h3 class="product__title">${item.nombre_producto}</h3>
+                        </a>
+                        <div class="product__price flex">
+                            <span class="new__price">$${item.precio}</span>
+                        </div>
+                        <div class="product__buttons">
+                            <button class="action__btn remove-from-wishlist" aria-label="Remove from Wishlist">
+                                <i class="fi fi-rs-trash"></i>
+                            </button>
+                            <button class="action__btn add-to-cart" aria-label="Add to Cart">
+                                <i class="fi fi-rs-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Agregar event listeners a los nuevos botones
+            attachButtonListeners();
+
+        } catch (error) {
+            console.error('Error al cargar items:', error);
+            showNotification('Error al cargar la lista de deseos', 'error');
+        }
+    };
+
+    // Función para agregar event listeners a los botones
+    const attachButtonListeners = () => {
+        // Botones de eliminar de la lista
+        document.querySelectorAll('.remove-from-wishlist').forEach(button => {
+            button.addEventListener('click', async function() {
+                const productItem = this.closest('.product__item');
+                const productId = productItem.dataset.id;
+
+                try {
+                    const response = await fetch('/api/wishlist/remove', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ producto_id: productId })
+                    });
+
+                    const data = await response.json();
+                    showNotification(data.message);
                     
-                    alert(`El producto "${productName}" ha sido agregado al carrito.`);
+                    // Eliminar el item visualmente
+                    productItem.remove();
                     
-                    // Here you could add logic to actually add the product to the cart in your application
+                    // Actualizar contador
+                    updateWishlistCount();
+                    
+                    // Verificar si la lista está vacía
+                    if (wishlistContainer.children.length === 0) {
+                        wishlistContainer.style.display = 'none';
+                        emptyMessage.style.display = 'block';
+                    }
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    showNotification('Error al eliminar el producto', 'error');
                 }
             });
         });
-    </script>
 
+        // Botones de agregar al carrito
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', async function() {
+                const productItem = this.closest('.product__item');
+                const productId = productItem.dataset.id;
+
+                try {
+                    const response = await fetch('/api/cart/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            producto_id: productId,
+                            cantidad: 1
+                        })
+                    });
+
+                    const data = await response.json();
+                    showNotification(data.message);
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    showNotification('Error al agregar al carrito', 'error');
+                }
+            });
+        });
+    };
+
+    // Cargar items al iniciar
+    loadWishlistItems();
+    updateWishlistCount();
+});
+</script>
 </body>
 
 </html>

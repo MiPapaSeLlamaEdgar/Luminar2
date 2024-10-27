@@ -82,17 +82,6 @@
                                 <img src="assets/img/product-1-1.jpg" alt="Product Image" class="product__img default">
                                 <img src="assets/img/product-1-2.jpg" alt="Product Image Hover" class="product__img hover">
                             </a>
-                            <div class="product__actions">
-                                <a href="#" class="action__btn" aria-label="Quick View">
-                                    <i class="fi fi-rs-eye"></i>
-                                </a>
-                                <a href="#" class="action__btn" aria-label="Add to Wishlist">
-                                    <i class="fi fi-rs-heart"></i>
-                                </a>
-                                <a href="#" class="action__btn" aria-label="Compare">
-                                    <i class="fi fi-rs-shuffle"></i>
-                                </a>
-                            </div>
                             <div class="product__badge light-pink">Hot</div>
                         </div>
                         <div class="product__content">
@@ -111,6 +100,9 @@
                                 <span class="new__price">$238.85</span>
                                 <span class="old__price">$245.80</span>
                             </div>
+                            <a href="#" class="action__btn Wishlist" aria-label="Add to Wishlist">
+                                <i class="fi fi-rs-shopping-bag-add"></i>
+                            </a>
                             <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
                                 <i class="fi fi-rs-shopping-bag-add"></i>
                             </a><!--Boton de añadir al carrito-->
@@ -123,17 +115,6 @@
                                 <img src="assets/img/product-2-1.jpg" alt="Product Image" class="product__img default">
                                 <img src="assets/img/product-2-2.jpg" alt="Product Image Hover" class="product__img hover">
                             </a>
-                            <div class="product__actions">
-                                <a href="#" class="action__btn" aria-label="Quick View">
-                                    <i class="fi fi-rs-eye"></i>
-                                </a>
-                                <a href="#" class="action__btn" aria-label="Add to Wishlist">
-                                    <i class="fi fi-rs-heart"></i>
-                                </a>
-                                <a href="#" class="action__btn" aria-label="Compare">
-                                    <i class="fi fi-rs-shuffle"></i>
-                                </a>
-                            </div>
                             <div class="product__badge light-green">-30%</div>
                         </div>
                         <div class="product__content">
@@ -152,6 +133,9 @@
                                 <span class="new__price">$178.99</span>
                                 <span class="old__price">$210.50</span>
                             </div>
+                            <a href="#" class="action__btn Wishlist" aria-label="Add to Wishlist">
+                                <i class="fi fi-rs-shopping-bag-add"></i>
+                            </a>
                             <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
                                 <i class="fi fi-rs-shopping-bag-add"></i>
                             </a>
@@ -202,7 +186,297 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="assets/js/main.js"></script>
+    <!-- SWIPER JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<!-- SWEETALERT2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- MAIN JS -->
+<script src="assets/js/main.js"></script>
+
+<!-- Wishlist and Cart Functionality Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para mostrar notificaciones
+    const showNotification = (message, type = 'success') => {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        Toast.fire({
+            icon: type,
+            title: message
+        });
+    };
+
+    // Función para actualizar el contador de la lista de deseos
+    const updateWishlistCount = async () => {
+        try {
+            const response = await fetch('/api/wishlist/count');
+            const data = await response.json();
+            document.querySelectorAll('.count').forEach(element => {
+                element.textContent = data.count;
+            });
+        } catch (error) {
+            console.error('Error al actualizar contador:', error);
+        }
+    };
+
+    // Función para manejar el botón de lista de deseos
+    const handleWishlistButton = async (button, productName, productPrice) => {
+        try {
+            const response = await fetch('/api/wishlist/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nombre_producto: productName,
+                    precio: productPrice
+                })
+            });
+
+            const data = await response.json();
+            showNotification(data.message);
+            
+            // Actualizar el estilo del botón
+            button.classList.toggle('in-wishlist');
+            if (button.classList.contains('in-wishlist')) {
+                button.style.backgroundColor = 'var(--first-color)';
+                button.style.color = 'var(--body-color)';
+            } else {
+                button.style.backgroundColor = 'var(--first-color-alt)';
+                button.style.color = 'var(--text-color)';
+            }
+            
+            // Actualizar el contador
+            updateWishlistCount();
+
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Error al actualizar la lista de deseos', 'error');
+        }
+    };
+
+    // Función para manejar el botón de carrito
+    const handleCartButton = async (button, productName, productPrice) => {
+        try {
+            const response = await fetch('/api/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nombre_producto: productName,
+                    precio: productPrice,
+                    cantidad: 1
+                })
+            });
+
+            const data = await response.json();
+            showNotification(data.message);
+
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Error al agregar al carrito', 'error');
+        }
+    };
+
+    // Agregar event listeners a los botones
+    document.querySelectorAll('.action__btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const productCard = this.closest('.product__item');
+            const productName = productCard.querySelector('.product__title').textContent;
+            const productPrice = productCard.querySelector('.new__price').textContent.replace('$', '');
+            
+            if (this.getAttribute('aria-label') === 'Add to Wishlist') {
+                handleWishlistButton(this, productName, productPrice);
+            } else if (this.getAttribute('aria-label') === 'Add to Cart') {
+                handleCartButton(this, productName, productPrice);
+            }
+        });
+
+        // Mostrar tooltips al hover
+        button.addEventListener('mouseenter', function() {
+            const label = this.getAttribute('aria-label');
+            if (label) {
+                this.setAttribute('data-tooltip', label);
+            }
+        });
+
+        button.addEventListener('mouseleave', function() {
+            this.removeAttribute('data-tooltip');
+        });
+    });
+
+    // Inicializar contadores al cargar la página
+    updateWishlistCount();
+});
+</script>
+<!-- Antes de cerrar el body, después de los otros scripts -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Función para mostrar notificaciones
+        const showNotification = (message, type = 'success') => {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+    
+            Toast.fire({
+                icon: type,
+                title: message
+            });
+        };
+    
+        // Función para actualizar contadores
+        const updateCounters = async () => {
+            try {
+                // Actualizar contador de wishlist
+                const wishlistResponse = await fetch('/api/wishlist/count');
+                const wishlistData = await wishlistResponse.json();
+                
+                // Actualizar contador de carrito
+                const cartResponse = await fetch('/api/cart/count');
+                const cartData = await cartResponse.json();
+                
+                // Actualizar los contadores en el DOM
+                document.querySelectorAll('.header__action-btn .count').forEach(counter => {
+                    if (counter.closest('a[href="/whishlist"]')) {
+                        counter.textContent = wishlistData.count;
+                    } else if (counter.closest('a[href="/cart"]')) {
+                        counter.textContent = cartData.count;
+                    }
+                });
+            } catch (error) {
+                console.error('Error al actualizar contadores:', error);
+            }
+        };
+    
+        // Función para manejar el botón de wishlist
+        const handleWishlistButton = async (button, productName, productPrice) => {
+            try {
+                const response = await fetch('/api/wishlist/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nombre_producto: productName,
+                        precio: productPrice
+                    })
+                });
+    
+                const data = await response.json();
+                
+                // Mostrar notificación
+                showNotification(data.message);
+                
+                // Actualizar el estilo del botón
+                button.classList.toggle('in-wishlist');
+                if (button.classList.contains('in-wishlist')) {
+                    button.style.backgroundColor = 'var(--first-color)';
+                    button.style.color = 'var(--body-color)';
+                } else {
+                    button.style.backgroundColor = 'var(--first-color-alt)';
+                    button.style.color = 'var(--text-color)';
+                }
+                
+                // Actualizar contadores
+                updateCounters();
+    
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al actualizar la lista de deseos', 'error');
+            }
+        };
+    
+        // Función para manejar el botón de carrito
+        const handleCartButton = async (button, productName, productPrice) => {
+            try {
+                const response = await fetch('/api/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nombre_producto: productName,
+                        precio: productPrice,
+                        cantidad: 1
+                    })
+                });
+    
+                const data = await response.json();
+                
+                // Mostrar notificación
+                showNotification(data.message);
+                
+                // Actualizar el estilo del botón temporalmente
+                button.style.backgroundColor = 'var(--first-color)';
+                button.style.color = 'var(--body-color)';
+                
+                setTimeout(() => {
+                    button.style.backgroundColor = '';
+                    button.style.color = '';
+                }, 1000);
+                
+                // Actualizar contadores
+                updateCounters();
+    
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al agregar al carrito', 'error');
+            }
+        };
+    
+        // Agregar event listeners a los botones
+        document.querySelectorAll('.action__btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const productCard = this.closest('.product__item');
+                const productName = productCard.querySelector('.product__title').textContent;
+                const productPrice = productCard.querySelector('.new__price').textContent.replace('$', '');
+                
+                if (this.classList.contains('Wishlist__btn')) {
+                    handleWishlistButton(this, productName, productPrice);
+                } else if (this.classList.contains('cart__btn')) {
+                    handleCartButton(this, productName, productPrice);
+                }
+            });
+    
+            // Mostrar tooltips al hover
+            button.addEventListener('mouseenter', function() {
+                const label = this.getAttribute('aria-label');
+                if (label) {
+                    this.setAttribute('data-tooltip', label);
+                }
+            });
+    
+            button.addEventListener('mouseleave', function() {
+                this.removeAttribute('data-tooltip');
+            });
+        });
+    
+        // Inicializar contadores al cargar la página
+        updateCounters();
+    });
+    </script>
 </body>
 </html>

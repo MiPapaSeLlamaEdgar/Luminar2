@@ -410,6 +410,16 @@ input{
     transition: all .2s var(--transition);
 }
 
+.product__buttons {
+    position: absolute;
+    bottom: 1rem;
+    left: 1.25rem;
+    right: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    z-index: 2;
+}
+
 .product__banner {
     padding: 0.625rem 0.75rem 0.75rem;
 }
@@ -451,25 +461,27 @@ input{
 }
 
 .action__btn {
-    width: 40px;
-    height: 40px;
-    line-height: 42px;
-    text-align: center;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 50%;
     background-color: var(--first-color-alt);
     border: 1px solid var(--border-color);
     color: var(--text-color);
     font-size: var(--small-font-size);
     position: relative;
+    transition: all 0.3s var(--transition);
 }
 
 
-.action__btn::before,
-.action__btn::after {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    transition: all .3s cubic-bezier(0.71, 1.7, 0.77, 1.24);
+/* Mostrar solo en hover */
+.action__btn:hover::before,
+.action__btn:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-10px); /* Añade un pequeño movimiento al aparecer */
 }
 
 .action__btn::before {
@@ -477,6 +489,10 @@ input{
     top: -2px;
     border: .5rem solid transparent;
     border-top-color: var(--first-color);
+    opacity: 0; /* Inicialmente oculto */
+    visibility: hidden; /* Asegura que no sea interactuable */
+    transition: all 0.3s var(--transition);
+    position: absolute;
 }
 
 .action__btn::after {
@@ -489,18 +505,24 @@ input{
     padding-inline: 0.625rem;
     border-radius: 0.25rem;
     line-height: 2.58;
+    opacity: 0; /* Inicialmente oculto */
+    visibility: hidden; /* Asegura que no sea interactuable */
+    transition: all 0.3s var(--transition);
+    position: absolute;
 }
 
 .product__badge {
     position: absolute;
-    left: 1.25rem;
-    top: 1.25rem;
+    top: 1rem;
+    left: 1rem;
     background-color: var(--first-color);
-    color: var(--second-color);
-    padding: 0.25rem 0.625rem;
-    border-radius: 2.5rem;
+    color: var(--body-color);
     font-size: var(--tiny-font-size);
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    z-index: 3;
 }
+
 
 .product__badge.light-pink {
     background-color: hsl(340, 80%, 70%); /* Soft light pink */
@@ -526,6 +548,7 @@ input{
 .product__category {
     color: var(--text-color-light);
     font-size: var(--smaller-font-size);
+    margin-bottom: 0.25rem;
 }
 
 .product__title {
@@ -542,6 +565,14 @@ input{
 .product__price .new__price {
     font-size: var(--large-font-size);
 }
+
+.product__price {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
 .cart__btn {
     position: absolute;
     bottom: 1.6rem;
@@ -681,3 +712,23 @@ input{
     font-size: 0.9rem;
     color: #666;
 }
+
+/* Estilos para el botón de lista de deseos */
+.action__btn.in-wishlist {
+    background-color: var(--first-color);
+    color: var(--body-color);
+}
+
+.action__btn.in-wishlist:hover {
+    background-color: var(--first-color-alt);
+    color: var(--text-color);
+}
+
+/* Animación del botón */
+.action__btn i {
+    transition: transform 0.3s ease;
+}
+
+.action__btn:hover i {
+    transform: scale(1.1);
+}   

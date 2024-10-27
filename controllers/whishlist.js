@@ -1,86 +1,67 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Load wishlist items for a specific clienteId (this should be set based on your app logic)
-    const clienteId = /* Retrieve clienteId from session or context */;
-    loadWishlistItems(clienteId); // Load wishlist items when the page loads
+const express = require('express');
+const router = express.Router();
 
-    // Add events to "Add to Wishlist" buttons
-    const wishlistButtons = document.querySelectorAll('.action__btn[aria-label="Add to Wishlist"]');
+module.exports = (sequelize) => {
+    const Wishlist = sequelize.models.Lista_Deseos;
+    const Producto = sequelize.models.Producto;
 
-    wishlistButtons.forEach(button => {
-        button.addEventListener('click', (event) => {
-            event.preventDefault();
-            const productItem = button.closest('.product__item');
-            const productName = productItem.querySelector('.product__title').textContent;
-            const productImage = productItem.querySelector('.default').src;
-
-            const product = {
-                name: productName,
-                image: productImage,
-                cliente_id: clienteId // Include cliente ID for wishlist association
-            };
-
-            addToWishlist(product);
-        });
-    });
-
-    async function addToWishlist(product) {
+    // Agregar a la lista de deseos
+    router.post('/add', async (req, res) => {
         try {
-            const response = await fetch('/api/wishlist', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(product),
+            const { producto_id } = req.body;
+            const cliente_id = req.session.cliente_id;
+
+            const [item, created] = await Wishlist.findOrCreate({
+                where: { cliente_id, producto_id }
             });
 
-            if (response.ok) {
-                alert(`${product.name} ha sido añadido a la lista de deseos.`);
-                loadWishlistItems(product.cliente_id); // Refresh the wishlist
+            if (created) {
+                res.json({ message: 'Producto agregado a la lista de deseos' });
             } else {
-                alert('Error al añadir el producto a la lista de deseos.');
+                await item.destroy();
+                res.json({ message: 'Producto eliminado de la lista de deseos' });
             }
         } catch (error) {
-            console.error('Error adding to wishlist:', error);
-        }
-    }
-
-    async function loadWishlistItems(clienteId) {
-        try {
-            const response = await fetch(`/api/wishlist/${clienteId}`);
-            if (!response.ok) throw new Error('Error fetching wishlist items');
-
-            const wishlistItems = await response.json();
-    
-            const wishlistItemsBody = document.getElementById('wishlistItemsBody');
-            wishlistItemsBody.innerHTML = ''; // Clear existing items
-    
-            wishlistItems.forEach(item => {
-                const row = document.createElement('tr');
-                row.setAttribute('data-product-id', item.producto_id);
-                row.innerHTML = `
-                    <td>
-                        <div class="wishlist__product">
-                            <img src="${item.producto.imagen}" alt="${item.producto.nombre}" class="wishlist__product-img">
-                            <span class="wishlist__product-name">${item.producto.nombre}</span>
-                        </div>
-                    </td>
-                    <td><button class="btn btn-remove">Eliminar</button></td>
-                `;
-                wishlistItemsBody.appendChild(row);
-            });
-        } catch (error) {
-            console.error('Failed to load wishlist items:', error);
-        }
-    }
-
-    // Event listener for removing a product from the wishlist
-    document.querySelector('.wishlist__content').addEventListener('click', event => {
-        if (event.target.classList.contains('btn-remove')) {
-            const row = event.target.closest('tr');
-            
-            // Optionally, remove from local storage or database here
-            
-            row.remove();
+            console.error('Error:', error);
+            res.status(500).json({ message: 'Error del servidor' });
         }
     });
-});
+
+    // Obtener items de la lista de deseos
+    router.get('/items', async (req, res) => {
+        try {
+            const cliente_id = req.session.cliente_id;
+            
+            const items = await Wishlist.findAll({
+                where: { cliente_id },
+                include: [{
+                    model: Producto,
+                    attributes: ['nombre_producto', 'precio', 'imagen_url']
+                }]
+            });
+
+            res.json(items);
+        } catch (error) {
+            console.error('Error:', error);
+            res.status(500).json({ message: 'Error al obtener la lista de deseos' });
+        }
+    });
+
+    // Obtener contador
+    router.get('/count', async (req, res) => {
+        try {
+            const cliente_id = req.session.cliente_id;
+            
+            const count = await Wishlist.count({
+                where: { cliente_id }
+            });
+
+            res.json({ count });
+        } catch (error) {
+            console.error('Error:', error);
+            res.status(500).json({ message: 'Error al obtener el conteo' });
+        }
+    });
+
+    return router;
+};

@@ -1,38 +1,42 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-   const OrderDetail = sequelize.define('Detalle_Orden', {
-      detalle_id:{
-          type :DataTypes.INTEGER ,
-          primaryKey:true ,
-          autoIncrement:true 
-      }, 
-      orden_id:{
-          type :DataTypes.INTEGER ,
-          references:{
-              model:'Ordenes',
-              key:'orden_id'
-          }
-      }, 
-      producto_id:{
-          type :DataTypes.INTEGER ,
-          references:{
-              model:'Productos',
-              key:'producto_id'
-          }
-      }, 
-      cantidad:{
-          type :DataTypes.INTEGER ,
-          allowNull:false 
-      }, 
-      precio_unitario:{
-          type :DataTypes.DECIMAL(10 ,2) ,
-          allowNull:false 
-      }
-   }, { 
-      tableName:'Detalle_Ordenes',
-      timestamps:false 
-   });
+    const orderTracking = sequelize.define('SeguimientoOrden', {
+        seguimiento_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+        },
+        orden_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'Ordenes',
+                key: 'orden_id',
+            },
+        },
+        estado: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+        },
+        descripcion: {
+            type: DataTypes.TEXT,
+        },
+        fecha_actualizacion: {
+            type: DataTypes.DATE,
+            defaultValue: DataTypes.NOW,
+        },
+        usuario_id: {
+            type: DataTypes.INTEGER,
+            references: {
+                model: 'Usuarios',
+                key: 'usuario_id',
+            },
+        }
+    }, {
+        tableName: 'Seguimiento_Ordenes',
+        timestamps: false,
+    });
 
-   return OrderDetail;
+    return orderTracking;
 };

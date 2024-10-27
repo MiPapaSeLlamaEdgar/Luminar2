@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-    const Cart = sequelize.define('Carrito', {
-        carrito_id: {
+    const Whishlist = sequelize.define('ListaDeseos', {
+        wishlist_id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
@@ -23,22 +23,22 @@ module.exports = (sequelize) => {
                 key: 'producto_id',
             },
         },
-        cantidad: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            defaultValue: 1,
-        },
         fecha_agregado: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW,
         },
-        fecha_modificacion: {
-            type: DataTypes.DATE,
+        notificar_disponibilidad: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
         }
     }, {
-        tableName: 'Carrito',
+        tableName: 'Lista_Deseos',
         timestamps: false,
+        indexes: [{
+            unique: true,
+            fields: ['cliente_id', 'producto_id']
+        }]
     });
 
-    return Cart;
+    return Whishlist;
 };

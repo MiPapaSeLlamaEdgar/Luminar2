@@ -42,10 +42,10 @@ Sigue los pasos a continuación para configurar el proyecto localmente:
    cd luminar-gestion-ventas-inventarios
 
 ### Dependencias
-- npm install express dotenv sequelize mysql2 body-parser bcryptjs jsonwebtoken cookie-parser cors gulp
+- "npm install express dotenv sequelize mysql2 body-parser bcryptjs jsonwebtoken cookie-parser cors gulp express-session helmet  express-rate-limit express-validator moment multer sharp nodemailer uuid connect-flash morgan debug sweetalert2"
 
 **Si quieres usar nodemon para facilitar el desarrollo, instala también:**
-- npm install --save-dev nodemon
+- "npm install --save-dev nodemon"
 
 ### Configurar las variables de entorno:
 **Crea un archivo .env en la raíz del proyecto y agrega la configuración de tu base de datos:**

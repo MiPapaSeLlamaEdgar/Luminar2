@@ -1,214 +1,163 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize } = require('sequelize');
 const bodyParser = require('body-parser');
-const bcrypt = require('bcryptjs');
+const session = require('express-session');
+const cors = require('cors');
 
 const app = express();
 
-// Middlewares para analizar el cuerpo de las solicitudes
+// Middlewares
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(express.json());
+app.use(express.static('public'));
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'secret_key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: process.env.NODE_ENV === 'production' }
+}));
 
-// Configurar carpeta de archivos estáticos (public)
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Conectar a MySQL usando Sequelize
+// Conexión a la base de datos
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,
     dialect: 'mysql',
-    logging: false // Desactivar logging SQL para menos ruido en la consola
-});
-
-// Verificar la conexión a la base de datos
-(async () => {
-    try {
-        await sequelize.authenticate();
-        console.log('Conectado a MySQL');
-    } catch (err) {
-        console.error('Error de conexión a MySQL:', err.message);
-        process.exit(1); // Salir si la conexión falla
+    logging: false,
+    pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
     }
-})();
-
-// Definir el modelo de Usuario
-const User = sequelize.define('Usuario', {
-    usuario_id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-    },
-    nombre: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    apellido: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    correo_electronico: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
-    },
-    contrasena: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    rol_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
-}, {
-    tableName: 'Usuarios',
-    timestamps: false,
 });
 
-// Definir el modelo de Rol
-const Role = sequelize.define('Rol', {
-    rol_id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-    },
-    nombre_rol: {  // Cambié a nombre_rol para coincidir con tu esquema
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-}, {
-    tableName: 'Roles',
-    timestamps: false,
-});
+// Importar y configurar modelos
+const initModels = require('./models/init-models');
+const models = initModels(sequelize);
 
-// Relación entre Usuarios y Roles
-User.belongsTo(Role, { foreignKey: 'rol_id', as: 'rol' });
-
-// Sincronizar los modelos con la base de datos
-(async () => {
-    try {
-        await sequelize.sync({ alter: true });
-        console.log('Modelos sincronizados');
-        
-        // Crear administrador al iniciar el servidor
-        await crearAdministrador();
-        
-    } catch (err) {
-        console.error('Error sincronizando modelos:', err.message);
-        process.exit(1); // Salir si la sincronización falla
+// Middleware para manejar respuestas JSON
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    if (req.method === 'OPTIONS') {
+        res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+        return res.status(200).json({});
     }
-})();
+    next();
+});
 
-// Función para crear un administrador si no existe
-const crearAdministrador = async () => {
-    const correo_electronico = 'Holaeric12@gmail.com';
-    const contrasena = 'poiuyt098765';
+// Importar rutas
+const authRoutes = require('./controllers/auth');
+const cartRoutes = require('./controllers/cart');
+const wishlistRoutes = require('./controllers/whishlist');
+const crudRoutes = require('./controllers/crudRoutes');
+const inventoryRoutes = require('./controllers/inventorySalesRoutes');
+
+// Configurar rutas de API
+app.use('/api/auth', authRoutes(sequelize));
+app.use('/api/cart', cartRoutes(sequelize));
+app.use('/api/wishlist', wishlistRoutes(sequelize));
+app.use('/api/crud', crudRoutes(sequelize));
+app.use('/api/inventory', inventoryRoutes(sequelize));
+
+// Rutas de vistas
+const viewRoutes = {
+    '/': 'login-register.html',
+    '/index': 'index.html',
+    '/dashboard-cliente': 'Cliente/dashboard-cliente.html',
+    '/Vendedor/dashboard-vendedor': 'Vendedor/dashboard-vendedor.html',
+    '/dashboard-admin': 'Admin/dashboard-admin.html',
+    '/accounts': 'accounts.html',
+    '/cart': 'cart.html',
+    '/checkout': 'checkout.html',
+    '/productos': 'productos.html',
+    '/shop': 'shop.html',
+    '/whishlist': 'whishlist.html',
+    '/orders': 'orders.html',
     
-    try {
-        const adminExistente = await User.findOne({ where: { correo_electronico } });
-        
-        if (!adminExistente) {
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(contrasena, salt);
-
-            // Asignar rol_id 3 para Administrador según tu inserción en Roles
-            await User.create({
-                nombre: 'Eric',
-                apellido: 'Hola',
-                correo_electronico,
-                contrasena: hashedPassword,
-                rol_id: 3, // Asignar rol de Administrador (rol_id 3)
-            });
-            console.log('Administrador creado con éxito.');
-        } else {
-            console.log('El administrador ya existe.');
-        }
-        
-    } catch (error) {
-        console.error(`Error al crear el administrador: ${error.message}`);
-    }
+    // Nuevas rutas para la sección de Vendedor
+    '/vendedor/clientes': 'Vendedor/clientes.html',
+    '/vendedor/dashboard': 'Vendedor/dashboard-vendedor.html',
+    '/vendedor/dashboards': 'Vendedor/dashboards.html',
+    '/vendedor/inventario': 'Vendedor/inventario.html',
+    '/vendedor/reportes': 'Vendedor/reportes.html',
+    '/vendedor/ventas': 'Vendedor/ventas.html',
+    '/vendedor/editar-perfil': 'Vendedor/editar-perfil.html'
 };
 
-// Importar y usar el módulo de autenticación
-try {
-    const authRoutes = require('./controllers/auth')(sequelize);
-    app.use('/', authRoutes);
-    console.log('Rutas de autenticación cargadas correctamente.');
-} catch (err) {
-    console.error('Error al cargar las rutas de autenticación:', err.message);
+
+// Middleware para servir archivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Configurar rutas de vistas
+Object.entries(viewRoutes).forEach(([route, file]) => {
+    app.get(route, (req, res) => {
+        res.sendFile(path.join(__dirname, 'views', file));
+    });
+});
+
+// Manejo de errores 404
+app.use((req, res, next) => {
+    const error = new Error('Not found');
+    error.status = 404;
+    next(error);
+});
+
+// Manejo de errores global
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.status || 500).json({ 
+        error: {
+            message: err.message,
+            status: err.status,
+            stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+        }
+    });
+});
+
+// Función para inicializar modelos y relaciones
+async function initializeModels() {
+    try {
+        await sequelize.authenticate();
+        console.log('Conexión a la base de datos establecida.');
+        
+        await sequelize.sync({ alter: true });
+        console.log('Modelos sincronizados.');
+    } catch (error) {
+        console.error('Error al inicializar modelos:', error);
+        throw error;
+    }
 }
 
-// Rutas para vistas HTML
-app.get('/', (req, res) => {
+// Inicialización del servidor
+async function initializeServer() {
     try {
-        res.sendFile(path.join(__dirname, 'views', 'login-register.html'));
-    } catch (err) {
-        console.error('Error al cargar la página de login/register:', err.message);
-        res.status(500).json({ msg: `Error del servidor.` });
-    }
-});
-
-// Endpoint to get cart items (if you decide to store them in the database)
-app.get('/api/cart/:clienteId', async (req, res) => {
-    const { clienteId } = req.params;
-
-    try {
-        const [results] = await sequelize.query(
-            `SELECT c.cantidad, p.nombre_producto, p.precio 
-             FROM Carrito c 
-             JOIN Productos p ON c.producto_id = p.producto_id 
-             WHERE c.cliente_id = ?`, 
-             { replacements: [clienteId] }
-        );
+        await initializeModels();
         
-        res.json(results);
+        const PORT = process.env.PORT || 5000;
+        app.listen(PORT, () => {
+            console.log(`Servidor corriendo en puerto ${PORT}`);
+            console.log(`Modo: ${process.env.NODE_ENV || 'development'}`);
+        });
     } catch (error) {
-        console.error('Error al obtener el carrito:', error);
-        res.status(500).json({ message: 'Error del servidor' });
+        console.error('Error de inicialización:', error);
+        process.exit(1);
     }
+}
+
+// Manejo de errores no capturados
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-// Endpoint to add item to cart (optional, if using a database)
-app.post('/api/cart', async (req, res) => {
-    const { cliente_id, producto_id, cantidad } = req.body;
-
-    try {
-        await sequelize.query(
-            'INSERT INTO Carrito (cliente_id, producto_id, cantidad) VALUES (?, ?, ?)',
-            { replacements: [cliente_id, producto_id, cantidad] }
-        );
-        res.status(201).json({ message: 'Producto añadido al carrito' });
-    } catch (error) {
-        console.error('Error al añadir al carrito:', error);
-        res.status(500).json({ message: 'Error del servidor' });
-    }
-});
-// Endpoint to remove item from cart (optional)
-app.delete('/api/cart/:id', async (req, res) => {
-    const { id } = req.params;
-    // Logic to remove product from the database or session storage
-    res.status(200).json({ message: 'Producto eliminado del carrito' });
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+    process.exit(1);
 });
 
-// Otras rutas...
-app.get('/accounts', (req, res) => res.sendFile(path.join(__dirname, 'views', 'accounts.html')));
-app.get('/cart', (req, res) => res.sendFile(path.join(__dirname, 'views', 'cart.html')));
-app.get('/checkout', (req, res) => res.sendFile(path.join(__dirname, 'views', 'checkout.html')));
-app.get('/dashboard-admin', (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard-admin.html')));
-app.get('/dashboard-cliente', (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard-cliente.html')));
-app.get('/dashboard-vendedor', (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard-vendedor.html')));
-app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard.html')));
-app.get('/index', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
-app.get('/productos', (req, res) => res.sendFile(path.join(__dirname, 'views', 'productos.html')));
-app.get('/shop', (req, res) => res.sendFile(path.join(__dirname, 'views', 'shop.html')));
-app.get('/whishlist', (req, res) => res.sendFile(path.join(__dirname, 'views', 'whishlist.html')));
-app.get('/orders', (req, res) => res.sendFile(path.join(__dirname, 'views', 'orders.html')));
-app.get('/forget-password', (req, res) => res.sendFile(path.join(__dirname, 'views', 'forget-password.html')));
-app.get('/privacy-policy', (req, res) => res.sendFile(path.join(__dirname, 'views', 'privacy-policy.html')));
-app.get('/details', (req, res) => res.sendFile(path.join(__dirname, 'views', 'details.html')));
+initializeServer();
 
-// Iniciar el servidor
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
-});
+module.exports = app;

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil | Luminar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <style>
+        :root {
+            --primary-color: #D6266F;
+            --secondary-color: #4A2828;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar (mantener consistente con el dashboard) */
+        .sidebar {
+            width: 280px;
+            background-color: var(--card-color);
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            background-color: var(--background-color);
+        }
+
+        /* Modifica estas clases en la sección de estilos */
+.profile-section {
+    max-width: 1000px; /* Aumentado de 800px a 1000px */
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.profile-header {
+    background-color: var(--card-color);
+    padding: 40px; /* Aumentado de 30px a 40px */
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.profile-form {
+    background-color: var(--card-color);
+    padding: 40px; /* Aumentado de 30px a 40px */
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px; /* Aumentado de 20px a 30px */
+}
+
+/* Ajustar el espacio entre elementos */
+.form-group {
+    margin-bottom: 25px; /* Aumentado de 20px a 25px */
+}
+
+/* Ajustar el responsive */
+@media (max-width: 1024px) {
+    .profile-section {
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-section {
+        max-width: 100%;
+        padding: 0 15px;
+    }
+    
+    .profile-header,
+    .profile-form {
+        padding: 20px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .save-btn, .cancel-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .save-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .save-btn:hover {
+            background-color: #bf1b5d;
+        }
+
+        .cancel-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            background-color: #5a6268;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .save-btn, .cancel-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Panel Vendedor</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/Vendedor/dashboard-vendedor" class="active">Dashboard</a></li>
+                <li><a href="/Vendedor/ventas">Ventas</a></li>
+                <li><a href="/Vendedor/clientes">Clientes</a></li>
+                <li><a href="/Vendedor/inventario">Inventario</a></li>
+                <li><a href="/Vendedor/reportes">Reportes</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="profile-section">
+                <div class="profile-header">
+                    <div class="profile-image-container">
+                        <img src="/images/foto.png" alt="Foto de perfil" class="profile-image">
+                        <button class="change-photo-btn" title="Cambiar foto">
+                            <i class="fi fi-sr-camera" style="font-size: 1.5em;"></i>
+                        </button>
+                    </div>
+                    <h2>Editar Perfil</h2>
+                </div>
+
+                <form class="profile-form" id="profileForm">
+                    <div class="form-section">
+                        <h3>Información Personal</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <input type="text" id="nombre" name="nombre" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Apellido</label>
+                                <input type="text" id="apellido" name="apellido" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Correo Electrónico</label>
+                            <input type="email" id="correo_electronico" name="correo_electronico" required>
+                        </div> 
+                        <div class="form-group">
+                            <label>Último Acceso</label>
+                            <input type="text" id="ultimo_acceso" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de Registro</label>
+                            <input type="text" id="fecha_registro" disabled>
+                        </div>
+                    </div>
+                
+                    <div class="form-section">
+                        <h3>Cambiar Contraseña</h3>
+                        <div class="form-group">
+                            <label>Contraseña Actual</label>
+                            <input type="password" id="contrasena_actual" name="contrasena_actual">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nueva Contraseña</label>
+                                <input type="password" id="nueva_contrasena" name="nueva_contrasena">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirmar Nueva Contraseña</label>
+                                <input type="password" id="confirmar_contrasena">
+                            </div>
+                        </div>
+                    </div>
+                
+                
+                    <div class="action-buttons">
+                        <button type="button" class="cancel-btn" onclick="window.history.back()">Cancelar</button>
+                        <button type="submit" class="save-btn">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validar contraseñas
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (newPassword && newPassword !== confirmPassword) {
+                alert('Las contraseñas no coinciden');
+                return;
+            }
+            
+            // Aquí iría la lógica para guardar los cambios
+            alert('Cambios guardados exitosamente');
+        });
+
+        // Cambiar foto de perfil
+        document.querySelector('.change-photo-btn').addEventListener('click', function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.querySelector('.profile-image').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('profileForm');
+    
+    // Cargar datos del usuario
+    async function cargarDatosUsuario() {
+        try {
+            const query = `
+                SELECT 
+                    u.*,
+                    r.nombre_rol
+                FROM Usuarios u
+                JOIN Roles r ON u.rol_id = r.rol_id
+                WHERE u.usuario_id = ?
+            `;
+            
+            // Aquí iría tu lógica para obtener los datos del usuario
+            const usuario = {
+                nombre: 'Andres',
+                apellido: 'Mora',
+                correo_electronico: 'andres@luminar.com',
+                ultimo_acceso: '2024-03-20 15:30:00',
+                fecha_registro: '2024-01-01 09:00:00',
+                imagen_perfil: '/images/foto.png'
+            };
+
+            // Llenar el formulario con los datos
+            document.getElementById('nombre').value = usuario.nombre;
+            document.getElementById('apellido').value = usuario.apellido;
+            document.getElementById('correo_electronico').value = usuario.correo_electronico;
+            document.getElementById('ultimo_acceso').value = new Date(usuario.ultimo_acceso).toLocaleString();
+            document.getElementById('fecha_registro').value = new Date(usuario.fecha_registro).toLocaleString();
+            
+            // Mostrar imagen de perfil actual
+            document.querySelector('.profile-image').src = usuario.imagen_perfil;
+        } catch (error) {
+            console.error('Error al cargar datos:', error);
+        }
+    }
+
+    // Manejar envío del formulario
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Validar contraseñas
+        const nuevaContrasena = document.getElementById('nueva_contrasena').value;
+        const confirmarContrasena = document.getElementById('confirmar_contrasena').value;
+        
+        if (nuevaContrasena && nuevaContrasena !== confirmarContrasena) {
+            alert('Las contraseñas no coinciden');
+            return;
+        }
+
+        // Crear FormData para manejar la imagen
+        const formData = new FormData(this);
+        
+        try {
+            // Aquí iría tu lógica para actualizar los datos del usuario
+            console.log('Datos a actualizar:', Object.fromEntries(formData));
+            alert('Perfil actualizado exitosamente');
+        } catch (error) {
+            console.error('Error al actualizar perfil:', error);
+            alert('Error al actualizar el perfil');
+        }
+    });
+
+    // Cargar datos iniciales
+    cargarDatosUsuario();
+});
+    </script>
+</body>
+</html>
