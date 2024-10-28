@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="css/style.css">
+    <title>Mis Pedidos - LUMINAR</title>
+</head>
+
+<body>
+    <!--== HEADER ==-->
+    <header class="header">
+        <div class="header__top">
+            <div class="header__container container">
+                <div class="header__contact">
+                    <span>luminaropa@gmail.com</span>
+                    <span>+57 3134717406</span>
+                </div>
+
+                <p class="header__alert-news">LUMINAR</p>
+
+                <a href="/" class="header__top-action">
+                    Cierre de sesión
+                </a>
+            </div>
+        </div>
+
+        <nav class="nav container">
+            <a href="/indexCliente" class="nav__logo">
+                <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
+            </a>
+
+            <div class="nav__menu" id="nav__menu">
+                <ul class="nav__list">
+                    <li class="nav__item">
+                        <a href="/indexCliente" class="nav__link active-link">INICIO</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/shopCliente" class="nav__link">Tienda</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/editarperfilCliente" class="nav__link">Mi cuenta</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/ordersCliente" class="nav__link">Pedidos</a>
+                    </li>
+                </ul>
+
+                <div class="header_search">
+                    <input type="text" placeholder="Buscar productos..." class="form__input">
+               <!--  <button class="search__btn">
+                    <i class="fi fi-rr-search"></i>
+                </button> -->
+                </div>
+            </div>
+
+            <div class="header__user-actions">
+                <a href="/whishlistCliente" class="header__action-btn">
+                    <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
+                    <span class="count">3</span>
+                </a>
+
+                <a href="/cartCliente" class="header__action-btn">
+                    <img src="assets/img/icon-cart.svg" alt="Carrito">
+                    <span class="count">3</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!--=== ORDERS ===-->
+    <main class="main section--lg">
+        <div class="container">
+            <h2 class="section__title">Mis Pedidos</h2>
+
+            <!-- Table for Orders -->
+            <div class="card card-body border-0 shadow table-wrapper table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Producto</th>						
+                            <th>Fecha de Pedido</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Example Order Item -->
+                        <tr>
+                            <td><a href="#" class="fw-bold">123456</a></td>
+                            <td><span class="fw-normal">Camisa Colorida</span></td>                        
+                            <td><span class="fw-normal">1 Mayo 2024</span></td>
+                            <td><span class="fw-bold">$50.00</span></td>
+                            <td><span class="fw-bold text-success">Entregado</span></td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class='btn btn-link text-dark' aria-label='View Details'>
+                                        Ver Detalles
+                                    </button>
+                                    |
+                                    <button class='btn btn-link text-dark' aria-label='Reorder'>
+                                        Reordenar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Repeat similar structure for other orders -->
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+
+    <!--=== FOOTER ===-->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__links">
+                    <h4 class="footer__title">Enlaces Útiles</h4>
+                    <ul class="footer__list">
+                        <li><a href="/shopCliente">Tienda</a></li>
+                        <li><a href="/editarperfilCliente">Mi Cuenta</a></li>
+                        <li><a href="/whishlistCliente">Lista de Deseos</a></li>
+                        <li><a href="/ordersCliente">Pedidos</a></li>
+                        <li><a href="/cartCliente">Carrito</a></li>
+                        <li><a href="privacy-policy" target="_blank">Políticas de Privacidad</a></li>
+                    </ul>
+                </div>
+    
+                <div class="footer__contact">
+                    <h4 class="footer__title">Contáctanos</h4>
+                    <p>Teléfono: +57 3134717406</p>
+                    <p>Email: luminaropa@gmail.com</p>
+                    <p>Direccion: Neos Centro, Calle 12 B, 9-40</p>
+                </div>
+    
+                <div class="footer__social">
+                    <h4 class="footer__title">Síguenos</h4>
+                    <ul class="footer__social-list">
+                        <li><a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank"><i class="fi fi-rr-facebook"></i> Facebook</a></li>
+                        <li><a href="https://www.tiktok.com/@luminar.2023" target="_blank"><i class="fi fi-rr-tiktok"></i> TikTok</a></li>
+                        <li><a href="https://www.instagram.com/luminar.2023/" target="_blank"><i class="fi fi-rr-instagram"></i> Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+    
+            <div class="footer__bottom">
+                <p>&copy; 2024 Luminar. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SWIPER JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<!-- SWEETALERT2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- MAIN JS -->
+<script src="./assets/js/main.js"></script>
+
+<!-- Orders Functionality Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para mostrar notificaciones
+    const showNotification = (message, type = 'success') => {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        Toast.fire({
+            icon: type,
+            title: message
+        });
+    };
+
+    // Función para actualizar contadores
+    const updateCounters = async () => {
+        try {
+            // Actualizar contador de wishlist
+            const wishlistResponse = await fetch('/api/wishlist/count');
+            const wishlistData = await wishlistResponse.json();
+            
+            // Actualizar contador de carrito
+            const cartResponse = await fetch('/api/cart/count');
+            const cartData = await cartResponse.json();
+            
+            // Actualizar los contadores en el DOM
+            document.querySelectorAll('.header__action-btn .count').forEach(counter => {
+                if (counter.closest('a[href="/whishlist"]')) {
+                    counter.textContent = wishlistData.count;
+                } else if (counter.closest('a[href="/cart"]')) {
+                    counter.textContent = cartData.count;
+                }
+            });
+        } catch (error) {
+            console.error('Error al actualizar contadores:', error);
+        }
+    };
+
+    // Función para ver detalles del pedido
+    const viewOrderDetails = async (orderId) => {
+        try {
+            const response = await fetch(`/api/orders/${orderId}`);
+            const data = await response.json();
+            
+            Swal.fire({
+                title: `Detalles del Pedido #${orderId}`,
+                html: `
+                    <div class="order-details">
+                        <p><strong>Fecha:</strong> ${data.fecha_pedido}</p>
+                        <p><strong>Estado:</strong> ${data.estado}</p>
+                        <p><strong>Total:</strong> $${data.total}</p>
+                        <hr>
+                        <h4>Productos:</h4>
+                        ${data.productos.map(prod => `
+                            <div class="product-item">
+                                <p>${prod.nombre_producto} x ${prod.cantidad}</p>
+                                <p>$${prod.precio}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `,
+                confirmButtonText: 'Cerrar',
+                width: '600px'
+            });
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Error al cargar los detalles del pedido', 'error');
+        }
+    };
+
+    // Función para reordenar
+    const reorder = async (orderId) => {
+        try {
+            const response = await fetch(`/api/orders/reorder/${orderId}`, {
+                method: 'POST'
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                showNotification('Productos añadidos al carrito correctamente');
+                updateCounters();
+            } else {
+                throw new Error(data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Error al reordenar los productos', 'error');
+        }
+    };
+
+    // Agregar event listeners a los botones de la tabla
+    document.querySelectorAll('button[aria-label="View Details"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const orderId = this.closest('tr').querySelector('a').textContent;
+            viewOrderDetails(orderId);
+        });
+    });
+
+    document.querySelectorAll('button[aria-label="Reorder"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const orderId = this.closest('tr').querySelector('a').textContent;
+            reorder(orderId);
+        });
+    });
+
+    // Inicializar contadores
+    updateCounters();
+});
+</script>
+</body>
+
+</html>

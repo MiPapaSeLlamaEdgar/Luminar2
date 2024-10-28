@@ -1,174 +1,185 @@
-CREATE DATABASE Luminar;
-USE Luminar;
+    DROP DATABASE Luminar;
+    CREATE DATABASE Luminar;
+    USE Luminar;
 
--- Tabla de Roles (Modificada para incluir permisos)
-CREATE TABLE Roles (
-    rol_id INT PRIMARY KEY AUTO_INCREMENT,
-    nombre_rol VARCHAR(50),
-    descripcion TEXT,
-    permisos JSON
-);
+    -- Tabla de Roles (Modificada para incluir permisos)
+        CREATE TABLE Roles (
+            rol_id INT PRIMARY KEY AUTO_INCREMENT,
+            nombre_rol VARCHAR(50),
+            descripcion TEXT,
+            permisos JSON
+        );
 
--- Tabla de Usuarios (Añadidos campos adicionales)
-CREATE TABLE Usuarios (
-    usuario_id INT PRIMARY KEY AUTO_INCREMENT,
-    nombre VARCHAR(100),
-    apellido VARCHAR(100),
-    correo_electronico VARCHAR(100) UNIQUE,
-    contrasena VARCHAR(255),
-    rol_id INT,
-    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    ultimo_acceso TIMESTAMP NULL DEFAULT NULL,
-    estado ENUM('activo', 'inactivo', 'suspendido') DEFAULT 'activo',
-    imagen_perfil VARCHAR(255),
-    FOREIGN KEY (rol_id) REFERENCES Roles(rol_id)
-);
+    -- Tabla de Usuarios (Añadidos campos adicionales)
+    CREATE TABLE Usuarios (
+        usuario_id INT PRIMARY KEY AUTO_INCREMENT,
+        nombre VARCHAR(100),
+        apellido VARCHAR(100),
+        correo_electronico VARCHAR(100) UNIQUE,
+        contrasena VARCHAR(255),
+        rol_id INT,
+        fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        ultimo_acceso TIMESTAMP NULL DEFAULT NULL,
+        estado ENUM('activo', 'inactivo', 'suspendido') DEFAULT 'activo',
+        imagen_perfil VARCHAR(255),
+        FOREIGN KEY (rol_id) REFERENCES Roles(rol_id)
+    );
 
--- Tabla de Clientes (Añadidos campos para marketing)
-CREATE TABLE Clientes (
-    cliente_id INT PRIMARY KEY AUTO_INCREMENT,
-    nombre VARCHAR(100),
-    apellido VARCHAR(100),
-    correo_electronico VARCHAR(100) UNIQUE,
-    telefono VARCHAR(15),
-    direccion TEXT,
-    ciudad VARCHAR(100),
-    codigo_postal VARCHAR(10),
-    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fecha_nacimiento DATE,
-    genero ENUM('M', 'F', 'Otro'),
-    preferencias JSON,
-    ultima_compra TIMESTAMP NULL DEFAULT NULL
-);
+    -- Tabla de Clientes (Añadidos campos para marketing)
+    CREATE TABLE Clientes (
+        cliente_id INT PRIMARY KEY AUTO_INCREMENT,
+        nombre VARCHAR(100),
+        apellido VARCHAR(100),
+        correo_electronico VARCHAR(100) UNIQUE,
+        telefono VARCHAR(15),
+        direccion TEXT,
+        ciudad VARCHAR(100),
+        codigo_postal VARCHAR(10),
+        fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        fecha_nacimiento DATE,
+        genero ENUM('M', 'F', 'Otro'),
+        preferencias JSON,
+        ultima_compra TIMESTAMP NULL DEFAULT NULL
+    );
 
--- Tabla de Categorías (Añadida jerarquía)
-CREATE TABLE Categorias (
-    categoria_id INT PRIMARY KEY AUTO_INCREMENT,
-    nombre_categoria VARCHAR(100),
-    categoria_padre_id INT,
-    descripcion TEXT,
-    imagen VARCHAR(255),
-    estado ENUM('activo', 'inactivo') DEFAULT 'activo',
-    FOREIGN KEY (categoria_padre_id) REFERENCES Categorias(categoria_id)
-);
+    -- Tabla de Categorías (Añadida jerarquía)
+    CREATE TABLE Categorias (
+        categoria_id INT PRIMARY KEY AUTO_INCREMENT,
+        nombre_categoria VARCHAR(100),
+        categoria_padre_id INT,
+        descripcion TEXT,
+        imagen VARCHAR(255),
+        estado ENUM('activo', 'inactivo') DEFAULT 'activo',
+        FOREIGN KEY (categoria_padre_id) REFERENCES Categorias(categoria_id)
+    );
 
--- Tabla de Productos (Añadidos campos para e-commerce)
-CREATE TABLE Productos (
-    producto_id INT PRIMARY KEY AUTO_INCREMENT,
-    nombre_producto VARCHAR(100),
-    descripcion TEXT,
-    talla VARCHAR(10),
-    color VARCHAR(50),
-    precio DECIMAL(10, 2),
-    cantidad_stock INT,
-    categoria_id INT,
-    imagenes JSON,
-    especificaciones JSON,
-    estado ENUM('activo', 'inactivo', 'agotado') DEFAULT 'activo',
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fecha_modificacion TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (categoria_id) REFERENCES Categorias(categoria_id)
-);
+    -- Tabla de Productos (Añadidos campos para e-commerce)
+    CREATE TABLE Productos (
+        producto_id INT PRIMARY KEY AUTO_INCREMENT,
+        nombre_producto VARCHAR(100),
+        descripcion TEXT,
+        talla VARCHAR(10),
+        color VARCHAR(50),
+        precio DECIMAL(10, 2),
+        cantidad_stock INT,
+        categoria_id INT,
+        imagenes JSON,
+        especificaciones JSON,
+        estado ENUM('activo', 'inactivo', 'agotado') DEFAULT 'activo',
+        fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        fecha_modificacion TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (categoria_id) REFERENCES Categorias(categoria_id)
+    );
 
--- Tabla de Órdenes (Añadido seguimiento)
-CREATE TABLE Ordenes (
-    orden_id INT PRIMARY KEY AUTO_INCREMENT,
-    cliente_id INT,
-    usuario_id INT,
-    codigo_orden VARCHAR(20) UNIQUE,
-    fecha_orden TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fecha_entrega_estimada DATE,
-    fecha_entrega_real DATE,
-    subtotal DECIMAL(10, 2),
-    impuestos DECIMAL(10, 2),
-    descuento DECIMAL(10, 2),
-    total DECIMAL(10, 2),
-    estado ENUM('pendiente', 'confirmada', 'en proceso', 'enviada', 'entregada', 'cancelada') DEFAULT 'pendiente',
-    direccion_envio TEXT,
-    notas TEXT,
-    FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id),
-    FOREIGN KEY (usuario_id) REFERENCES Usuarios(usuario_id)
-);
+    -- Tabla de Órdenes (Añadido seguimiento)
+    CREATE TABLE Ordenes (
+        orden_id INT PRIMARY KEY AUTO_INCREMENT,
+        cliente_id INT,
+        usuario_id INT,
+        codigo_orden VARCHAR(20) UNIQUE,
+        fecha_orden TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        fecha_entrega_estimada DATE,
+        fecha_entrega_real DATE,
+        subtotal DECIMAL(10, 2),
+        impuestos DECIMAL(10, 2),
+        descuento DECIMAL(10, 2),
+        total DECIMAL(10, 2),
+        estado ENUM('pendiente', 'confirmada', 'en proceso', 'enviada', 'entregada', 'cancelada') DEFAULT 'pendiente',
+        direccion_envio TEXT,
+        notas TEXT,
+        FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id),
+        FOREIGN KEY (usuario_id) REFERENCES Usuarios(usuario_id)
+    );
 
--- Tabla de Seguimiento de Órdenes (Nueva)
-CREATE TABLE Seguimiento_Ordenes (
-    seguimiento_id INT PRIMARY KEY AUTO_INCREMENT,
-    orden_id INT,
-    estado VARCHAR(50),
-    descripcion TEXT,
-    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    usuario_id INT,
-    FOREIGN KEY (orden_id) REFERENCES Ordenes(orden_id),
-    FOREIGN KEY (usuario_id) REFERENCES Usuarios(usuario_id)
-);
+    -- Tabla de Seguimiento de Órdenes (Nueva)
+    CREATE TABLE Seguimiento_Ordenes (
+        seguimiento_id INT PRIMARY KEY AUTO_INCREMENT,
+        orden_id INT,
+        estado VARCHAR(50),
+        descripcion TEXT,
+        fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        usuario_id INT,
+        FOREIGN KEY (orden_id) REFERENCES Ordenes(orden_id),
+        FOREIGN KEY (usuario_id) REFERENCES Usuarios(usuario_id)
+    );
 
--- Tabla de Pagos (Modificada)
-CREATE TABLE Pagos (
-    pago_id INT PRIMARY KEY AUTO_INCREMENT,
-    orden_id INT,
-    codigo_pago VARCHAR(50) UNIQUE,
-    fecha_pago TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    monto DECIMAL(10, 2),
-    metodo_pago VARCHAR(50),
-    estado_pago ENUM('pendiente', 'completado', 'fallido', 'reembolsado') DEFAULT 'pendiente',
-    referencia_transaccion VARCHAR(100),
-    FOREIGN KEY (orden_id) REFERENCES Ordenes(orden_id)
-);
+    -- Tabla de Pagos (Modificada)
+    CREATE TABLE Pagos (
+        pago_id INT PRIMARY KEY AUTO_INCREMENT,
+        orden_id INT,
+        codigo_pago VARCHAR(50) UNIQUE,
+        fecha_pago TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        monto DECIMAL(10, 2),
+        metodo_pago VARCHAR(50),
+        estado_pago ENUM('pendiente', 'completado', 'fallido', 'reembolsado') DEFAULT 'pendiente',
+        referencia_transaccion VARCHAR(100),
+        FOREIGN KEY (orden_id) REFERENCES Ordenes(orden_id)
+    );
 
--- Tabla de Lista de Deseos (Modificada)
-CREATE TABLE Lista_Deseos (
-    wishlist_id INT PRIMARY KEY AUTO_INCREMENT,
-    cliente_id INT,
-    producto_id INT,
-    fecha_agregado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    notificar_disponibilidad BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id),
-    FOREIGN KEY (producto_id) REFERENCES Productos(producto_id),
-    UNIQUE KEY unique_wishlist_item (cliente_id, producto_id)
-);
+    -- Tabla de Lista de Deseos (Modificada)
+    CREATE TABLE Lista_Deseos (
+        wishlist_id INT PRIMARY KEY AUTO_INCREMENT,
+        cliente_id INT,
+        producto_id INT,
+        fecha_agregado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        notificar_disponibilidad BOOLEAN DEFAULT FALSE,
+        FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id),
+        FOREIGN KEY (producto_id) REFERENCES Productos(producto_id),
+        UNIQUE KEY unique_wishlist_item (cliente_id, producto_id)
+    );
 
--- Tabla de Carrito (Modificada)
-CREATE TABLE Carrito (
-    carrito_id INT PRIMARY KEY AUTO_INCREMENT,
-    cliente_id INT,
-    producto_id INT,
-    cantidad INT,
-    fecha_agregado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fecha_modificacion TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id),
-    FOREIGN KEY (producto_id) REFERENCES Productos(producto_id)
-);
+    -- Tabla de Carrito (Modificada)
+    CREATE TABLE Carrito (
+        carrito_id INT PRIMARY KEY AUTO_INCREMENT,
+        cliente_id INT,
+        producto_id INT,
+        cantidad INT,
+        fecha_agregado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        fecha_modificacion TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id),
+        FOREIGN KEY (producto_id) REFERENCES Productos(producto_id)
+    );
 
-INSERT INTO Roles (rol_id, nombre_rol) VALUES 
-(1, 'Cliente'),
-(2, 'Vendedor'),
-(3, 'Administrador');
+    INSERT INTO Roles (rol_id, nombre_rol) VALUES 
+    (1, 'Cliente'),
+    (2, 'Vendedor'),
+    (3, 'Administrador');
 
--- Primero insertamos algunos clientes
-INSERT INTO Clientes (cliente_id, nombre, apellido, correo_electronico, telefono, direccion, fecha_registro) 
-VALUES 
-(1, 'Juan', 'Pérez', 'juan@email.com', '1234567890', 'Calle 1 #123', '2024-10-26'),
-(2, 'María', 'García', 'maria@email.com', '0987654321', 'Calle 2 #456', '2024-10-26'),
-(3, 'Carlos', 'López', 'carlos@email.com', '5555555555', 'Calle 3 #789', '2024-10-26');
+    -- Primero insertamos algunos clientes
+    INSERT INTO Clientes (cliente_id, nombre, apellido, correo_electronico, telefono, direccion, fecha_registro) 
+    VALUES 
+    (1, 'Juan', 'Pérez', 'juan@email.com', '1234567890', 'Calle 1 #123', '2024-10-26'),
+    (2, 'María', 'García', 'maria@email.com', '0987654321', 'Calle 2 #456', '2024-10-26'),
+    (3, 'Carlos', 'López', 'carlos@email.com', '5555555555', 'Calle 3 #789', '2024-10-26');
 
--- Luego insertamos algunos usuarios (vendedores)
-INSERT INTO Usuarios (usuario_id, nombre, apellido, correo_electronico, contrasena, rol_id, fecha_registro)
-VALUES 
-(1, 'Pedro', 'Vendedor', 'pedro@luminar.com', 'contraseña123', 2, '2024-10-26'),
-(2, 'Ana', 'Vendedora', 'ana@luminar.com', 'contraseña456', 2, '2024-10-26');
+    -- Luego insertamos algunos usuarios (vendedores)
+    INSERT INTO Usuarios (usuario_id, nombre, apellido, correo_electronico, contrasena, rol_id, fecha_registro)
+    VALUES 
+    (1, 'Pedro', 'Vendedor', 'pedro@luminar.com', 'contraseña123', 2, '2024-10-26'),
+    (2, 'Ana', 'Vendedora', 'ana@luminar.com', 'contraseña456', 2, '2024-10-26');
 
-INSERT INTO Categorias (nombre_categoria) VALUES 
-('1'),
-('Ropa Casual'),
-('Ropa Elegante');
+    INSERT INTO Categorias (nombre_categoria) VALUES 
+    ('1'),
+    ('Ropa Casual'),
+    ('Ropa Elegante');
 
--- Insertar órdenes de ejemplo con diferentes estados
-INSERT INTO Ordenes (cliente_id, usuario_id, fecha_orden, total, estado) VALUES
-(1, 1, '2024-10-26', 150.00, 'completada'),
-(2, 2, '2024-10-26', 200.00, 'en proceso'),
-(3, 1, '2024-10-26', 175.00, 'cancelada');
+    -- Insertar órdenes de ejemplo con diferentes estados
+    INSERT INTO Ordenes (cliente_id, usuario_id, fecha_orden, total, estado) VALUES
+    (1, 1, '2024-10-26', 150.00, 'completada'),
+    (2, 2, '2024-10-26', 200.00, 'en proceso'),
+    (3, 1, '2024-10-26', 175.00, 'cancelada');
 
--- Para actualizar el estado de una orden existente
-UPDATE Ordenes 
-SET estado = 'completada' 
-WHERE orden_id = 1;
+    -- Para actualizar el estado de una orden existente
+    UPDATE Ordenes 
+    SET estado = 'completada' 
+    WHERE orden_id = 1;
+
+    SELECT * FROM usuarios;
+
+    -- Primero, elimina los índices existentes
+    ALTER TABLE Usuarios DROP INDEX correo_electronico;
+
+    -- Luego, crea la tabla con la estructura correcta
+    ALTER TABLE Usuarios 
+    MODIFY COLUMN correo_electronico VARCHAR(100) NOT NULL,
+    ADD UNIQUE INDEX idx_correo_electronico (correo_electronico);

@@ -21,23 +21,29 @@
                 <p class="header__alert-news">LUMINAR</p>
 
                 <a href="/" class="header__top-action">
-                    Iniciar sesión / Registrarse
+                    Cerrar Sesion
                 </a>
             </div>
         </div>
 
         <nav class="nav container">
-            <a href="/index" class="nav__logo">
-                <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
+            <a href="/dashboard-cliente" class="nav__logo">
+                <img src="/assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
             </a>
 
             <div class="nav__menu" id="nav__menu">
                 <ul class="nav__list">
                     <li class="nav__item">
-                        <a href="/index" class="nav__link active-link">INICIO</a>
+                        <a href="/dashboard-cliente" class="nav__link ">INICIO</a>
                     </li>
                     <li class="nav__item">
-                        <a href="/shop" class="nav__link">Tienda</a>
+                        <a href="/cliente/shop" class="nav__link active-link">Tienda</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/cliente/accounts" class="nav__link">Mi cuenta</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/cliente/orders" class="nav__link">Pedidos</a>
                     </li>
                 </ul>
 
@@ -50,13 +56,13 @@
             </div>
 
             <div class="header__user-actions">
-                <a href="/" class="header__action-btn">
-                    <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
+                <a href="/cliente/whishlist" class="header__action-btn">
+                    <img src="/assets/img/icon-heart.svg" alt="Lista de Deseos">
                     <span class="count">3</span>
                 </a>
 
-                <a href="/" class="header__action-btn">
-                    <img src="assets/img/icon-cart.svg" alt="Carrito">
+                <a href="/cliente/cart" class="header__action-btn">
+                    <img src="/assets/img/icon-cart.svg" alt="Carrito">
                     <span class="count">3</span>
                 </a>
             </div>
@@ -209,7 +215,44 @@
     </section>
 
     <!-- Footer permanece igual -->
-
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__links">
+                    <h4 class="footer__title">Enlaces Útiles</h4>
+                    <ul class="footer__list">
+                        <li><a href="/dashboard-cliente">INICIO</a></li>
+                        <li><a href="/cliente/shop">Tienda</a></li>
+                        <li><a href="/cliente/accounts">Mi Cuenta</a></li>
+                        <li><a href="/cliente/whishlist">Lista de Deseos</a></li>
+                        <li><a href="/cliente/Orders">Pedidos</a></li>
+                        <li><a href="/cliente/cart">Carrito</a></li>
+                        <li><a href="/privacy-policy" target="_blank">Políticas de Privacidad</a></li>
+                    </ul>
+                </div>
+    
+                <div class="footer__contact">
+                    <h4 class="footer__title">Contáctanos</h4>
+                    <p>Teléfono: +57 3134717406</p>
+                    <p>Email: luminaropa@gmail.com</p>
+                    <p>Direccion: Neos Centro, Calle 12 B, 9-40</p>
+                </div>
+    
+                <div class="footer__social">
+                    <h4 class="footer__title">Síguenos</h4>
+                    <ul class="footer__social-list">
+                        <li><a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank"><i class="fi fi-rr-facebook"></i> Facebook</a></li>
+                        <li><a href="https://www.tiktok.com/@luminar.2023" target="_blank"><i class="fi fi-rr-tiktok"></i> TikTok</a></li>
+                        <li><a href="https://www.instagram.com/luminar.2023/" target="_blank"><i class="fi fi-rr-instagram"></i> Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+    
+            <div class="footer__bottom">
+                <p>&copy; 2024 Luminar. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/js/details.js"></script>

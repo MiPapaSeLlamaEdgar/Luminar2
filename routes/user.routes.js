@@ -2,15 +2,132 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken'); // Asegúrate de tener instalado jsonwebtoken
 
 module.exports = (models) => {
-    const { User } = models;
+    const { User, Role } = models;
+
+    // Ruta de login
+    router.post('/login', async (req, res) => {
+        try {
+            const { correo_electronico, contrasena } = req.body;
+
+            // Buscar usuario
+            const user = await User.findOne({ 
+                where: { correo_electronico },
+                include: [{
+                    model: Role,
+                    attributes: ['nombre_rol']
+                }]
+            });
+
+            if (!user) {
+                return res.status(401).json({ 
+                    message: 'Correo electrónico o contraseña incorrectos' 
+                });
+            }
+
+            // Verificar contraseña
+            const isValidPassword = await bcrypt.compare(contrasena, user.contrasena);
+            if (!isValidPassword) {
+                return res.status(401).json({ 
+                    message: 'Correo electrónico o contraseña incorrectos' 
+                });
+            }
+
+            // Generar token
+            const token = jwt.sign(
+                { 
+                    usuario_id: user.usuario_id,
+                    rol_id: user.rol_id 
+                },
+                process.env.JWT_SECRET || 'tu_clave_secreta',
+                { expiresIn: '24h' }
+            );
+
+            // Actualizar último acceso
+            await user.update({ ultimo_acceso: new Date() });
+
+            // Enviar respuesta
+            res.json({
+                token,
+                usuario_id: user.usuario_id,
+                rol_id: user.rol_id,
+                nombre: user.nombre,
+                correo_electronico: user.correo_electronico,
+                estado: user.estado
+            });
+
+        } catch (error) {
+            console.error('Error en login:', error);
+            res.status(500).json({
+                message: 'Error al iniciar sesión',
+                error: error.message
+            });
+        }
+    });
+
+    // Crear nuevo usuario (registro)
+    router.post('/', async (req, res) => {
+        try {
+            // Verificar si el correo ya existe
+            const existingUser = await User.findOne({
+                where: { correo_electronico: req.body.correo_electronico }
+            });
+
+            if (existingUser) {
+                return res.status(400).json({
+                    message: 'El correo electrónico ya está registrado'
+                });
+            }
+
+            // Encriptar contraseña
+            const hashedPassword = await bcrypt.hash(req.body.contrasena, 10);
+
+            // Crear usuario
+            const user = await User.create({
+                ...req.body,
+                contrasena: hashedPassword,
+                fecha_registro: new Date(),
+                estado: 'activo'
+            });
+
+            // Generar token
+            const token = jwt.sign(
+                { 
+                    usuario_id: user.usuario_id,
+                    rol_id: user.rol_id 
+                },
+                process.env.JWT_SECRET || 'tu_clave_secreta',
+                { expiresIn: '24h' }
+            );
+
+            // Preparar respuesta sin contraseña
+            const userResponse = user.toJSON();
+            delete userResponse.contrasena;
+
+            res.status(201).json({
+                ...userResponse,
+                token
+            });
+
+        } catch (error) {
+            console.error('Error en registro:', error);
+            res.status(500).json({
+                message: 'Error al crear usuario',
+                error: error.message
+            });
+        }
+    });
 
     // Obtener todos los usuarios
     router.get('/', async (req, res) => {
         try {
             const users = await User.findAll({
-                include: ['Role'],
+                include: [{
+                    model: Role,
+                    attributes: ['nombre_rol']
+                }],
                 attributes: { exclude: ['contrasena'] }
             });
             res.json(users);
@@ -26,12 +143,17 @@ module.exports = (models) => {
     router.get('/:id', async (req, res) => {
         try {
             const user = await User.findByPk(req.params.id, {
-                include: ['Role'],
+                include: [{
+                    model: Role,
+                    attributes: ['nombre_rol']
+                }],
                 attributes: { exclude: ['contrasena'] }
             });
+            
             if (!user) {
                 return res.status(404).json({ message: 'Usuario no encontrado' });
             }
+            
             res.json(user);
         } catch (error) {
             res.status(500).json({
@@ -41,130 +163,47 @@ module.exports = (models) => {
         }
     });
 
-    // Crear nuevo usuario
-    router.post('/', async (req, res) => {
-        try {
-            const hashedPassword = await bcrypt.hash(req.body.contrasena, 10);
-            const user = await User.create({
-                ...req.body,
-                contrasena: hashedPassword
-            });
-            const userWithoutPassword = user.toJSON();
-            delete userWithoutPassword.contrasena;
-            res.status(201).json(userWithoutPassword);
-        } catch (error) {
-            res.status(500).json({
-                message: 'Error al crear usuario',
-                error: error.message
-            });
-        }
-    });
-
     // Actualizar usuario
     router.put('/:id', async (req, res) => {
         try {
             const user = await User.findByPk(req.params.id);
+            
             if (!user) {
                 return res.status(404).json({ message: 'Usuario no encontrado' });
             }
+
+            // Si se está actualizando el correo, verificar que no exista
+            if (req.body.correo_electronico && req.body.correo_electronico !== user.correo_electronico) {
+                const existingUser = await User.findOne({
+                    where: { correo_electronico: req.body.correo_electronico }
+                });
+
+                if (existingUser) {
+                    return res.status(400).json({
+                        message: 'El correo electrónico ya está registrado'
+                    });
+                }
+            }
+
+            // Si se está actualizando la contraseña, encriptarla
             if (req.body.contrasena) {
                 req.body.contrasena = await bcrypt.hash(req.body.contrasena, 10);
             }
+
             await user.update(req.body);
             
             const updatedUser = await User.findByPk(req.params.id, {
-                include: ['Role'],
+                include: [{
+                    model: Role,
+                    attributes: ['nombre_rol']
+                }],
                 attributes: { exclude: ['contrasena'] }
             });
+
             res.json(updatedUser);
         } catch (error) {
             res.status(500).json({
                 message: 'Error al actualizar usuario',
-                error: error.message
-            });
-        }
-    });
-
-    // Eliminar usuario
-    router.delete('/:id', async (req, res) => {
-        try {
-            const user = await User.findByPk(req.params.id);
-            if (!user) {
-                return res.status(404).json({ message: 'Usuario no encontrado' });
-            }
-            await user.destroy();
-            res.json({ message: 'Usuario eliminado correctamente' });
-        } catch (error) {
-            res.status(500).json({
-                message: 'Error al eliminar usuario',
-                error: error.message
-            });
-        }
-    });
-
-    // Cambiar contraseña
-    router.post('/:id/change-password', async (req, res) => {
-        try {
-            const { currentPassword, newPassword } = req.body;
-            const user = await User.findByPk(req.params.id);
-            
-            if (!user) {
-                return res.status(404).json({ message: 'Usuario no encontrado' });
-            }
-
-            // Verificar contraseña actual
-            const isValidPassword = await bcrypt.compare(currentPassword, user.contrasena);
-            if (!isValidPassword) {
-                return res.status(400).json({ message: 'Contraseña actual incorrecta' });
-            }
-
-            // Actualizar contraseña
-            const hashedPassword = await bcrypt.hash(newPassword, 10);
-            await user.update({ contrasena: hashedPassword });
-
-            res.json({ message: 'Contraseña actualizada correctamente' });
-        } catch (error) {
-            res.status(500).json({
-                message: 'Error al cambiar la contraseña',
-                error: error.message
-            });
-        }
-    });
-
-    // Actualizar estado del usuario
-    router.patch('/:id/status', async (req, res) => {
-        try {
-            const { estado } = req.body;
-            const user = await User.findByPk(req.params.id);
-            
-            if (!user) {
-                return res.status(404).json({ message: 'Usuario no encontrado' });
-            }
-
-            await user.update({ estado });
-            res.json({ message: 'Estado actualizado correctamente' });
-        } catch (error) {
-            res.status(500).json({
-                message: 'Error al actualizar estado',
-                error: error.message
-            });
-        }
-    });
-
-    // Actualizar último acceso
-    router.patch('/:id/last-access', async (req, res) => {
-        try {
-            const user = await User.findByPk(req.params.id);
-            
-            if (!user) {
-                return res.status(404).json({ message: 'Usuario no encontrado' });
-            }
-
-            await user.update({ ultimo_acceso: new Date() });
-            res.json({ message: 'Último acceso actualizado' });
-        } catch (error) {
-            res.status(500).json({
-                message: 'Error al actualizar último acceso',
                 error: error.message
             });
         }

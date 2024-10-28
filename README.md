@@ -4,7 +4,7 @@
 - Eric Sebastián Gonzales
 - Paula Andrea Ortiz
 - Andres Mora
-- Javier Andrés Abril
+
 
 **Información General:**
 - 2902093
@@ -42,7 +42,7 @@ Sigue los pasos a continuación para configurar el proyecto localmente:
    cd luminar-gestion-ventas-inventarios
 
 ### Dependencias
-- "npm install express sequelize mysql2 dotenv cors helmet express-session body-parser cookie-parser express-rate-limit express-validator compression bcryptjs jsonwebtoken multer sharp uuid moment morgan winston debug sweetalert2 nodemailer connect-flash && npm install --save-dev nodemon"
+- "npm install express sequelize mysql2 dotenv cors helmet express-session body-parser cookie-parser express-rate-limit express-validator compression bcryptjs jsonwebtoken multer sharp uuid moment morgan winston debug sweetalert2 nodemailer connect-flash hbs && npm install --save-dev nodemon"
 
 **Si quieres usar nodemon para facilitar el desarrollo, instala también:**
 - "npm install --save-dev nodemon"
@@ -51,7 +51,7 @@ Sigue los pasos a continuación para configurar el proyecto localmente:
 **Crea un archivo .env en la raíz del proyecto y agrega la configuración de tu base de datos:**
 - DB_HOST=127.0.0.1
 - DB_USER=root
-- DB_PASSWORD=1234
+- DB_PASSWORD=
 - DB_NAME=luminar
 - JWT_SECRET=supersecretkey
 - PORT=5000

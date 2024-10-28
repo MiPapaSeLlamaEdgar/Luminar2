@@ -7,12 +7,12 @@
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <title>Mis Pedidos - LUMINAR</title>
 </head>
 
 <body>
-    <!--== HEADER ==-->
+    <!-- HEADER -->
     <header class="header">
         <div class="header__top">
             <div class="header__container container">
@@ -24,29 +24,29 @@
                 <p class="header__alert-news">LUMINAR</p>
 
                 <a href="/" class="header__top-action">
-                    Iniciar sesión / Registrarse
+                    Cerrar Sesion
                 </a>
             </div>
         </div>
 
         <nav class="nav container">
-            <a href="/index" class="nav__logo">
-                <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
+            <a href="/dashboard-cliente" class="nav__logo">
+                <img src="/assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
             </a>
 
             <div class="nav__menu" id="nav__menu">
                 <ul class="nav__list">
                     <li class="nav__item">
-                        <a href="/index" class="nav__link active-link">INICIO</a>
+                        <a href="/dashboard-cliente" class="nav__link ">INICIO</a>
                     </li>
                     <li class="nav__item">
-                        <a href="/shop" class="nav__link">Tienda</a>
+                        <a href="/cliente/shop" class="nav__link">Tienda</a>
                     </li>
                     <li class="nav__item">
-                        <a href="/accounts" class="nav__link">Mi cuenta</a>
+                        <a href="/cliente/accounts" class="nav__link">Mi cuenta</a>
                     </li>
                     <li class="nav__item">
-                        <a href="/orders" class="nav__link">Pedidos</a>
+                        <a href="/cliente/orders" class="nav__link active-link">Pedidos</a>
                     </li>
                 </ul>
 
@@ -59,13 +59,13 @@
             </div>
 
             <div class="header__user-actions">
-                <a href="/whishlist" class="header__action-btn">
-                    <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
+                <a href="/cliente/whishlist" class="header__action-btn">
+                    <img src="/assets/img/icon-heart.svg" alt="Lista de Deseos">
                     <span class="count">3</span>
                 </a>
 
-                <a href="/cart" class="header__action-btn">
-                    <img src="assets/img/icon-cart.svg" alt="Carrito">
+                <a href="/cliente/cart" class="header__action-btn">
+                    <img src="/assets/img/icon-cart.svg" alt="Carrito">
                     <span class="count">3</span>
                 </a>
             </div>
@@ -126,12 +126,13 @@
                 <div class="footer__links">
                     <h4 class="footer__title">Enlaces Útiles</h4>
                     <ul class="footer__list">
-                        <li><a href="/shop">Tienda</a></li>
-                        <li><a href="/accounts">Mi Cuenta</a></li>
-                        <li><a href="/whishlist">Lista de Deseos</a></li>
-                        <li><a href="/Orders">Pedidos</a></li>
-                        <li><a href="/cart">Carrito</a></li>
-                        <li><a href="privacy-policy" target="_blank">Políticas de Privacidad</a></li>
+                        <li><a href="/dashboard-cliente">INICIO</a></li>
+                        <li><a href="/cliente/shop">Tienda</a></li>
+                        <li><a href="/cliente/accounts">Mi Cuenta</a></li>
+                        <li><a href="/cliente/whishlist">Lista de Deseos</a></li>
+                        <li><a href="/cliente/Orders">Pedidos</a></li>
+                        <li><a href="/cliente/cart">Carrito</a></li>
+                        <li><a href="/privacy-policy" target="_blank">Políticas de Privacidad</a></li>
                     </ul>
                 </div>
     
@@ -165,126 +166,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- MAIN JS -->
-<script src="./assets/js/main.js"></script>
-
-<!-- Orders Functionality Script -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Función para mostrar notificaciones
-    const showNotification = (message, type = 'success') => {
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        });
-
-        Toast.fire({
-            icon: type,
-            title: message
-        });
-    };
-
-    // Función para actualizar contadores
-    const updateCounters = async () => {
-        try {
-            // Actualizar contador de wishlist
-            const wishlistResponse = await fetch('/api/wishlist/count');
-            const wishlistData = await wishlistResponse.json();
-            
-            // Actualizar contador de carrito
-            const cartResponse = await fetch('/api/cart/count');
-            const cartData = await cartResponse.json();
-            
-            // Actualizar los contadores en el DOM
-            document.querySelectorAll('.header__action-btn .count').forEach(counter => {
-                if (counter.closest('a[href="/whishlist"]')) {
-                    counter.textContent = wishlistData.count;
-                } else if (counter.closest('a[href="/cart"]')) {
-                    counter.textContent = cartData.count;
-                }
-            });
-        } catch (error) {
-            console.error('Error al actualizar contadores:', error);
-        }
-    };
-
-    // Función para ver detalles del pedido
-    const viewOrderDetails = async (orderId) => {
-        try {
-            const response = await fetch(`/api/orders/${orderId}`);
-            const data = await response.json();
-            
-            Swal.fire({
-                title: `Detalles del Pedido #${orderId}`,
-                html: `
-                    <div class="order-details">
-                        <p><strong>Fecha:</strong> ${data.fecha_pedido}</p>
-                        <p><strong>Estado:</strong> ${data.estado}</p>
-                        <p><strong>Total:</strong> $${data.total}</p>
-                        <hr>
-                        <h4>Productos:</h4>
-                        ${data.productos.map(prod => `
-                            <div class="product-item">
-                                <p>${prod.nombre_producto} x ${prod.cantidad}</p>
-                                <p>$${prod.precio}</p>
-                            </div>
-                        `).join('')}
-                    </div>
-                `,
-                confirmButtonText: 'Cerrar',
-                width: '600px'
-            });
-        } catch (error) {
-            console.error('Error:', error);
-            showNotification('Error al cargar los detalles del pedido', 'error');
-        }
-    };
-
-    // Función para reordenar
-    const reorder = async (orderId) => {
-        try {
-            const response = await fetch(`/api/orders/reorder/${orderId}`, {
-                method: 'POST'
-            });
-            const data = await response.json();
-            
-            if (data.success) {
-                showNotification('Productos añadidos al carrito correctamente');
-                updateCounters();
-            } else {
-                throw new Error(data.message);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            showNotification('Error al reordenar los productos', 'error');
-        }
-    };
-
-    // Agregar event listeners a los botones de la tabla
-    document.querySelectorAll('button[aria-label="View Details"]').forEach(button => {
-        button.addEventListener('click', function() {
-            const orderId = this.closest('tr').querySelector('a').textContent;
-            viewOrderDetails(orderId);
-        });
-    });
-
-    document.querySelectorAll('button[aria-label="Reorder"]').forEach(button => {
-        button.addEventListener('click', function() {
-            const orderId = this.closest('tr').querySelector('a').textContent;
-            reorder(orderId);
-        });
-    });
-
-    // Inicializar contadores
-    updateCounters();
-});
-</script>
+<script src="/js/orders.js"></script>
 </body>
 
 </html>

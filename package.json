@@ -25,6 +25,7 @@
     "express-session": "^1.18.1",
     "express-validator": "^7.2.0",
     "gulp": "^5.0.0",
+    "hbs": "^4.2.0",
     "helmet": "^8.0.0",
     "helmet-csp": "^4.0.0",
     "jsonwebtoken": "^9.0.2",
