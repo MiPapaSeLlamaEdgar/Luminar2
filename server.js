@@ -88,14 +88,30 @@ const viewRoutes = {
     '/whishlist': 'whishlist.html',
     '/orders': 'orders.html',
     '/privacy-policy': 'privacy-policy.html',
+    //vendedor
     '/vendedor/clientes': 'Vendedor/clientes.html',
     '/vendedor/dashboard': 'Vendedor/dashboard-vendedor.html',
     '/vendedor/dashboards': 'Vendedor/dashboards.html',
     '/vendedor/inventario': 'Vendedor/inventario.html',
     '/vendedor/reportes': 'Vendedor/reportes.html',
     '/vendedor/ventas': 'Vendedor/ventas.html',
+    '/vendedor/nueva-venta': 'Vendedor/nueva-venta.html',
+    '/vendedor/nuevo-cliente': 'Vendedor/nuevo-cliente.html',
+    '/vendedor/nuevo-producto': 'Vendedor/nuevo-producto.html',
     '/vendedor/editar-perfil': 'Vendedor/editar-perfil.html',
-    '/admin/roles': 'Admin/roles.html'
+    //admin
+    '/admin/roles': 'Admin/roles.html',
+    '/admin/config-admin': 'Admin/config-admin.html',
+    '/admin/notificaciones': 'Admin/notificaciones.html',
+    '/admin/pedidos': 'Admin/pedidos.html',
+    '/admin/productos': 'Admin/productos.html',
+    '/admin/reportes': 'Admin/reportes.html',
+    '/admin/clientes': 'Admin/clientes.html',
+    '/admin/editar-perfil': 'Admin/editar-perfil.html',
+    '/admin/inventario': 'Admin/inventario.html',
+    '/admin/ventas': 'Admin/ventas.html',
+    '/admin/usuarios': 'Admin/usuarios.html',
+    '/admin/ordenes': 'Admin/ordenes.html'
 };
 
 // Configurar rutas de vistas

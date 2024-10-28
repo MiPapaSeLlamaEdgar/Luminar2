@@ -149,48 +149,7 @@
     <script src="assets/js/main.js"></script>
 
     <!-- Cerrar Sesión y Manejo del Token -->
-    <script>
-        // Función para cerrar sesión
-        function cerrarSesion() {
-            localStorage.removeItem('token'); // Eliminar el token
-            localStorage.removeItem('rol_id'); // Eliminar el rol
-            alert('Has cerrado sesión exitosamente.');
-            window.location.href = '/'; // Redirigir a la página de inicio de sesión
-        }
-
-        // Botón de Cerrar Sesión
-        const logoutBtn = document.getElementById('logout');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', cerrarSesion);
-        }
-
-        // Mostrar el nombre del usuario al cargar la página
-        document.addEventListener('DOMContentLoaded', () => {
-            const token = localStorage.getItem('token');
-            const rolId = localStorage.getItem('rol_id');
-
-            if (token && rolId) {
-                try {
-                    // Decodificar el token para obtener la información del usuario
-                    const base64Url = token.split('.')[1];
-                    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                    }).join(''));
-                    const payload = JSON.parse(jsonPayload);
-
-                    // Mostrar el nombre del usuario
-                    document.getElementById('user-name').innerText = payload.nombre || 'Cliente';
-                } catch (err) {
-                    console.error('Error al decodificar el token:', err);
-                    cerrarSesion(); // Cerrar sesión si hay un error con el token
-                }
-            } else {
-                // Si no hay token o rol, redirigir al inicio de sesión
-                cerrarSesion();
-            }
-        });
-    </script>
+    
 </body>
 
 </html>

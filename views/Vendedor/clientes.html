@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Clientes | Luminar</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
     <style>
         :root {
             --primary-color: #D6266F;
@@ -226,7 +226,7 @@
                 <li><a href="/vendedor/reportes">Reportes</a></li>
             </ul>
             <div class="user-info">
-                <img src="/images/foto.png" alt="Profile" class="profile-img">
+                <img src="/images/foto.jpeg" alt="Profile" class="profile-img">
                 <span>Andres Mora</span>
             </div>
         </nav>
@@ -235,7 +235,11 @@
         <main class="main-content">
             <div class="header-actions">
                 <h2>Gestión de Clientes</h2>
-                <button class="nuevo-cliente-btn" onclick="abrirModalNuevoCliente()">+ Nuevo Cliente</button>
+                <div class="actions">
+                    <a href="/vendedor/nuevo-cliente">
+                        <button class="nuevo-cliente-btn">+ Nuevo Cliente</button>
+                    </a>
+                </div>
             </div>
 
             <!-- Filtros -->

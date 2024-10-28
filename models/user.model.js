@@ -1,4 +1,3 @@
-// models/user.model.js
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('User', {
         usuario_id: {
@@ -17,7 +16,15 @@ module.exports = (sequelize, DataTypes) => {
         correo_electronico: {
             type: DataTypes.STRING(100),
             allowNull: false,
-            unique: true
+            unique: {
+                name: 'idx_correo_electronico',
+                msg: 'Este correo electrónico ya está registrado'
+            },
+            validate: {
+                isEmail: {
+                    msg: 'Por favor, introduce un correo electrónico válido'
+                }
+            }
         },
         contrasena: {
             type: DataTypes.STRING(255),
@@ -45,7 +52,13 @@ module.exports = (sequelize, DataTypes) => {
         }
     }, {
         tableName: 'Usuarios',
-        timestamps: false
+        timestamps: false,
+        indexes: [
+            {
+                unique: true,
+                fields: ['correo_electronico'],
+                name: 'idx_correo_electronico'
+            }
+        ]
     });
 };
-

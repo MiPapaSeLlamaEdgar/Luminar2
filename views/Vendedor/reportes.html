@@ -6,7 +6,11 @@
     <title>Reportes | Luminar</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="/css/dashboard.css">
+        <!-- ... otros enlaces ... -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
     <style>
         :root {
             --primary-color: #D6266F;
@@ -105,7 +109,7 @@
         .filtros-section select,
         .filtros-section input {
             padding: 8px 15px;
-            border: 1px solid #ddd;
+            border: 1px solid #ddd; 
             border-radius: 5px;
         }
 
@@ -204,12 +208,12 @@
             <ul class="nav-links">
                 <li><a href="/vendedor/dashboard-vendedor">Inicio</a></li>
                 <li><a href="/vendedor/ventas">Ventas</a></li>
-                <li><a href="/vendedor/clientes" class="active">Clientes</a></li>
+                <li><a href="/vendedor/clientes" >Clientes</a></li>
                 <li><a href="/vendedor/inventario">Inventario</a></li>
-                <li><a href="/vendedor/reportes">Reportes</a></li>
+                <li><a href="/vendedor/reportes" class="active">Reportes</a></li>
             </ul>
             <div class="user-info">
-                <img src="/images/foto.png" alt="Profile" class="profile-img">
+                <img src="/images/foto.jpeg" alt="Profile" class="profile-img">
                 <span>Andres Mora</span>
             </div>
         </nav>
@@ -341,6 +345,151 @@
             // Aquí iría la lógica para generar el reporte según los filtros seleccionados
             console.log('Generando reporte:', { tipoReporte, fechaInicio, fechaFin });
         }
+        // Funciones para exportar reportes
+function exportarPDF(tipoReporte) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Configuración del documento
+    doc.setFont("helvetica");
+    doc.setFontSize(20);
+    doc.setTextColor(214, 38, 111); // Color primario Luminar
+
+    // Título
+    doc.text("Reporte de " + tipoReporte.charAt(0).toUpperCase() + tipoReporte.slice(1), 20, 20);
+    
+    // Fecha del reporte
+    doc.setFontSize(12);
+    doc.setTextColor(51, 51, 51);
+    doc.text("Fecha: " + new Date().toLocaleDateString(), 20, 30);
+
+    // Datos según el tipo de reporte
+    let datos = obtenerDatosReporte(tipoReporte);
+    
+    // Generar tabla
+    doc.autoTable({
+        head: [datos.columnas],
+        body: datos.filas,
+        startY: 40,
+        styles: {
+            fontSize: 10,
+            cellPadding: 6,
+            lineColor: [221, 221, 221],
+            lineWidth: 0.1,
+        },
+        headStyles: {
+            fillColor: [214, 38, 111],
+            textColor: [255, 255, 255],
+            fontStyle: 'bold',
+        },
+        alternateRowStyles: {
+            fillColor: [245, 245, 245],
+        },
+    });
+
+    // Guardar el PDF
+    doc.save(`reporte_${tipoReporte}_${formatearFecha(new Date())}.pdf`);
+}
+
+function exportarExcel(tipoReporte) {
+    // Obtener datos según el tipo de reporte
+    let datos = obtenerDatosReporte(tipoReporte);
+    
+    // Crear libro de trabajo
+    const wb = XLSX.utils.book_new();
+    
+    // Crear hoja de cálculo con los datos
+    const ws = XLSX.utils.aoa_to_sheet([
+        datos.columnas,
+        ...datos.filas
+    ]);
+
+    // Añadir la hoja al libro
+    XLSX.utils.book_append_sheet(wb, ws, tipoReporte.charAt(0).toUpperCase() + tipoReporte.slice(1));
+
+    // Guardar el archivo
+    XLSX.writeFile(wb, `reporte_${tipoReporte}_${formatearFecha(new Date())}.xlsx`);
+}
+
+function obtenerDatosReporte(tipoReporte) {
+    let columnas = [];
+    let filas = [];
+
+    switch(tipoReporte) {
+        case 'ventas':
+            columnas = ['ID', 'Fecha', 'Cliente', 'Producto', 'Monto', 'Estado'];
+            filas = [
+                ['001', '2024-03-20', 'Juan Pérez', 'Producto A', '$1,500', 'Completado'],
+                ['002', '2024-03-19', 'María García', 'Producto B', '$2,300', 'Pendiente'],
+                // ... más datos
+            ];
+            break;
+
+        case 'inventario':
+            columnas = ['ID', 'Producto', 'Categoría', 'Stock', 'Precio', 'Estado'];
+            filas = [
+                ['001', 'Producto A', 'Categoría 1', '50', '$100', 'En stock'],
+                ['002', 'Producto B', 'Categoría 2', '30', '$150', 'Bajo stock'],
+                // ... más datos
+            ];
+            break;
+
+        case 'clientes':
+            columnas = ['ID', 'Nombre', 'Email', 'Teléfono', 'Última Compra', 'Estado'];
+            filas = [
+                ['001', 'Juan Pérez', 'juan@email.com', '1234567890', '2024-03-15', 'Activo'],
+                ['002', 'María García', 'maria@email.com', '0987654321', '2024-03-10', 'Activo'],
+                // ... más datos
+            ];
+            break;
+    }
+
+    return { columnas, filas };
+}
+
+function formatearFecha(fecha) {
+    return fecha.toISOString().split('T')[0];
+}
+
+// Modificar la función generarReporte existente
+function generarReporte() {
+    const tipoReporte = document.getElementById('tipoReporte').value;
+    const fechaInicio = document.getElementById('fechaInicio').value;
+    const fechaFin = document.getElementById('fechaFin').value;
+
+    if (!tipoReporte) {
+        alert('Por favor seleccione un tipo de reporte');
+        return;
+    }
+
+    // Crear modal de opciones de exportación
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 300px;">
+            <h3>Exportar Reporte</h3>
+            <p>Seleccione el formato de exportación:</p>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="exportarPDF('${tipoReporte}')" class="export-btn export-pdf">
+                    Exportar PDF
+                </button>
+                <button onclick="exportarExcel('${tipoReporte}')" class="export-btn export-excel">
+                    Exportar Excel
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Cerrar modal al hacer clic fuera
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+}
     </script>
 </body>
 </html>

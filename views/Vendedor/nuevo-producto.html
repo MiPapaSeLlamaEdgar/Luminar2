@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Producto | Luminar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
+    <style>
+        .form-container {
+            background-color: var(--card-color);
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin: 20px;
+            flex-grow: 1;
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+            text-align: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .form-header h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .form-section {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .form-section h3 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(214, 38, 111, 0.1);
+        }
+
+        .required::after {
+            content: '*';
+            color: var(--primary-color);
+            margin-left: 4px;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #bf1b5d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Panel Vendedor</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/vendedor/dashboard-vendedor">Dashboard</a></li>
+                <li><a href="/vendedor/ventas">Ventas</a></li>
+                <li><a href="/vendedor/clientes">Clientes</a></li>
+                <li><a href="/vendedor/inventario" class="active">Inventario</a></li>
+                <li><a href="/vendedor/reportes">Reportes</a></li>
+            </ul>
+            <div class="user-info">
+                <img src="/images/foto.jpeg" alt="Profile" class="profile-img">
+                <span>Andres Mora</span>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>Nuevo Producto</h2>
+                    <p>Complete el formulario con los datos del producto</p>
+                </div>
+
+                <form id="productoForm">
+                    <!-- Información Básica -->
+                    <div class="form-section">
+                        <h3>Información Básica</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="required">Nombre del Producto</label>
+                                <input type="text" id="nombre_producto" name="nombre_producto" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="required">Categoría</label>
+                                <select id="categoria_id" name="categoria_id" required>
+                                    <option value="">Seleccionar categoría</option>
+                                    <option value="1">Ropa Casual</option>
+                                    <option value="2">Ropa Elegante</option>
+                                    <option value="3">Accesorios</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <textarea id="descripcion" name="descripcion" rows="4"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Detalles del Producto -->
+                    <div class="form-section">
+                        <h3>Detalles del Producto</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="required">Talla</label>
+                                <select id="talla" name="talla" required>
+                                    <option value="">Seleccionar talla</option>
+                                    <option value="XS">XS</option>
+                                    <option value="S">S</option>
+                                    <option value="M">M</option>
+                                    <option value="L">L</option>
+                                    <option value="XL">XL</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="required">Color</label>
+                                <input type="text" id="color" name="color" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="required">Precio</label>
+                                <input type="number" id="precio" name="precio" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="required">Cantidad en Stock</label>
+                                <input type="number" id="cantidad_stock" name="cantidad_stock" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Imágenes -->
+                    <div class="form-section">
+                        <h3>Imágenes del Producto</h3>
+                        <div class="form-group">
+                            <label>Imágenes</label>
+                            <input type="file" id="imagenes" name="imagenes" multiple accept="image/*">
+                            <div class="image-preview" id="imagePreview">
+                                <span>Haga clic o arrastre las imágenes aquí</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                            <i class="fi fi-sr-cross-circle"></i>
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fi fi-sr-disk"></i>
+                            Guardar Producto
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('productoForm');
+            const imagePreview = document.getElementById('imagePreview');
+            const imageInput = document.getElementById('imagenes');
+
+            // Preview de imágenes
+            imageInput.addEventListener('change', function(e) {
+                imagePreview.innerHTML = '';
+                const files = e.target.files;
+
+                for(let file of files) {
+                    if(file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            imagePreview.appendChild(img);
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                }
+            });
+
+            // Manejo del formulario
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                if(validarFormulario()) {
+                    try {
+                        const formData = new FormData(this);
+                        
+                        // Preparar datos para JSON
+                        const imagenesArray = [];
+                        const files = imageInput.files;
+                        for(let file of files) {
+                            imagenesArray.push(file.name);
+                        }
+
+                        const productoData = {
+                            nombre_producto: formData.get('nombre_producto'),
+                            descripcion: formData.get('descripcion'),
+                            categoria_id: formData.get('categoria_id'),
+                            talla: formData.get('talla'),
+                            color: formData.get('color'),
+                            precio: parseFloat(formData.get('precio')),
+                            cantidad_stock: parseInt(formData.get('cantidad_stock')),
+                            imagenes: JSON.stringify(imagenesArray),
+                            estado: 'activo'
+                        };
+
+                        console.log('Producto a guardar:', productoData);
+                        alert('Producto guardado exitosamente');
+                        window.location.href = '/inventario';
+                    } catch (error) {
+                        console.error('Error al guardar producto:', error);
+                        alert('Error al guardar el producto');
+                    }
+                }
+            });
+
+            function validarFormulario() {
+                let isValid = true;
+                const camposRequeridos = [
+                    'nombre_producto', 'categoria_id', 'talla', 
+                    'color', 'precio', 'cantidad_stock'
+                ];
+                
+                camposRequeridos.forEach(campo => {
+                    const input = document.getElementById(campo);
+                    if (!input.value.trim()) {
+                        marcarError(input);
+                        isValid = false;
+                    } else {
+                        limpiarError(input);
+                    }
+                });
+
+                return isValid;
+            }
+
+            function marcarError(input) {
+                input.style.borderColor = '#dc3545';
+            }
+
+            function limpiarError(input) {
+                input.style.borderColor = '#eee';
+            }
+        });
+    </script>
+</body>
+</html>

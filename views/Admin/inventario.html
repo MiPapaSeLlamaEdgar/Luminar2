@@ -262,14 +262,14 @@
                 <h2>Panel Vendedor</h2>
             </div>
             <ul class="nav-links">
-                <li><a href="/vendedor/dashboard-vendedor">Inicio</a></li>
-                <li><a href="/vendedor/ventas">Ventas</a></li>
-                <li><a href="/vendedor/clientes" >Clientes</a></li>
-                <li><a href="/vendedor/inventario" class="active">Inventario</a></li>
-                <li><a href="/vendedor/reportes">Reportes</a></li>
+                <li><a href="/dashboard-vendedor">Inicio</a></li>
+                <li><a href="/admin/ventas">Ventas</a></li>
+                <li><a href="/admin/clientes" class="active">Clientes</a></li>
+                <li><a href="/admin/inventario">Inventario</a></li>
+                <li><a href="/admin/reportes">Reportes</a></li>
             </ul>
             <div class="user-info">
-                <img src="/images/foto.jpeg" alt="Profile" class="profile-img">
+                <img src="/images/foto.png" alt="Profile" class="profile-img">
                 <span>Andres Mora</span>
             </div>
         </nav>
@@ -282,9 +282,7 @@
                     <input type="text" placeholder="Buscar producto...">
                 </div>
                 <div class="action-buttons">
-                    <a href="/vendedor/nuevo-producto">
-                        <button class="add-product-btn">+ Nuevo Producto</button>
-                    </a>
+                    <button class="add-product-btn" onclick="abrirModalProducto()">+ Nuevo Producto</button>
                 </div>
             </div>
 
