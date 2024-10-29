@@ -4,33 +4,274 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configuración del Administrador</title>
-    <link rel="stylesheet" href="/path/to/your/styles.css">
-     <!-- Actualiza la ruta si tienes un archivo CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="/css/dashboard-admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <style>/* Estilo general para el contenedor de configuración */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            display: flex;
+        }
+        
+        /* Estilo de la barra lateral */
+        .sidebar {
+            width: 220px;
+            background-color: #fff;
+            border-right: 1px solid #ddd;
+            height: 100vh;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .sidebar-header h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-left: 10px;
+            color: #d6266f;
+        }
+        
+        .sidebar .nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .nav-links li {
+            margin-bottom: 15px;
+        }
+        
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: #333;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .nav-links a i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .nav-links a.active, .nav-links a:hover {
+            background-color: #d6266f;
+            color: #fff;
+        }
+        
+        /* Estilo del contenido principal */
+        .settings-container {
+            margin-left: 240px; /* Espacio para la barra lateral */
+            padding: 40px;
+            flex: 1;
+        }
+        
+        .settings-container h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section h2 {
+            font-size: 1.4rem;
+            color: #d6266f;
+            margin-bottom: 15px;
+        }
+        
+        .section label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .section input[type="text"],
+        .section input[type="email"],
+        .section input[type="number"],
+        .section select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .section input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        
+        /* Estilo de botones */
+        button {
+            background-color: #d6266f;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #bf1b5d;
+        }
+        
+        .save-button {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 20px;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        /* Estilo para los modales */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal h2 {
+            color: #d6266f;
+            margin-bottom: 15px;
+        }
+        
+        .modal label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .modal input[type="text"],
+        .modal input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        .modal button {
+            margin-top: 10px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* Estilo de modo oscuro */
+        body.dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+        
+        body.dark-mode .sidebar {
+            background-color: #444;
+        }
+        
+        body.dark-mode .sidebar a {
+            color: #ddd;
+        }
+        
+        body.dark-mode .sidebar a.active,
+        body.dark-mode .sidebar a:hover {
+            background-color: #555;
+            color: #fff;
+        }
+        
+        body.dark-mode .settings-container {
+            background-color: #444;
+        }
+        
+        body.dark-mode .settings-container h1,
+        body.dark-mode .settings-container h2,
+        body.dark-mode .settings-container label {
+            color: #ddd;
+        }
+        
+        body.dark-mode input,
+        body.dark-mode select {
+            background-color: #555;
+            color: #ddd;
+            border: 1px solid #666;
+        }
+        
+        body.dark-mode button {
+            background-color: #666;
+        }
+        
+        body.dark-mode .modal-content {
+            background-color: #555;
+            color: #ddd;
+        }
+        </style>
 </head>
 <body>
-    <style>
-
-    </style>
-</head>
-<body>
-
     <aside class="sidebar">
         <div class="sidebar-header">
             <a href="/dashboard-admin" class="back-button"><i class="fas fa-arrow-left"></i></a>
             <h2>Admin Panel</h2>
         </div>
-        <nav class="sidebar-menu">
-            <a href="/dashboard-admin" class="menu-item active"><i class="fas fa-home"></i> Resumen General</a>
-            <a href="/admin/productos" class="menu-item"><i class="fas fa-box"></i> Productos</a>
-            <a href="/admin/pedidos" class="menu-item"><i class="fas fa-shopping-cart"></i> Pedidos</a>
-            <a href="/admin/usuarios" class="menu-item"><i class="fas fa-users"></i> Usuarios</a>
-            <a href="/admin/reportes" class="menu-item"><i class="fas fa-chart-line"></i> Reportes</a>
-            <a href="/admin/notificaciones" class="menu-item"><i class="fas fa-bell"></i> Notificaciones</a>
-            <a href="/admin/config-admin" class="menu-item"><i class="fas fa-cog"></i> Configuración</a>
+        <nav class="sidebar">
+            <ul class="nav-links">
+                <li><a href="/dashboard-admin" class="active"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="/admin/usuarios"><i class="fas fa-user"></i> Usuarios</a></li>
+                <li><a href="/admin/clientes"><i class="fas fa-users"></i> Clientes</a></li>
+                <li><a href="/admin/ordenes"><i class="fas fa-clipboard-list"></i> Órdenes</a></li>
+                <li><a href="/admin/productos"><i class="fas fa-box-open"></i> Productos</a></li>
+                <li><a href="/admin/inventario"><i class="fas fa-warehouse"></i> Inventario</a></li>
+                <li><a href="/admin/roles"><i class="fas fa-user-tag"></i> Roles</a></li>
+                <li><a href="/admin/reportes"><i class="fas fa-chart-line"></i> Reportes</a></li>
+                <li><a href="/admin/ventas"><i class="fas fa-dollar-sign"></i> Ventas</a></li>
+                <li><a href="/admin/config"><i class="fas fa-cogs"></i> Configuración</a></li>
+            </ul>
         </nav>
     </aside>
+
     <div class="settings-container">
         <h1>Configuración del Administrador</h1>
         
@@ -176,6 +417,3 @@
             closeModal('add-user');
         }
     </script>
-</body>
-</html>
-

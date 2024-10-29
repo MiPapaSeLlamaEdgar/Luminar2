@@ -80,37 +80,53 @@ Object.entries(availableRoutes).forEach(([routeName, path]) => {
 
 // Configurar rutas de vistas (HTML y HBS)
 const viewRoutes = {
-   '/': 'views/login-register.html',
+    '/': 'views/login-register.html',
     '/index': 'views/index.html',
-    '/dashboard-cliente': 'views/Cliente/dashboard-cliente.html',
-    '/Vendedor/dashboard-vendedor': 'views/Vendedor/dashboard-vendedor.html',
-    '/dashboard-admin': 'views/Admin/dashboard-admin.html',
-    '/accounts': 'views/accounts.html',
-    '/cart': 'views/cart.html',
-    '/checkout': 'views/checkout.html',
-    '/productos': 'views/productos.html',
-    '/shop': 'views/shop.html',
-    '/whishlist': 'views/whishlist.html',
-    '/orders': 'views/orders.html',
-    '/privacy-policy': 'views/privacy-policy.html',
+    
+    // Rutas para Cliente
+    '/indexCliente': 'views/Cliente/indexCliente.html',
+    '/cartCliente': 'views/Cliente/cartCliente.html',
+    '/detailsCliente': 'views/Cliente/detailsCliente.html',
+    '/editarperfilCliente': 'views/Cliente/editarperfilCliente.html',
+    '/ordersCliente': 'views/Cliente/ordersCliente.html',
+    '/shopCliente': 'views/Cliente/shopCliente.html',
+    '/whishlistCliente': 'views/Cliente/whishlistCliente.html',
+    
+    // Rutas para Vendedor
     '/vendedor/clientes': 'views/Vendedor/clientes.html',
     '/vendedor/dashboard': 'views/Vendedor/dashboard-vendedor.html',
-    '/vendedor/dashboards': 'views/Vendedor/dashboards.html',
+    '/vendedor/editar-perfil': 'views/Vendedor/editar-perfil.html',
     '/vendedor/inventario': 'views/Vendedor/inventario.html',
     '/vendedor/reportes': 'views/Vendedor/reportes.html',
     '/vendedor/ventas': 'views/Vendedor/ventas.html',
-    '/vendedor/editar-perfil': 'views/Vendedor/editar-perfil.html',
+    '/vendedor/nueva-venta': 'views/Vendedor/nueva-venta.html',
+    '/vendedor/nuevo-cliente': 'views/Vendedor/nuevo-cliente.html',
+    '/vendedor/nuevo-producto': 'views/Vendedor/nuevo-producto.html',
+    
+    // Rutas para Admin
+    '/dashboard-admin': 'views/Admin/dashboard-admin.html',
     '/admin/roles': 'views/Admin/roles.html',
-    '/editarperfilCliente': 'views/editarperfilCliente.html',
-    '/shopCliente': 'views/shopCliente.html',
-    '/ordersCliente': 'views/ordersCliente.html',
-    '/indexCliente': 'views/indexCliente.html',
-    '/detailsCliente': 'views/detailsCliente.html',
-    '/whishlistCliente': 'views/whishlistCliente.html',
+    '/admin/clientes': 'views/Admin/clientes.html',
+    '/admin/config': 'views/Admin/config-admin.html',
+    '/admin/editar-perfil': 'views/Admin/editar-perfil.html',
+    '/admin/inventario': 'views/Admin/inventario.html',
+    '/admin/notificaciones': 'views/Admin/notificaciones.html',
+    '/admin/ordenes': 'views/Admin/ordenes.html',
+    '/admin/pedidos': 'views/Admin/pedidos.html',
+    '/admin/productos': 'views/Admin/productos.html',
+    '/admin/reportes': 'views/Admin/reportes.html',
+    '/admin/usuarios': 'views/Admin/usuarios.html',
+    '/admin/ventas': 'views/Admin/ventas.html',
+
+    // Rutas adicionales
+    '/privacy-policy': 'views/privacy-policy.html',
     '/indexPortal': 'views/indexPortal.html',
     '/shopPortal': 'views/shopPortal.html',
-    '/cartCliente.html': 'views/cartCliente.html'
+    '/details': 'views/details.html',
+
 };
+
+ 
 
 // Agregar ruta específica para roles usando Handlebars
 app.get('/admin/roles', async (req, res) => {
@@ -123,7 +139,7 @@ app.get('/admin/roles', async (req, res) => {
     }
 });
 
-app.get('/clientes', async (req, res) => {
+app.get('/vendedor/cliente', async (req, res) => {
     try {
         const clientes = await req.models.User.findAll({
             attributes: ['usuario_id', 'nombre', 'correo_electronico', 'fecha_registro', 'estado']

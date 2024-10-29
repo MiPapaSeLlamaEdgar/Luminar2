@@ -5,29 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Vendedor | Luminar</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/dashboard-admin.css">
+    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 </head>
 <body>
     <div class="container">
         <!-- Sidebar -->
         <aside class="sidebar">
-        <div class="sidebar-header">
-            <a href="/dashboard-admin" class="back-button"><i class="fas fa-arrow-left"></i></a>
-            <h2>Admin Panel</h2>
-        </div>
-        <nav class="sidebar-menu">
-            <a href="/dashboard-admin" class="menu-item active"><i class="fas fa-home"></i> Resumen General</a>
-            <a href="/admin/productos" class="menu-item"><i class="fas fa-box"></i> Productos</a>
-            <a href="/admin/pedidos" class="menu-item"><i class="fas fa-shopping-cart"></i> Pedidos</a>
-            <a href="/admin/usuarios" class="menu-item"><i class="fas fa-users"></i> Usuarios</a>
-            <a href="/admin/reportes" class="menu-item"><i class="fas fa-chart-line"></i> Reportes</a>
-            <a href="/admin/notificaciones" class="menu-item"><i class="fas fa-bell"></i> Notificaciones</a>
-            <a href="/admin/config-admin" class="menu-item"><i class="fas fa-cog"></i> Configuración</a>
-        </nav>
-    </aside>
+            <div class="sidebar-header">
+                <a href="/dashboard-admin" class="back-button"><i class="fas fa-arrow-left"></i></a>
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="sidebar">
+                <ul class="nav-links">
+                    <li><a href="/dashboard-admin" class="active"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="/admin/usuarios"><i class="fas fa-user"></i> Usuarios</a></li>
+                    <li><a href="/admin/clientes"><i class="fas fa-users"></i> Clientes</a></li>
+                    <li><a href="/admin/ordenes"><i class="fas fa-clipboard-list"></i> Órdenes</a></li>
+                    <li><a href="/admin/productos"><i class="fas fa-box-open"></i> Productos</a></li>
+                    <li><a href="/admin/inventario"><i class="fas fa-warehouse"></i> Inventario</a></li>
+                    <li><a href="/admin/roles"><i class="fas fa-user-tag"></i> Roles</a></li>
+                    <li><a href="/admin/reportes"><i class="fas fa-chart-line"></i> Reportes</a></li>
+                    <li><a href="/admin/ventas"><i class="fas fa-dollar-sign"></i> Ventas</a></li>
+                    <li><a href="/admin/config"><i class="fas fa-cogs"></i> Configuración</a></li>
+                </ul>
+            </nav>
+        </aside>
 
         <!-- Main Content -->
         <main class="main-content">
