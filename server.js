@@ -27,9 +27,9 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 }
 }));
-
+ 
 // Configuración de la base de datos
-const sequelize = new Sequelize('Luminar', 'root', '1234', {
+const sequelize = new Sequelize('luminar', 'root', '1234', {
     host: 'localhost',
     dialect: 'mysql',
     logging: false,
@@ -153,8 +153,6 @@ app.get('/vendedor/clientes', async (req, res) => {
         res.status(500).send('Error al obtener usuarios');
     }
 });
-
-
 
 Object.entries(viewRoutes).forEach(([route, file]) => {
     app.get(route, (req, res) => {
