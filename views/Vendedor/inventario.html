@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario | Luminar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
+    <style>
+        :root {
+            --primary-color: #D6266F;
+            --secondary-color: #4A2828;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+        }
+
+        /* Información del usuario */
+.user-info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Coloca el contenido a la izquierda */
+    margin-top: 30px; /* Espacio en la parte superior de la imagen */
+    padding-top: 20px;
+    border-top: 1px solid #eee; /* Línea superior */
+}
+
+/* Imagen de perfil */
+.profile-img {
+    width: 40px; /* Tamaño más pequeño */
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px; /* Espacio entre la imagen y el nombre */
+}
+
+.user-info span {
+    color: var(--text-color);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--card-color);
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar-header h2 {
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .nav-links li a {
+            display: block;
+            padding: 15px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-links li a:hover,
+        .nav-links li a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: var(--background-color);
+        }
+
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .search-box input {
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            width: 300px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .edit-btn, .delete-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+
+        .add-product-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-product-btn:hover {
+            background-color: #bf1b5d;
+        }
+
+        /* Inventory Table */
+        .inventory-table {
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .stock-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .en-stock {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .bajo-stock {
+            background-color: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .agotado {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            margin: 50px auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-buttons button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .cancel-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Panel Vendedor</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/vendedor/dashboard-vendedor">Inicio</a></li>
+                <li><a href="/vendedor/ventas">Ventas</a></li>
+                <li><a href="/vendedor/clientes" >Clientes</a></li>
+                <li><a href="/vendedor/inventario" class="active">Inventario</a></li>
+                <li><a href="/vendedor/reportes">Reportes</a></li>
+            </ul>
+            <div class="user-info">
+                <img src="/images/foto.jpeg" alt="Profile" class="profile-img">
+                <span>Andres Mora</span>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h2 style="margin-bottom: 20px;">Gestión de Inventario</h2>
+            <div class="header-actions">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar producto...">
+                </div>
+                <div class="action-buttons">
+                    <a href="/vendedor/nuevo-producto">
+                        <button class="add-product-btn">+ Nuevo Producto</button>
+                    </a>
+                </div>
+            </div>
+
+            <div class="inventory-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody">
+                        <!-- Datos dinámicos aquí -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Nuevo/Editar Producto -->
+    <div id="productoModal" class="modal">
+        <div class="modal-content">
+            <h2>Nuevo Producto</h2>
+            <form id="productoForm">
+                <div class="form-group">
+                    <label>Nombre del Producto</label>
+                    <input type="text" id="nombreProducto" required>
+                </div>
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select id="categoria" required>
+                        <option value="">Seleccionar categoría</option>
+                        <option value="1">Sombreros</option>
+                        <option value="2">Accesorios</option>
+                        <option value="3">Ropa</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Precio</label>
+                    <input type="number" id="precio" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Stock</label>
+                    <input type="number" id="stock" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="cancel-btn" onclick="cerrarModal()">Cancelar</button>
+                    <button type="submit" class="save-btn">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarInventario();
+        });
+
+        function cargarInventario() {
+            // Simulación de datos de inventario
+            const productos = [
+                { id: 1, nombre: 'Sombrero Rosa', categoria: 'Sombreros', precio: 59.99, stock: 25, estado: 'en-stock' },
+                { id: 2, nombre: 'Sombrero Elegante', categoria: 'Sombreros', precio: 79.99, stock: 5, estado: 'bajo-stock' },
+                { id: 3, nombre: 'Sombrero Casual', categoria: 'Sombreros', precio: 45.99, stock: 0, estado: 'agotado' }
+            ];
+
+            const tbody = document.getElementById('inventoryTableBody');
+            tbody.innerHTML = '';
+
+            productos.forEach(producto => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${producto.id}</td>
+                    <td>${producto.nombre}</td>
+                    <td>${producto.categoria}</td>
+                    <td>$${producto.precio}</td>
+                    <td>${producto.stock}</td>
+                    <td><span class="stock-status ${producto.estado}">${getEstadoTexto(producto.estado)}</span></td>
+                    <td>
+                        <button onclick="editarProducto(${producto.id})" class="edit-btn">Editar</button>
+                        <button onclick="eliminarProducto(${producto.id})" class="delete-btn">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function getEstadoTexto(estado) {
+            switch(estado) {
+                case 'en-stock': return 'En Stock';
+                case 'bajo-stock': return 'Bajo Stock';
+                case 'agotado': return 'Agotado';
+                default: return estado;
+            }
+        }
+
+        function abrirModalProducto() {
+            document.getElementById('productoModal').style.display = 'block';
+        }
+
+        function cerrarModal() {
+            document.getElementById('productoModal').style.display = 'none';
+        }
+
+        function editarProducto(id) {
+            // Implementar lógica de edición
+            console.log('Editar producto:', id);
+        }
+
+        function eliminarProducto(id) {
+            // Implementar lógica de eliminación
+            console.log('Eliminar producto:', id);
+        }
+    </script>
+</body>
+</html>

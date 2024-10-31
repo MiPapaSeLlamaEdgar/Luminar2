@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil | Luminar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/dashboard-admin" class="back-button"><i class="fas fa-arrow-left"></i></a>
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="sidebar">
+                <ul class="nav-links">
+                    <li><a href="/dashboard-admin" class="active"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="/admin/usuarios"><i class="fas fa-user"></i> Usuarios</a></li>
+                    <li><a href="/admin/clientes"><i class="fas fa-users"></i> Clientes</a></li>
+                    <li><a href="/admin/ordenes"><i class="fas fa-clipboard-list"></i> Órdenes</a></li>
+                    <li><a href="/admin/productos"><i class="fas fa-box-open"></i> Productos</a></li>
+                    <li><a href="/admin/inventario"><i class="fas fa-warehouse"></i> Inventario</a></li>
+                    <li><a href="/admin/roles"><i class="fas fa-user-tag"></i> Roles</a></li>
+                    <li><a href="/admin/reportes"><i class="fas fa-chart-line"></i> Reportes</a></li>
+                    <li><a href="/admin/ventas"><i class="fas fa-dollar-sign"></i> Ventas</a></li>
+                    <li><a href="/admin/config"><i class="fas fa-cogs"></i> Configuración</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="profile-section">
+                <div class="profile-header">
+                    <div class="profile-image-container">
+                        <img src="/images/foto.png" alt="Foto de perfil" class="profile-image">
+                        <button class="change-photo-btn" title="Cambiar foto">
+                            <i class="fi fi-sr-camera" style="font-size: 1.5em;"></i>
+                        </button>
+                    </div>
+                    <h2>Editar Perfil</h2>
+                </div>
+
+                <form class="profile-form" id="profileForm">
+                    <div class="form-section">
+                        <h3>Información Personal</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <input type="text" id="nombre" name="nombre" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Apellido</label>
+                                <input type="text" id="apellido" name="apellido" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Correo Electrónico</label>
+                            <input type="email" id="correo_electronico" name="correo_electronico" required>
+                        </div> 
+                        <div class="form-group">
+                            <label>Último Acceso</label>
+                            <input type="text" id="ultimo_acceso" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de Registro</label>
+                            <input type="text" id="fecha_registro" disabled>
+                        </div>
+                    </div>
+                
+                    <div class="form-section">
+                        <h3>Cambiar Contraseña</h3>
+                        <div class="form-group">
+                            <label>Contraseña Actual</label>
+                            <input type="password" id="contrasena_actual" name="contrasena_actual">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nueva Contraseña</label>
+                                <input type="password" id="nueva_contrasena" name="nueva_contrasena">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirmar Nueva Contraseña</label>
+                                <input type="password" id="confirmar_contrasena">
+                            </div>
+                        </div>
+                    </div>
+                
+                
+                    <div class="action-buttons">
+                        <button type="button" class="cancel-btn" onclick="window.history.back()">Cancelar</button>
+                        <button type="submit" class="save-btn">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validar contraseñas
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (newPassword && newPassword !== confirmPassword) {
+                alert('Las contraseñas no coinciden');
+                return;
+            }
+            
+            // Aquí iría la lógica para guardar los cambios
+            alert('Cambios guardados exitosamente');
+        });
+
+        // Cambiar foto de perfil
+        document.querySelector('.change-photo-btn').addEventListener('click', function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.querySelector('.profile-image').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('profileForm');
+    
+    // Cargar datos del usuario
+    async function cargarDatosUsuario() {
+        try {
+            const query = `
+                SELECT 
+                    u.*,
+                    r.nombre_rol
+                FROM Usuarios u
+                JOIN Roles r ON u.rol_id = r.rol_id
+                WHERE u.usuario_id = ?
+            `;
+            
+            // Aquí iría tu lógica para obtener los datos del usuario
+            const usuario = {
+                nombre: 'Andres',
+                apellido: 'Mora',
+                correo_electronico: 'andres@luminar.com',
+                ultimo_acceso: '2024-03-20 15:30:00',
+                fecha_registro: '2024-01-01 09:00:00',
+                imagen_perfil: '/images/foto.png'
+            };
+
+            // Llenar el formulario con los datos
+            document.getElementById('nombre').value = usuario.nombre;
+            document.getElementById('apellido').value = usuario.apellido;
+            document.getElementById('correo_electronico').value = usuario.correo_electronico;
+            document.getElementById('ultimo_acceso').value = new Date(usuario.ultimo_acceso).toLocaleString();
+            document.getElementById('fecha_registro').value = new Date(usuario.fecha_registro).toLocaleString();
+            
+            // Mostrar imagen de perfil actual
+            document.querySelector('.profile-image').src = usuario.imagen_perfil;
+        } catch (error) {
+            console.error('Error al cargar datos:', error);
+        }
+    }
+
+    // Manejar envío del formulario
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Validar contraseñas
+        const nuevaContrasena = document.getElementById('nueva_contrasena').value;
+        const confirmarContrasena = document.getElementById('confirmar_contrasena').value;
+        
+        if (nuevaContrasena && nuevaContrasena !== confirmarContrasena) {
+            alert('Las contraseñas no coinciden');
+            return;
+        }
+
+        // Crear FormData para manejar la imagen
+        const formData = new FormData(this);
+        
+        try {
+            // Aquí iría tu lógica para actualizar los datos del usuario
+            console.log('Datos a actualizar:', Object.fromEntries(formData));
+            alert('Perfil actualizado exitosamente');
+        } catch (error) {
+            console.error('Error al actualizar perfil:', error);
+            alert('Error al actualizar el perfil');
+        }
+    });
+
+    // Cargar datos iniciales
+    cargarDatosUsuario();
+});
+    </script>
+</body>
+</html>

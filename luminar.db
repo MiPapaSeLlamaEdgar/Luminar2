@@ -1,0 +1,188 @@
+DROP DATABASE IF EXISTS Luminar;
+CREATE DATABASE Luminar;
+USE Luminar;
+
+-- Tabla de Roles (Modificada para incluir permisos)
+CREATE TABLE Roles (
+    rol_id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre_rol VARCHAR(50) NOT NULL,
+    descripcion TEXT,
+    permisos JSON
+);
+
+-- Tabla de Usuarios (Añadidos campos adicionales)
+CREATE TABLE Usuarios (
+    usuario_id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    correo_electronico VARCHAR(100) UNIQUE NOT NULL,
+    contrasena VARCHAR(255) NOT NULL,
+    rol_id INT NOT NULL,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ultimo_acceso TIMESTAMP NULL DEFAULT NULL,
+    estado ENUM('activo', 'inactivo', 'suspendido') DEFAULT 'activo',
+    imagen_perfil VARCHAR(255),
+    FOREIGN KEY (rol_id) REFERENCES Roles(rol_id)
+);
+
+-- Tabla de Clientes (Añadidos campos para marketing)
+CREATE TABLE Clientes (
+    cliente_id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    correo_electronico VARCHAR(100) UNIQUE NOT NULL,
+    telefono VARCHAR(15),
+    direccion TEXT,
+    ciudad VARCHAR(100),
+    codigo_postal VARCHAR(10),
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_nacimiento DATE,
+    genero ENUM('M', 'F', 'Otro'),
+    preferencias JSON,
+    ultima_compra TIMESTAMP NULL DEFAULT NULL
+);
+
+-- Tabla de Categorías (Añadida jerarquía)
+CREATE TABLE Categorias (
+    categoria_id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre_categoria VARCHAR(100) NOT NULL,
+    categoria_padre_id INT DEFAULT NULL,
+    descripcion TEXT,
+    imagen VARCHAR(255),
+    estado ENUM('activo', 'inactivo') DEFAULT 'activo',
+    FOREIGN KEY (categoria_padre_id) REFERENCES Categorias(categoria_id)
+);
+
+-- Tabla de Productos (Añadidos campos para e-commerce)
+CREATE TABLE Productos (
+    producto_id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre_producto VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    talla VARCHAR(10),
+    color VARCHAR(50),
+    precio DECIMAL(10, 2),
+    cantidad_stock INT,
+    categoria_id INT,
+    imagenes JSON,
+    especificaciones JSON,
+    estado ENUM('activo', 'inactivo', 'agotado') DEFAULT 'activo',
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_modificacion TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (categoria_id) REFERENCES Categorias(categoria_id)
+);
+
+-- Tabla de Órdenes (Añadido seguimiento)
+CREATE TABLE Ordenes (
+    orden_id INT PRIMARY KEY AUTO_INCREMENT,
+    cliente_id INT,
+    usuario_id INT,
+    codigo_orden VARCHAR(20) UNIQUE,
+    fecha_orden TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_entrega_estimada DATE,
+    fecha_entrega_real DATE,
+    subtotal DECIMAL(10, 2),
+    impuestos DECIMAL(10, 2),
+    descuento DECIMAL(10, 2),
+    total DECIMAL(10, 2),
+    estado ENUM('pendiente', 'confirmada', 'en proceso', 'enviada', 'entregada', 'cancelada') DEFAULT 'pendiente',
+    direccion_envio TEXT,
+    notas TEXT,
+    FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id),
+    FOREIGN KEY (usuario_id) REFERENCES Usuarios(usuario_id)
+);
+
+-- Tabla de Seguimiento de Órdenes (Nueva)
+CREATE TABLE Seguimiento_Ordenes (
+    seguimiento_id INT PRIMARY KEY AUTO_INCREMENT,
+    orden_id INT,
+    estado VARCHAR(50),
+    descripcion TEXT,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    usuario_id INT,
+    FOREIGN KEY (orden_id) REFERENCES Ordenes(orden_id),
+    FOREIGN KEY (usuario_id) REFERENCES Usuarios(usuario_id)
+);
+
+-- Tabla de Pagos (Modificada)
+CREATE TABLE Pagos (
+    pago_id INT PRIMARY KEY AUTO_INCREMENT,
+    orden_id INT,
+    codigo_pago VARCHAR(50) UNIQUE,
+    fecha_pago TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    monto DECIMAL(10, 2),
+    metodo_pago VARCHAR(50),
+    estado_pago ENUM('pendiente', 'completado', 'fallido', 'reembolsado') DEFAULT 'pendiente',
+    referencia_transaccion VARCHAR(100),
+    FOREIGN KEY (orden_id) REFERENCES Ordenes(orden_id)
+);
+
+-- Tabla de Lista de Deseos (Modificada)
+CREATE TABLE Lista_Deseos (
+    wishlist_id INT PRIMARY KEY AUTO_INCREMENT,
+    cliente_id INT,
+    producto_id INT,
+    fecha_agregado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    notificar_disponibilidad BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id),
+    FOREIGN KEY (producto_id) REFERENCES Productos(producto_id),
+    UNIQUE KEY unique_wishlist_item (cliente_id, producto_id)
+);
+
+-- Tabla de Carrito (Modificada)
+CREATE TABLE Carrito (
+    carrito_id INT PRIMARY KEY AUTO_INCREMENT,
+    cliente_id INT,
+    producto_id INT,
+    cantidad INT,
+    fecha_agregado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_modificacion TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id),
+    FOREIGN KEY (producto_id) REFERENCES Productos(producto_id)
+);
+
+-- Inserciones de Datos Iniciales
+
+INSERT INTO Roles (nombre_rol, descripcion, permisos) VALUES 
+('Administrador', 'Administra todo el sistema', JSON_OBJECT('usuarios', true, 'productos', true, 'ordenes', true)),
+('Vendedor', 'Gestiona ventas y clientes', JSON_OBJECT('productos', true, 'clientes', true)),
+('Cliente', 'Realiza compras y gestiona su perfil', JSON_OBJECT('perfil', true, 'compras', true));
+
+INSERT INTO Usuarios (nombre, apellido, correo_electronico, contrasena, rol_id, fecha_registro, estado, imagen_perfil) VALUES 
+('Pedro', 'González', 'pedro.gonzalez@empresa.com', 'password123', 1, NOW(), 'activo', 'img/pedro.png'),
+('Ana', 'Martínez', 'ana.martinez@empresa.com', 'password456', 2, NOW(), 'activo', 'img/ana.png'),
+('Juan', 'Pérez', 'juan.perez@empresa.com', 'password789', 3, NOW(), 'activo', 'img/juan.png');
+
+INSERT INTO Clientes (nombre, apellido, correo_electronico, telefono, direccion, ciudad, codigo_postal, fecha_registro, fecha_nacimiento, genero, preferencias) VALUES 
+('María', 'López', 'maria.lopez@gmail.com', '555-1234', 'Calle Falsa 123', 'Ciudad A', '12345', NOW(), '1990-01-01', 'F', JSON_OBJECT('intereses', 'moda, tecnología')),
+('Carlos', 'Rodríguez', 'carlos.rodriguez@gmail.com', '555-5678', 'Calle Verdadera 456', 'Ciudad B', '54321', NOW(), '1985-02-20', 'M', JSON_OBJECT('intereses', 'deportes, videojuegos'));
+
+INSERT INTO Categorias (nombre_categoria, descripcion, imagen, estado) VALUES 
+('Electrónica', 'Artículos electrónicos y gadgets', 'img/electronica.png', 'activo'),
+('Ropa', 'Ropa para hombres, mujeres y niños', 'img/ropa.png', 'activo'),
+('Hogar', 'Artículos para el hogar y cocina', 'img/hogar.png', 'activo');
+
+INSERT INTO Productos (nombre_producto, descripcion, talla, color, precio, cantidad_stock, categoria_id, imagenes, especificaciones, estado) VALUES 
+('Smartphone XYZ', 'Teléfono inteligente con tecnología avanzada', NULL, 'Negro', 599.99, 50, 1, JSON_ARRAY('img1.png', 'img2.png'), JSON_OBJECT('procesador', '2.8GHz', 'RAM', '8GB'), 'activo'),
+('Camiseta Básica', 'Camiseta de algodón 100%', 'M', 'Blanco', 19.99, 100, 2, JSON_ARRAY('img1.png', 'img2.png'), JSON_OBJECT('material', 'Algodón', 'tipo', 'Manga corta'), 'activo'),
+('Lámpara de Mesa', 'Lámpara moderna para el hogar', NULL, 'Blanco', 39.99, 30, 3, JSON_ARRAY('img1.png', 'img2.png'), JSON_OBJECT('material', 'Metal', 'potencia', '5W'), 'activo');
+
+INSERT INTO Ordenes (cliente_id, usuario_id, codigo_orden, fecha_orden, fecha_entrega_estimada, subtotal, impuestos, descuento, total, estado, direccion_envio, notas) VALUES 
+(1, 2, 'ORD123', NOW(), '2024-11-10', 100.00, 15.00, 0.00, 115.00, 'confirmada', 'Calle Falsa 123', 'Entregar antes de las 6 PM'),
+(2, 2, 'ORD124', NOW(), '2024-11-11', 200.00, 30.00, 10.00, 220.00, 'pendiente', 'Calle Verdadera 456', 'Llamar al llegar');
+
+INSERT INTO Seguimiento_Ordenes (orden_id, estado, descripcion, fecha_actualizacion, usuario_id) VALUES 
+(1, 'confirmada', 'Orden confirmada por el usuario', NOW(), 2),
+(1, 'enviada', 'Orden enviada al cliente', NOW(), 2),
+(2, 'pendiente', 'Pendiente de confirmación de pago', NOW(), 2);
+
+INSERT INTO Pagos (orden_id, codigo_pago, fecha_pago, monto, metodo_pago, estado_pago, referencia_transaccion) VALUES 
+(1, 'PAY123', NOW(), 115.00, 'Tarjeta de crédito', 'completado', 'REF123456'),
+(2, 'PAY124', NOW(), 220.00, 'Transferencia bancaria', 'pendiente', 'REF654321');
+
+INSERT INTO Lista_Deseos (cliente_id, producto_id, fecha_agregado, notificar_disponibilidad) VALUES 
+(1, 1, NOW(), TRUE),
+(2, 2, NOW(), FALSE);
+
+INSERT INTO Carrito (cliente_id, producto_id, cantidad, fecha_agregado) VALUES 
+(1, 1, 2, NOW()),
+(2, 2, 1, NOW());

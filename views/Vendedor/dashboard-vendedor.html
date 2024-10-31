@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Vendedor | Luminar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+</head>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Panel Vendedor</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/vendedor/dashboard-vendedor" class="active">Inicio</a></li>
+                <li><a href="/vendedor/ventas">Ventas</a></li>
+                <li><a href="/vendedor/clientes">Clientes</a></li>
+                <li><a href="/vendedor/inventario">Inventario</a></li>
+                <li><a href="/vendedor/reportes">Reportes</a></li>
+            </ul>
+            <div class="user-info">
+                <img src="/images/foto.jpeg" alt="Profile" class="profile-img">
+                <span>Andres Mora</span>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar...">
+                </div>
+                <div class="header__user-actions">
+                    <a href="/vendedor/editar-perfil" class="header__action-btn" title="Editar Perfil">
+                        <i class="fi fi-sr-user-pen"></i>
+                    </a>
+                    <a href="/index" class="header__action-btn" title="Cerrar Sesión">
+                        <i class="fi fi-sr-exit"></i>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Dashboard Cards -->
+            <div class="dashboard-cards">
+                <div class="card">
+                    <h3>Ventas Totales</h3>
+                    <p class="number" id="totalVentas">$0</p>
+                    <p class="trend positive">+15% vs mes anterior</p>
+                </div>
+                <div class="card">
+                    <h3>Clientes Nuevos</h3>
+                    <p class="number" id="totalClientes">0</p>
+                    <p class="trend positive">+5% vs mes anterior</p>
+                </div>
+                <div class="card">
+                    <h3>Pedidos Pendientes</h3>
+                    <p class="number" id="pedidosPendientes">0</p>
+                    <p class="trend negative">-2% vs mes anterior</p>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3>Ventas Mensuales</h3>
+                    <canvas id="ventasChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Productos más Vendidos</h3>
+                    <canvas id="productosChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent Sales Table -->
+            <div class="recent-sales">
+                <h3>Ventas Recientes</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Producto</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salesTableBody">
+                        <!-- Datos dinámicos aquí -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <!-- Modal de Cerrar Sesión -->
+<!-- Modal de Cerrar Sesión -->
+<div id="logoutModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Cerrar Sesión</h2>
+        </div>
+        <div class="modal-body">
+            <p>¿Estás seguro que deseas cerrar sesión?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="cancel-btn" onclick="cerrarModal()">Cancelar</button>
+            <button class="confirm-btn" onclick="confirmarCerrarSesion()">Cerrar Sesión</button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos para el Modal */
+/* Estilos para el Modal */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    z-index: 1000; /* Asegúrate de que esté sobre el resto del contenido */
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    margin: 0 auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Cabecera del modal */
+.modal-header {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.modal-header h2 {
+    font-size: 1.5em;
+    color: #333;
+}
+
+/* Cuerpo del modal */
+.modal-body {
+    padding: 15px 0;
+    text-align: center;
+}
+
+.modal-body p {
+    font-size: 1em;
+    color: #555;
+    line-height: 1.4;
+}
+
+/* Pie del modal con botones */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.cancel-btn,
+.confirm-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s;
+}
+
+/* Botón de cancelar */
+.cancel-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.cancel-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Botón de confirmación */
+.confirm-btn {
+    background-color: #d6266f; /* Color principal */
+    color: white;
+}
+
+.confirm-btn:hover {
+    background-color: #bf1b5d; /* Color de hover */
+}
+
+</style>
+
+<script>
+    function mostrarModalCerrarSesion(e) {
+        e.preventDefault();
+        document.getElementById('logoutModal').style.display = 'block';
+    }
+
+    function cerrarModal() {
+        document.getElementById('logoutModal').style.display = 'none';
+    }
+
+    function confirmarCerrarSesion() {
+        window.location.href = '/index';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const logoutBtn = document.querySelector('.header__user-actions a[title="Cerrar Sesión"]');
+        if(logoutBtn) {
+            logoutBtn.addEventListener('click', mostrarModalCerrarSesion);
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('logoutModal');
+            if (event.target == modal) {
+                cerrarModal();
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
+<script>
+    // script.js
+document.addEventListener('DOMContentLoaded', function() {
+    // Datos de ejemplo
+    const ventasData = {
+        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+        ventas: [12000, 19000, 15000, 25000, 22000, 30000],
+        clientes: [15, 25, 20, 30, 28, 35]
+    };
+
+    const productosData = {
+        productos: ['Producto A', 'Producto B', 'Producto C', 'Producto D', 'Producto E'],
+        cantidades: [300, 250, 200, 150, 100]
+    };
+
+    // Actualizar números en las tarjetas
+    document.getElementById('totalVentas').textContent = '$' + ventasData.ventas[5].toLocaleString();
+    document.getElementById('totalClientes').textContent = ventasData.clientes[5];
+    document.getElementById('pedidosPendientes').textContent = '12';
+
+    // Gráfico de Ventas
+    const ventasChart = new Chart(document.getElementById('ventasChart'), {
+        type: 'line',
+        data: {
+            labels: ventasData.labels,
+            datasets: [{
+                label: 'Ventas Mensuales',
+                data: ventasData.ventas,
+                borderColor: '#3498db',
+                tension: 0.1,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
+    });
+
+    // Gráfico de Productos
+    const productosChart = new Chart(document.getElementById('productosChart'), {
+        type: 'bar',
+        data: {
+            labels: productosData.productos,
+            datasets: [{
+                label: 'Unidades Vendidas',
+                data: productosData.cantidades,
+                backgroundColor: '#2ecc71'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
+    });
+
+    // Datos de ventas recientes
+    const ventasRecientes = [
+        { id: '001', cliente: 'Juan Pérez', producto: 'Producto A', monto: 1500, estado: 'Completado' },
+        { id: '002', cliente: 'María García', producto: 'Producto B', monto: 2300, estado: 'Pendiente' },
+        { id: '003', cliente: 'Carlos López', producto: 'Producto C', monto: 950, estado: 'Completado' },
+        { id: '004', cliente: 'Ana Martínez', producto: 'Producto A', monto: 1800, estado: 'En proceso' },
+        { id: '005', cliente: 'Pedro Sánchez', producto: 'Producto D', monto: 3200, estado: 'Completado' }
+    ];
+
+    // Llenar tabla de ventas recientes
+    const tableBody = document.getElementById('salesTableBody');
+    ventasRecientes.forEach(venta => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${venta.id}</td>
+            <td>${venta.cliente}</td>
+            <td>${venta.producto}</td>
+            <td>$${venta.monto.toLocaleString()}</td>
+            <td><span class="status ${venta.estado.toLowerCase()}">${venta.estado}</span></td>
+        `;
+        tableBody.appendChild(row);
+    });
+
+    // Funcionalidad de búsqueda
+    const searchInput = document.querySelector('.search-box input');
+    searchInput.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const rows = tableBody.getElementsByTagName('tr');
+        
+        Array.from(rows).forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+});
+    // Agregar al final de tu script
+    // Modificar la función de cerrar sesión
+    
+
+    
+</script>

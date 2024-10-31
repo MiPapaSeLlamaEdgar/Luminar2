@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Órdenes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>Dashboard de Órdenes</h1>
+    </header>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/dashboard-admin" class="back-button"><i class="fas fa-arrow-left"></i></a>
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="sidebar">
+                <ul class="nav-links">
+                    <!-- Menú de navegación -->
+                    <li><a href="/dashboard-admin" class="active"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="/admin/usuarios"><i class="fas fa-user"></i> Usuarios</a></li>
+                    <li><a href="/admin/clientes"><i class="fas fa-users"></i> Clientes</a></li>
+                    <li><a href="/admin/ordenes"><i class="fas fa-clipboard-list"></i> Órdenes</a></li>
+                    <li><a href="/admin/productos"><i class="fas fa-box-open"></i> Productos</a></li>
+                    <li><a href="/admin/inventario"><i class="fas fa-warehouse"></i> Inventario</a></li>
+                    <li><a href="/admin/roles"><i class="fas fa-user-tag"></i> Roles</a></li>
+                    <li><a href="/admin/reportes"><i class="fas fa-chart-line"></i> Reportes</a></li>
+                    <li><a href="/admin/ventas"><i class="fas fa-dollar-sign"></i> Ventas</a></li>
+                    <li><a href="/admin/config"><i class="fas fa-cogs"></i> Configuración</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar órdenes..." id="searchInput" onkeyup="buscarOrden()">
+                </div>
+                <div class="header__user-actions">
+                    <a href="#" class="header__action-btn"><i class="fas fa-bell"></i></a>
+                    <a href="#" class="header__action-btn"><i class="fas fa-cog"></i></a>
+                    <a href="#" class="header__action-btn"><i class="fas fa-sign-out-alt"></i></a>
+                </div>
+            </div>
+
+            <!-- Tabla de Órdenes -->
+            <div class="recent-sales">
+                <h3>Órdenes Recientes</h3>
+                <button class="nuevo-cliente-btn" onclick="mostrarModal()">Nueva Orden</button>
+                <table id="ordenesTable">
+                    <thead>
+                        <tr>
+                            <th>ID Orden</th>
+                            <th>Cliente</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Fecha Orden</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordenesBody">
+                        <!-- Filas dinámicas generadas por JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Modal para CRUD -->
+            <div class="modal" id="ordenModal">
+                <div class="modal-content">
+                    <span onclick="cerrarModal()" style="cursor:pointer;">&times;</span>
+                    <form id="ordenForm">
+                        <input type="hidden" id="ordenId">
+                        <div class="form-group">
+                            <label for="clienteId">ID Cliente:</label>
+                            <input type="number" id="clienteId" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="usuarioId">ID Usuario:</label>
+                            <input type="number" id="usuarioId">
+                        </div>
+                        <div class="form-group">
+                            <label for="total">Total:</label>
+                            <input type="number" id="total" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="estado">Estado:</label>
+                            <select id="estado" required>
+                                <option value="pendiente">Pendiente</option>
+                                <option value="confirmada">Confirmada</option>
+                                <option value="en proceso">En Proceso</option>
+                                <option value="enviada">Enviada</option>
+                                <option value="entregada">Entregada</option>
+                                <option value="cancelada">Cancelada</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="direccionEnvio">Dirección de Envío:</label>
+                            <textarea id="direccionEnvio"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="detalles">Detalles de Productos:</label>
+                            <textarea id="detalles" placeholder="Formato: Producto ID, Cantidad; Producto ID, Cantidad"></textarea>
+                        </div>
+                        <div class="modal-buttons">
+                            <button type="submit" class="save-btn">Guardar</button>
+                            <button type="button" onclick="cerrarModal()" class="cancel-btn">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiUrl = '/api/orders';
+
+        function mostrarModal(orden = null) {
+            const modal = document.getElementById('ordenModal');
+            if (orden) {
+                document.getElementById('ordenId').value = orden.orden_id;
+                document.getElementById('clienteId').value = orden.cliente_id;
+                document.getElementById('usuarioId').value = orden.usuario_id;
+                document.getElementById('total').value = orden.total;
+                document.getElementById('estado').value = orden.estado;
+                document.getElementById('direccionEnvio').value = orden.direccion_envio;
+                // Detalles de productos en un formato legible
+                const detallesFormat = orden.OrderDetails.map(det => `${det.producto_id}, ${det.cantidad}`).join('; ');
+                document.getElementById('detalles').value = detallesFormat;
+            } else {
+                document.getElementById('ordenForm').reset();
+                document.getElementById('ordenId').value = '';
+            }
+            modal.style.display = 'block';
+        }
+
+        function cerrarModal() {
+            document.getElementById('ordenModal').style.display = 'none';
+        }
+
+        document.getElementById('ordenForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const ordenId = document.getElementById('ordenId').value;
+            const method = ordenId ? 'PUT' : 'POST';
+            const url = ordenId ? `${apiUrl}/${ordenId}` : apiUrl;
+
+            // Crear objeto de detalles
+            const detallesString = document.getElementById('detalles').value.trim();
+            const detalles = detallesString.split(';').map(det => {
+                const [productoId, cantidad] = det.split(',').map(d => d.trim());
+                return { producto_id: parseInt(productoId), cantidad: parseInt(cantidad) };
+            });
+
+            const orden = {
+                cliente_id: parseInt(document.getElementById('clienteId').value.trim()),
+                usuario_id: document.getElementById('usuarioId').value ? parseInt(document.getElementById('usuarioId').value.trim()) : null,
+                total: parseFloat(document.getElementById('total').value.trim()),
+                estado: document.getElementById('estado').value,
+                direccion_envio: document.getElementById('direccionEnvio').value.trim(),
+                detalles
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orden),
+                });
+
+                if (response.ok) {
+                    cargarOrdenes();
+                    cerrarModal();
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error al guardar la orden: ${errorData.message || 'Error desconocido'}`);
+                }
+            } catch (error) {
+                alert('Error al conectar con el servidor');
+            }
+        });
+
+        async function cargarOrdenes() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error('Error al obtener órdenes');
+                const ordenes = await response.json();
+
+                const ordenesBody = document.getElementById('ordenesBody');
+                ordenesBody.innerHTML = '';
+                ordenes.forEach(orden => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${orden.orden_id}</td>
+                        <td>${orden.Cliente.nombre} ${orden.Cliente.apellido}</td>
+                        <td>$${orden.total.toFixed(2)}</td>
+                        <td><span class="status ${orden.estado.toLowerCase()}">${orden.estado}</span></td>
+                        <td>${new Date(orden.fecha_orden).toLocaleDateString()}</td>
+                        <td class="action-buttons">
+                            <button onclick='mostrarModal(${JSON.stringify(orden)})' class="editar-btn"><i class="fas fa-edit"></i> Editar</button>
+                            <button onclick='eliminarOrden(${orden.orden_id})' class="delete-btn"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                        </td>
+                    `;
+                    ordenesBody.appendChild(row);
+                });
+            } catch (error) {
+                alert('Error al cargar órdenes');
+            }
+        }
+
+        async function eliminarOrden(ordenId) {
+            const confirmacion = confirm('¿Estás seguro de que deseas eliminar esta orden?');
+            if (!confirmacion) return;
+
+            try {
+                const response = await fetch(`${apiUrl}/${ordenId}`, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    cargarOrdenes();
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error al eliminar la orden: ${errorData.message || 'Error desconocido'}`);
+                }
+            } catch (error) {
+                alert('Error al conectar con el servidor');
+            }
+        }
+
+        function buscarOrden() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const filas = document.querySelectorAll('#ordenesBody tr');
+            filas.forEach(fila => {
+                const cliente = fila.children[1].textContent.toLowerCase();
+                if (cliente.includes(input)) {
+                    fila.style.display = '';
+                } else {
+                    fila.style.display = 'none';
+                }
+            });
+        }
+
+        cargarOrdenes();
+    </script>
+</body>
+</html>

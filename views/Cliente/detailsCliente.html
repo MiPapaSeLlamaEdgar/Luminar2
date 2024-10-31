@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel="stylesheet" href="/assets/css/details.css">
+    <title>Detalles del Producto - LUMINAR</title>
+</head>
+<body>
+    <!--== HEADER ==-->
+    <header class="header">
+        <div class="header__top">
+            <div class="header__container container">
+                <div class="header__contact">
+                    <span>luminaropa@gmail.com</span>
+                    <span>+57 3134717406</span>
+                </div>
+
+                <p class="header__alert-news">LUMINAR</p>
+
+                <a href="/" class="header__top-action">
+                    Cierre de sesión
+                </a>
+            </div>
+        </div>
+
+        <nav class="nav container">
+            <a href="/indexCliente" class="nav__logo">
+                <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
+            </a>
+
+            <div class="nav__menu" id="nav__menu">
+                <ul class="nav__list">
+                    <li class="nav__item">
+                        <a href="/indexCliente" class="nav__link active-link">INICIO</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/shopCliente" class="nav__link">Tienda</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/editarperfilCliente" class="nav__link">Mi cuenta</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/ordersCliente" class="nav__link">Pedidos</a>
+                    </li>
+                </ul>
+
+                <div class="header_search">
+                    <input type="text" placeholder="Buscar productos..." class="form__input">
+                    <button class="search__btn">
+                        <i class="fi fi-rr-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="header__user-actions">
+                <a href="/whishlistCliente" class="header__action-btn">
+                    <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
+                    <span class="count">3</span>
+                </a>
+
+                <a href="/cartCliente" class="header__action-btn">
+                    <img src="assets/img/icon-cart.svg" alt="Carrito">
+                    <span class="count">3</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!--== PRODUCT DETAILS ==-->
+    <section class="product-details container section--lg">
+        <div class="product-info grid">
+            <div class="product-image">
+                <!-- Main Product Image -->
+                <img src="/assets/img/product-main.jpg" alt="Colorful Pattern Shirt" />
+                <!-- Thumbnails -->
+                <div class="thumbnail-images">
+                    <img src="/assets/img/product-thumb1.jpg" alt="">
+                    <img src="/assets/img/product-thumb2.jpg" alt="">
+                    <img src="/assets/img/product-thumb3.jpg" alt="">
+                </div>
+            </div>
+
+            <!-- Product Information -->
+            <div class="product-info-content">
+                <h1 class="product-title">Colorful Pattern Shirt</h1>
+                <p class="product-category">Clothing</p>
+
+                <!-- Rating -->
+                <div class="product-rating">
+                    ★★★★★<span>(25 reviews)</span>
+                </div>
+
+                <!-- Price -->
+                <div class="product-price">
+                    <span class="new-price">$238.85</span> 
+                    <span class="old-price">$245.80</span>
+                </div>
+
+                <!-- Description -->
+                <div class="product-description">
+                    <h3>Description</h3>
+                    <p>This colorful pattern shirt features a vibrant design perfect for casual outings. Made with high-quality, breathable fabric for all-day comfort.</p>
+                </div>
+
+                <!-- Options -->
+                <div class="product-options">
+                    <!-- Size -->
+                    <div class="size-option">
+                        <h3>Size</h3>
+                        <select name="talla" id="talla">
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                        </select>
+                    </div>
+
+                    <!-- Color -->
+                    <div class="color-option">
+                        <h3>Color</h3>
+                        <!-- Color Swatches -->
+                        <button style='background-color: blue;'></button>
+                        <button style='background-color: red;'></button>
+                        <button style='background-color: green;'></button>
+                    </div>
+
+                    <!-- Quantity and Cart Button -->
+                    <div class='product-actions'>
+                        <!-- Quantity Selector -->
+                        <input type='number' value='1' min='1' max='10' />
+                        <!-- Add to Cart Button -->
+                        <button>Add to Cart</button>
+                    </div>
+
+                    <!-- Stock Info -->
+                    In stock: 50 items
+                </div> 
+            </div> 
+        </div> 
+    </section>
+
+    <!--=== FOOTER ===-->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__links">
+                    <h4 class="footer__title">Enlaces Útiles</h4>
+                    <ul class="footer__list">
+                        <li><a href="/shopCliente">Tienda</a></li>
+                        <li><a href="/editarperfilCliente">Mi Cuenta</a></li>
+                        <li><a href="/whishlistCliente">Lista de Deseos</a></li>
+                        <li><a href="/ordersCliente">Pedidos</a></li>
+                        <li><a href="/cartCliente">Carrito</a></li>
+                        <li><a href="/privacy-policy" target="_blank">Políticas de Privacidad</a></li>
+                    </ul>
+                </div>
+    
+                <div class="footer__contact">
+                    <h4 class="footer__title">Contáctanos</h4>
+                    <p>Teléfono: +57 3134717406</p>
+                    <p>Email: luminaropa@gmail.com</p>
+                    <p>Dirección: Neos Centro, Calle 12 B, 9-40</p>
+                </div>
+    
+                <div class="footer__social">
+                    <h4 class="footer__title">Síguenos</h4>
+                    <ul class="footer__social-list">
+                        <li><a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank"><i class="fi fi-rr-facebook"></i> Facebook</a></li>
+                        <li><a href="https://www.tiktok.com/@luminar.2023" target="_blank"><i class="fi fi-rr-tiktok"></i> TikTok</a></li>
+                        <li><a href="https://www.instagram.com/luminar.2023/" target="_blank"><i class="fi fi-rr-instagram"></i> Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+    
+            <div class="footer__bottom">
+                <p>&copy; 2024 Luminar. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Productos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>Dashboard de Productos</h1>
+    </header>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/dashboard-admin" class="back-button"><i class="fas fa-arrow-left"></i></a>
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="sidebar">
+                <ul class="nav-links">
+                    <!-- Menú de navegación -->
+                    <li><a href="/dashboard-admin" class="active"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="/admin/productos"><i class="fas fa-box-open"></i> Productos</a></li>
+                    <!-- Otros enlaces omitidos -->
+                </ul>
+            </nav>
+        </aside>
+
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar productos..." id="searchInput" onkeyup="buscarProducto()">
+                </div>
+                <div class="header__user-actions">
+                    <a href="#" class="header__action-btn"><i class="fas fa-bell"></i></a>
+                    <a href="#" class="header__action-btn"><i class="fas fa-cog"></i></a>
+                    <a href="#" class="header__action-btn"><i class="fas fa-sign-out-alt"></i></a>
+                </div>
+            </div>
+
+            <div class="productos-table">
+                <h3>Productos Disponibles</h3>
+                <button class="nuevo-producto-btn" onclick="mostrarModal()">Nuevo Producto</button>
+                <table id="productosTable">
+                    <thead>
+                        <tr>
+                            <th>ID Producto</th>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productosBody">
+                        <!-- Filas dinámicas generadas por JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal" id="productoModal">
+                <div class="modal-content">
+                    <span onclick="cerrarModal()" style="cursor:pointer;">&times;</span>
+                    <form id="productoForm">
+                        <input type="hidden" id="productoId">
+                        <div class="form-group">
+                            <label for="nombre">Nombre:</label>
+                            <input type="text" id="nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoriaId">Categoría:</label>
+                            <select id="categoriaId" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="precio">Precio:</label>
+                            <input type="number" id="precio" step=".01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="stock">Stock:</label>
+                            <input type="number" id="stock" required>
+                        </div>
+                        <div class="modal-buttons">
+                            <button type="submit" class="save-btn">Guardar</button>
+                            <button type="button" onclick="cerrarModal()" class="cancel-btn">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiUrl = '/api/productos';
+        const apiCategoriasUrl = '/api/categorias';
+
+        function mostrarModal(producto = null) {
+            const modal = document.getElementById('productoModal');
+            if (producto) {
+                document.getElementById('productoId').value = producto.producto_id;
+                document.getElementById('nombre').value = producto.nombre_producto;
+                document.getElementById('categoriaId').value = producto.categoria_id;
+                document.getElementById('precio').value = producto.precio;
+                document.getElementById('stock').value = producto.cantidad_stock;
+            } else {
+                document.getElementById('productoForm').reset();
+                document.getElementById('productoId').value = '';
+            }
+            modal.style.display = 'block';
+        }
+
+        function cerrarModal() {
+            document.getElementById('productoModal').style.display = 'none';
+        }
+
+        async function cargarCategorias() {
+            try {
+                const response = await fetch(apiCategoriasUrl);
+                if (!response.ok) throw new Error('Error al obtener categorías');
+                const categorias = await response.json();
+
+                const categoriaSelect = document.getElementById('categoriaId');
+                categoriaSelect.innerHTML = '<option value="">Seleccione una categoría</option>';
+                categorias.forEach(categoria => {
+                    const option = document.createElement('option');
+                    option.value = categoria.categoria_id;
+                    option.textContent = categoria.nombre_categoria;
+                    categoriaSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error al cargar categorías:', error);
+            }
+        }
+
+        document.getElementById('productoForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const productoId = document.getElementById('productoId').value;
+            const method = productoId ? 'PUT' : 'POST';
+            const url = productoId ? `${apiUrl}/${productoId}` : apiUrl;
+            const producto = {
+                nombre_producto: document.getElementById('nombre').value.trim(),
+                categoria_id: parseInt(document.getElementById('categoriaId').value.trim()),
+                precio: parseFloat(document.getElementById('precio').value.trim()),
+                cantidad_stock: parseInt(document.getElementById('stock').value.trim()),
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(producto),
+                });
+
+                if (response.ok) {
+                    cargarProductos();
+                    cerrarModal();
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error al guardar el producto: ${errorData.message || 'Error desconocido'}`);
+                }
+            } catch (error) {
+                alert('Error al conectar con el servidor');
+            }
+        });
+
+        async function cargarProductos() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error('Error al obtener productos');
+                const productos = await response.json();
+
+                const productosBody = document.getElementById('productosBody');
+                productosBody.innerHTML = '';
+                productos.forEach(producto => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${producto.producto_id}</td>
+                        <td>${producto.nombre_producto}</td>
+                        <td>${producto.Categoria.nombre_categoria}</td>
+                        <td>$${producto.precio.toFixed(2)}</td>
+                        <td>${producto.cantidad_stock}</td>
+                        <td class="action-buttons">
+                            <button onclick='mostrarModal(${JSON.stringify(producto)})' class="editar-btn"><i class="fas fa-edit"></i> Editar</button>
+                            <button onclick='eliminarProducto(${producto.producto_id})' class="delete-btn"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                        </td>
+                    `;
+                    productosBody.appendChild(row);
+                });
+            } catch (error) {
+                alert('Error al cargar productos');
+            }
+        }
+
+        async function eliminarProducto(productoId) {
+            const confirmacion = confirm('¿Estás seguro de que deseas eliminar este producto?');
+            if (!confirmacion) return;
+
+            try {
+                const response = await fetch(`${apiUrl}/${productoId}`, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    cargarProductos();
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error al eliminar el producto: ${errorData.message || 'Error desconocido'}`);
+                }
+            } catch (error) {
+                alert('Error al conectar con el servidor');
+            }
+        }
+
+        function buscarProducto() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const filas = document.querySelectorAll('#productosBody tr');
+            filas.forEach(fila => {
+                const nombre = fila.children[1].textContent.toLowerCase();
+                if (nombre.includes(input)) {
+                    fila.style.display = '';
+                } else {
+                    fila.style.display = 'none';
+                }
+            });
+        }
+
+        // Inicializar la carga
+        cargarCategorias();
+        cargarProductos();
+    </script>
+
+</body>
+</html>

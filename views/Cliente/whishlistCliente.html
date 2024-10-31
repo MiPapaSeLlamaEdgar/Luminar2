@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--==FLATICON==-->
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
+
+    <!--==SWIPER CSS==-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <!--==SWEETALERT2==-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!--==CSS==-->
+    <link rel="stylesheet" href="css/style.css">
+    <title>Lista de Deseos - LUMINAR</title>
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header__top">
+            <div class="header__container container">
+                <div class="header__contact">
+                    <span>luminaropa@gmail.com</span>
+                    <span>+57 3134717406</span>
+                </div>
+
+                <p class="header__alert-news">LUMINAR</p>
+
+                <a href="/" class="header__top-action">
+                    Cierre de sesión
+                </a>
+            </div>
+        </div>
+
+        <nav class="nav container">
+            <a href="/indexCliente" class="nav__logo">
+                <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
+            </a>
+
+            <div class="nav__menu" id="nav__menu">
+                <ul class="nav__list">
+                    <li class="nav__item">
+                        <a href="/indexCliente" class="nav__link">INICIO</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/shopCliente" class="nav__link">Tienda</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/editarperfilCliente" class="nav__link">Mi cuenta</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/ordersCliente" class="nav__link">Pedidos</a>
+                    </li>
+                </ul>
+
+                <div class="header_search">
+                    <input type="text" placeholder="Buscar productos..." class="form__input">
+                <!--    <button class="search__btn">
+                        <i class="fi fi-rr-search"></i>
+                    </button> -->
+                </div>
+            </div>
+
+            <div class="header__user-actions">
+                <a href="/whishlistCliente" class="header__action-btn">
+                    <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
+                    <span class="count">0</span>
+                </a>
+
+                <a href="/cartCliente" class="header__action-btn">
+                    <img src="assets/img/icon-cart.svg" alt="Carrito">
+                    <span class="count">0</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- WISHLIST SECTION -->
+    <!-- En la sección de wishlist -->
+<section class="whishlist section--lg">
+    <div class="container">
+        <h2 class="section__title">Mi <span>Lista de Deseos</span></h2>
+        <div id="wishlistItemsBody" class="whishlist__content products__grid">
+            <!-- Agregar un loader o mensaje de carga -->
+            <div id="loadingMessage" class="loading-message">
+                Cargando productos...
+            </div>
+        </div>
+
+        <!-- Mensaje de lista vacía -->
+        <div id="emptyWishlistMessage" style="display:none;" class="empty-message">
+            <p>Tu lista de deseos está vacía.</p>
+            <a href="/shopCliente" class="btn">Ir a la tienda</a>
+        </div>
+    </div>
+</section>
+
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__links">
+                    <h4 class="footer__title">Enlaces Útiles</h4>
+                    <ul class="footer__list">
+                        <li><a href="/shopCliente">Tienda</a></li>
+                        <li><a href="/editarperfilCliente">Mi Cuenta</a></li>
+                        <li><a href="/whishlistCliente">Lista de Deseos</a></li>
+                        <li><a href="/ordersCliente">Pedidos</a></li>
+                        <li><a href="/cartCliente">Carrito</a></li>
+                        <li><a href="/privacy-policy">Políticas de Privacidad</a></li>
+                    </ul>
+                </div>
+    
+                <div class="footer__contact">
+                    <h4 class="footer__title">Contáctanos</h4>
+                    <p>Teléfono: +57 3134717406</p>
+                    <p>Email: luminaropa@gmail.com</p>
+                    <p>Dirección: Neos Centro, Calle 12 B, 9-40</p>
+                </div>
+    
+                <div class="footer__social">
+                    <h4 class="footer__title">Síguenos</h4>
+                    <ul class="footer__social-list">
+                        <li><a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank"><i class="fi fi-rr-facebook"></i> Facebook</a></li>
+                        <li><a href="https://www.tiktok.com/@luminar.2023" target="_blank"><i class="fi fi-rr-tiktok"></i> TikTok</a></li>
+                        <li><a href="https://www.instagram.com/luminar.2023/" target="_blank"><i class="fi fi-rr-instagram"></i> Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+    
+            <div class="footer__bottom">
+                <p>&copy; 2024 Luminar. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SWIPER JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<!-- SWEETALERT2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- MAIN JS -->
+<script src="assets/js/main.js"></script>
+
+<!-- Wishlist Functionality Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const wishlistContainer = document.getElementById('wishlistItemsBody');
+    const emptyMessage = document.getElementById('emptyWishlistMessage');
+
+    // Función para mostrar notificaciones
+    const showNotification = (message, type = 'success') => {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        Toast.fire({
+            icon: type,
+            title: message
+        });
+    };
+
+    // Función para actualizar el contador
+    const updateWishlistCount = async () => {
+        try {
+            const response = await fetch('/api/wishlist/count');
+            const data = await response.json();
+            document.querySelectorAll('.count').forEach(element => {
+                element.textContent = data.count;
+            });
+        } catch (error) {
+            console.error('Error al actualizar contador:', error);
+        }
+    };
+
+    // Función para cargar los items de la lista de deseos
+    const loadWishlistItems = async () => {
+        try {
+            const response = await fetch('/api/wishlist/items');
+            const items = await response.json();
+
+            if (items.length === 0) {
+                wishlistContainer.style.display = 'none';
+                emptyMessage.style.display = 'block';
+                return;
+            }
+
+            wishlistContainer.style.display = 'grid';
+            emptyMessage.style.display = 'none';
+
+            wishlistContainer.innerHTML = items.map(item => `
+                <div class="product__item" data-id="${item.producto_id}">
+                    <div class="product__banner">
+                        <a href="/product/${item.producto_id}" class="product__images">
+                            <img src="${item.imagen_url}" alt="${item.nombre_producto}" class="product__img">
+                        </a>
+                    </div>
+                    <div class="product__content">
+                        <span class="product__category">${item.categoria}</span>
+                        <a href="/product/${item.producto_id}">
+                            <h3 class="product__title">${item.nombre_producto}</h3>
+                        </a>
+                        <div class="product__price flex">
+                            <span class="new__price">$${item.precio}</span>
+                        </div>
+                        <div class="product__buttons">
+                            <button class="action__btn remove-from-wishlist" aria-label="Remove from Wishlist">
+                                <i class="fi fi-rs-trash"></i>
+                            </button>
+                            <button class="action__btn add-to-cart" aria-label="Add to Cart">
+                                <i class="fi fi-rs-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Agregar event listeners a los nuevos botones
+            attachButtonListeners();
+
+        } catch (error) {
+            console.error('Error al cargar items:', error);
+            showNotification('Error al cargar la lista de deseos', 'error');
+        }
+    };
+
+    // Función para agregar event listeners a los botones
+    const attachButtonListeners = () => {
+        // Botones de eliminar de la lista
+        document.querySelectorAll('.remove-from-wishlist').forEach(button => {
+            button.addEventListener('click', async function() {
+                const productItem = this.closest('.product__item');
+                const productId = productItem.dataset.id;
+
+                try {
+                    const response = await fetch('/api/wishlist/remove', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ producto_id: productId })
+                    });
+
+                    const data = await response.json();
+                    showNotification(data.message);
+                    
+                    // Eliminar el item visualmente
+                    productItem.remove();
+                    
+                    // Actualizar contador
+                    updateWishlistCount();
+                    
+                    // Verificar si la lista está vacía
+                    if (wishlistContainer.children.length === 0) {
+                        wishlistContainer.style.display = 'none';
+                        emptyMessage.style.display = 'block';
+                    }
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    showNotification('Error al eliminar el producto', 'error');
+                }
+            });
+        });
+
+        // Botones de agregar al carrito
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', async function() {
+                const productItem = this.closest('.product__item');
+                const productId = productItem.dataset.id;
+
+                try {
+                    const response = await fetch('/api/cart/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            producto_id: productId,
+                            cantidad: 1
+                        })
+                    });
+
+                    const data = await response.json();
+                    showNotification(data.message);
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    showNotification('Error al agregar al carrito', 'error');
+                }
+            });
+        });
+    };
+
+    // Cargar items al iniciar
+    loadWishlistItems();
+    updateWishlistCount();
+});
+</script>
+</body>
+
+</html>

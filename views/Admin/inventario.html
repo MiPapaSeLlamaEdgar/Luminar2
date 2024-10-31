@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario | Luminar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
+    
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/dashboard-admin" class="back-button"><i class="fas fa-arrow-left"></i></a>
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="sidebar">
+                <ul class="nav-links">
+                    <li><a href="/dashboard-admin" class="active"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="/admin/usuarios"><i class="fas fa-user"></i> Usuarios</a></li>
+                    <li><a href="/admin/clientes"><i class="fas fa-users"></i> Clientes</a></li>
+                    <li><a href="/admin/ordenes"><i class="fas fa-clipboard-list"></i> Órdenes</a></li>
+                    <li><a href="/admin/productos"><i class="fas fa-box-open"></i> Productos</a></li>
+                    <li><a href="/admin/inventario"><i class="fas fa-warehouse"></i> Inventario</a></li>
+                    <li><a href="/admin/roles"><i class="fas fa-user-tag"></i> Roles</a></li>
+                    <li><a href="/admin/reportes"><i class="fas fa-chart-line"></i> Reportes</a></li>
+                    <li><a href="/admin/ventas"><i class="fas fa-dollar-sign"></i> Ventas</a></li>
+                    <li><a href="/admin/config"><i class="fas fa-cogs"></i> Configuración</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h2 style="margin-bottom: 20px;">Gestión de Inventario</h2>
+            <div class="header-actions">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar producto...">
+                </div>
+                <div class="action-buttons">
+                    <button class="add-product-btn" onclick="abrirModalProducto()">+ Nuevo Producto</button>
+                </div>
+            </div>
+
+            <div class="inventory-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody">
+                        <!-- Datos dinámicos aquí -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Nuevo/Editar Producto -->
+    <div id="productoModal" class="modal">
+        <div class="modal-content">
+            <h2>Nuevo Producto</h2>
+            <form id="productoForm">
+                <div class="form-group">
+                    <label>Nombre del Producto</label>
+                    <input type="text" id="nombreProducto" required>
+                </div>
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select id="categoria" required>
+                        <option value="">Seleccionar categoría</option>
+                        <option value="1">Sombreros</option>
+                        <option value="2">Accesorios</option>
+                        <option value="3">Ropa</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Precio</label>
+                    <input type="number" id="precio" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Stock</label>
+                    <input type="number" id="stock" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="cancel-btn" onclick="cerrarModal()">Cancelar</button>
+                    <button type="submit" class="save-btn">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarInventario();
+        });
+
+        function cargarInventario() {
+            // Simulación de datos de inventario
+            const productos = [
+                { id: 1, nombre: 'Sombrero Rosa', categoria: 'Sombreros', precio: 59.99, stock: 25, estado: 'en-stock' },
+                { id: 2, nombre: 'Sombrero Elegante', categoria: 'Sombreros', precio: 79.99, stock: 5, estado: 'bajo-stock' },
+                { id: 3, nombre: 'Sombrero Casual', categoria: 'Sombreros', precio: 45.99, stock: 0, estado: 'agotado' }
+            ];
+
+            const tbody = document.getElementById('inventoryTableBody');
+            tbody.innerHTML = '';
+
+            productos.forEach(producto => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${producto.id}</td>
+                    <td>${producto.nombre}</td>
+                    <td>${producto.categoria}</td>
+                    <td>$${producto.precio}</td>
+                    <td>${producto.stock}</td>
+                    <td><span class="stock-status ${producto.estado}">${getEstadoTexto(producto.estado)}</span></td>
+                    <td>
+                        <button onclick="editarProducto(${producto.id})" class="edit-btn">Editar</button>
+                        <button onclick="eliminarProducto(${producto.id})" class="delete-btn">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function getEstadoTexto(estado) {
+            switch(estado) {
+                case 'en-stock': return 'En Stock';
+                case 'bajo-stock': return 'Bajo Stock';
+                case 'agotado': return 'Agotado';
+                default: return estado;
+            }
+        }
+
+        function abrirModalProducto() {
+            document.getElementById('productoModal').style.display = 'block';
+        }
+
+        function cerrarModal() {
+            document.getElementById('productoModal').style.display = 'none';
+        }
+
+        function editarProducto(id) {
+            // Implementar lógica de edición
+            console.log('Editar producto:', id);
+        }
+
+        function eliminarProducto(id) {
+            // Implementar lógica de eliminación
+            console.log('Eliminar producto:', id);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="assets/css/style.css">
+    <title>Shop - Luminar</title>
+    <style>
+        /* Estilo para los tabs de categorías */
+        .categories {
+            padding: 20px 0;
+            background-color: #f5f5f5;
+        }
+        .categories__tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .category__tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .category__tab:hover,
+        .category__tab.active {
+            background-color: #333;
+            color: #fff;
+            border-color: #333;
+        }
+        
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header__top">
+            <div class="header__container container">
+                <div class="header__contact">
+                    <span>luminaropa@gmail.com</span>
+                    <span>+57 3134717406</span>
+                </div>
+
+                <p class="header__alert-news">LUMINAR</p>
+
+                <a href="/" class="header__top-action">
+                    Cierre de sesión
+                </a>
+            </div>
+        </div>
+
+        <nav class="nav container">
+            <a href="/indexCliente" class="nav__logo">
+                <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
+            </a>
+
+            <div class="nav__menu" id="nav__menu">
+                <ul class="nav__list">
+                    <li class="nav__item">
+                        <a href="/indexCliente" class="nav__link active-link">INICIO</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/shopCliente" class="nav__link">Tienda</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/editarperfilCliente" class="nav__link">Mi cuenta</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/ordersCliente" class="nav__link">Pedidos</a>
+                    </li>
+                </ul>
+
+                <div class="header_search">
+                    <input type="text" placeholder="Buscar productos..." class="form__input">
+                    <button class="search__btn">
+                        <i class="fi fi-rr-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="header__user-actions">
+                <a href="/whishlistCliente" class="header__action-btn">
+                    <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
+                    <span class="count">3</span>
+                </a>
+
+                <a href="/cartCliente" class="header__action-btn">
+                    <img src="assets/img/icon-cart.svg" alt="Carrito">
+                    <span class="count">3</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- CATEGORÍAS (TABS) -->
+    <section class="categories section">
+        <div class="categories__container">
+            <ul class="categories__tabs">
+                <li class="category__tab active" data-category="all">Todos</li>
+                <li class="category__tab" data-category="blazer">Blazer</li>
+                <li class="category__tab" data-category="abrigos">Abrigos</li>
+                <li class="category__tab" data-category="faldas">Faldas</li>
+                <li class="category__tab" data-category="pantalones">Pantalones</li>
+                <li class="category__tab" data-category="chaquetas">Chaquetas</li>
+                <li class="category__tab" data-category="gabanes">Gabanes</li>
+                <li class="category__tab" data-category="tops">Tops</li>
+                <li class="category__tab" data-category="legis">Legis</li>
+                <li class="category__tab" data-category="corset">Corset</li>
+                <li class="category__tab" data-category="blusas">Blusas</li>
+                <li class="category__tab" data-category="chalecos">Chalecos</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- MAIN SHOP SECTION -->
+    <main class="main">
+        <section class="shop section">
+            <div class="shop__container container">
+                <h2 class="section__title">Tienda</h2>
+                <div class="products__container grid">
+                    <!-- Los productos se renderizan dinámicamente aquí -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__links">
+                    <h4 class="footer__title">Enlaces Útiles</h4>
+                    <ul class="footer__list">
+                        <li><a href="/shopCliente">Tienda</a></li>
+                        <li><a href="/editarperfilCliente">Mi Cuenta</a></li>
+                        <li><a href="/whishlistCliente">Lista de Deseos</a></li>
+                        <li><a href="/ordersCliente">Pedidos</a></li>
+                        <li><a href="/cartCliente">Carrito</a></li>
+                        <li><a href="privacy-policy" target="_blank">Políticas de Privacidad</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer__contact">
+                    <h4 class="footer__title">Contáctanos</h4>
+                    <p>Teléfono: +57 3134717406</p>
+                    <p>Email: luminaropa@gmail.com</p>
+                    <p>Direccion: Neos Centro, Calle 12 B, 9-40</p>
+                </div>
+
+                <div class="footer__social">
+                    <h4 class="footer__title">Síguenos</h4>
+                    <ul class="footer__social-list">
+                        <li><a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank"><i class="fi fi-rr-facebook"></i> Facebook</a></li>
+                        <li><a href="https://www.tiktok.com/@luminar.2023" target="_blank"><i class="fi fi-rr-tiktok"></i> TikTok</a></li>
+                        <li><a href="https://www.instagram.com/luminar.2023/" target="_blank"><i class="fi fi-rr-instagram"></i> Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer__bottom">
+                <p>&copy; 2024 Luminar. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MAIN JS -->
+    <script src="assets/js/main.js"></script>
+
+    <!-- Script para productos quemados y categorías -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const productContainer = document.querySelector('.products__container');
+            const categoryTabs = document.querySelectorAll('.category__tab');
+
+            // Productos quemados (datos simulados)
+            const productsData = [
+                {
+                    id: 1,
+                    imageUrl1: "assets/img/product-1-1.jpg",
+                    imageUrl2: "assets/img/product-1-2.jpg",
+                    badge: "Hot",
+                    category: "blazer",
+                    name: "Colorful Pattern Shirt",
+                    rating: 5,
+                    priceNew: 238.85,
+                    priceOld: 245.80
+                },
+                {
+                    id: 2,
+                    imageUrl1: "assets/img/product-2-1.jpg",
+                    imageUrl2: "assets/img/product-2-2.jpg",
+                    badge: "-30%",
+                    category: "accesorios",
+                    name: "Leather Handbag",
+                    rating: 5,
+                    priceNew: 178.99,
+                    priceOld: 210.50
+                },
+                {
+                    id: 3,
+                    imageUrl1: "assets/img/product-3-1.jpg",
+                    imageUrl2: "assets/img/product-3-2.jpg",
+                    badge: "New",
+                    category: "pantalones",
+                    name: "Casual Blue Jeans",
+                    rating: 4,
+                    priceNew: 99.99,
+                    priceOld: 120.00
+                },
+                // Añade más productos aquí según sea necesario
+            ];
+
+            // Función para cargar productos por categoría
+            const loadProductsByCategory = (category) => {
+                // Limpiar el contenedor de productos antes de agregar nuevos
+                productContainer.innerHTML = '';
+
+                // Filtrar productos según la categoría seleccionada
+                const filteredProducts = category === 'all'
+                    ? productsData
+                    : productsData.filter(product => product.category === category);
+
+                // Renderizar productos filtrados por categoría
+                filteredProducts.forEach(product => {
+                    const productItem = document.createElement('div');
+                    productItem.classList.add('product__item');
+                    productItem.innerHTML = `
+                        <div class="product__banner">
+                            <a href="/detailsCliente?productId=${product.id}" class="product__images">
+                                <img src="${product.imageUrl1}" alt="Product Image" class="product__img default">
+                                <img src="${product.imageUrl2}" alt="Product Image Hover" class="product__img hover">
+                            </a>
+                            ${product.badge ? `<div class="product__badge">${product.badge}</div>` : ''}
+                        </div>
+                        <div class="product__content">
+                            <span class="product__category">${product.category.charAt(0).toUpperCase() + product.category.slice(1)}</span>
+                            <a href="/detailsCliente?productId=${product.id}">
+                                <h3 class="product__title">${product.name}</h3>
+                            </a>
+                            <div class="product__rating">
+                                ${'<i class="fi fi-rs-star"></i>'.repeat(product.rating)}
+                            </div>
+                            <div class="product__price flex">
+                                <span class="new__price">$${product.priceNew.toFixed(2)}</span>
+                                ${product.priceOld ? `<span class="old__price">$${product.priceOld.toFixed(2)}</span>` : ''}
+                            </div>
+                            <a href="#" class="action__btn Wishlist" aria-label="Add to Wishlist">
+                                <i class="fi fi-rs-shopping-bag-add"></i>
+                            </a>
+                            <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
+                                <i class="fi fi-rs-shopping-bag-add"></i>
+                            </a>
+                        </div>
+                    `;
+                    productContainer.appendChild(productItem);
+                });
+            };
+
+            // Event listener para clics en tabs de categorías
+            categoryTabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const selectedCategory = this.getAttribute('data-category');
+
+                    // Remover la clase active de todos los tabs
+                    categoryTabs.forEach(tab => tab.classList.remove('active'));
+                    // Agregar la clase active al tab seleccionado
+                    this.classList.add('active');
+
+                    // Cargar productos según la categoría seleccionada
+                    loadProductsByCategory(selectedCategory);
+                });
+            });
+
+            // Cargar productos de la pestaña "Todos" al iniciar
+            loadProductsByCategory('all');
+        });
+    </script>
+</body>
+</html>

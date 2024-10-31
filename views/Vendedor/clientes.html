@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes | Luminar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
+    <style>
+        :root {
+            --primary-color: #D6266F;
+            --secondary-color: #4A2828;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar (mantener consistente con el dashboard) */
+        .sidebar {
+            width: 280px;
+            background-color: var(--card-color);
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: var(--background-color);
+        }
+
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .nuevo-cliente-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .nuevo-cliente-btn:hover {
+            background-color: #bf1b5d;
+        }
+
+        /* Search and Filter Section */
+        .filtros-section {
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-box input,
+        .filtros-section select {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 14px;
+        }
+
+        /* Clientes Table */
+        .clientes-table {
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .estado-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .activo { 
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .inactivo {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        /* Actions Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            margin: 50px auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .filtros-section {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar (mantener consistente con el dashboard) -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Panel Vendedor</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/vendedor/dashboard-vendedor">Inicio</a></li>
+                <li><a href="/vendedor/ventas">Ventas</a></li>
+                <li><a href="/vendedor/clientes" class="active">Clientes</a></li>
+                <li><a href="/vendedor/inventario">Inventario</a></li>
+                <li><a href="/vendedor/reportes">Reportes</a></li>
+            </ul>
+            <div class="user-info">
+                <img src="/images/foto.jpeg" alt="Profile" class="profile-img">
+                <span>Andres Mora</span>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header-actions">
+                <h2>Gestión de Clientes</h2>
+                <div class="actions">
+                    <a href="/vendedor/nuevo-cliente">
+                        <button class="nuevo-cliente-btn">+ Nuevo Cliente</button>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="filtros-section">
+                <input type="text" placeholder="Buscar cliente..." id="searchInput">
+                <select id="estadoFilter">
+                    <option value="">Todos los estados</option>
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                </select>
+            </div>
+
+            <!-- Tabla de Clientes -->
+            <div class="clientes-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Última Compra</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientesTableBody">
+                        <!-- Datos dinámicos aquí -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Nuevo/Editar Cliente -->
+    <div id="clienteModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Nuevo Cliente</h2>
+            <form id="clienteForm">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" id="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="tel" id="telefono" required>
+                </div>
+                <div class="form-group">
+                    <label>Dirección</label>
+                    <input type="text" id="direccion">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" onclick="cerrarModal()" class="cancelar-btn">Cancelar</button>
+                    <button type="submit" class="guardar-btn">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarClientes();
+
+            // Event listeners
+            document.getElementById('searchInput').addEventListener('input', filtrarClientes);
+            document.getElementById('estadoFilter').addEventListener('change', filtrarClientes);
+        });
+
+        function cargarClientes() {
+            // Aquí iría tu lógica para cargar clientes desde la base de datos
+            const clientes = [
+                { id: 1, nombre: 'Juan Pérez', email: 'juan@email.com', telefono: '1234567890', ultima_compra: '2024-03-15', estado: 'activo' },
+                { id: 2, nombre: 'María García', email: 'maria@email.com', telefono: '0987654321', ultima_compra: '2024-03-10', estado: 'activo' },
+                { id: 3, nombre: 'Carlos López', email: 'carlos@email.com', telefono: '5555555555', ultima_compra: '2024-02-28', estado: 'inactivo' }
+            ];
+
+            actualizarTablaClientes(clientes);
+        }
+
+        function actualizarTablaClientes(clientes) {
+            const tbody = document.getElementById('clientesTableBody');
+            tbody.innerHTML = '';
+
+            clientes.forEach(cliente => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${cliente.id}</td>
+                    <td>${cliente.nombre}</td>
+                    <td>${cliente.email}</td>
+                    <td>${cliente.telefono}</td>
+                    <td>${new Date(cliente.ultima_compra).toLocaleDateString()}</td>
+                    <td><span class="estado-badge ${cliente.estado}">${cliente.estado}</span></td>
+                    <td class="action-buttons">
+                        <button class="edit-btn" onclick="editarCliente(${cliente.id})">Editar</button>
+                        <button class="delete-btn" onclick="eliminarCliente(${cliente.id})">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Funciones del modal y CRUD
+        function abrirModalNuevoCliente() {
+            document.getElementById('modalTitle').textContent = 'Nuevo Cliente';
+            document.getElementById('clienteModal').style.display = 'block';
+        }
+
+        function cerrarModal() {
+            document.getElementById('clienteModal').style.display = 'none';
+        }
+
+        function editarCliente(id) {
+            // Implementar lógica de edición
+        }
+
+        function eliminarCliente(id) {
+            // Implementar lógica de eliminación
+        }
+
+        function filtrarClientes() {
+            // Implementar lógica de filtrado
+        }
+    </script>
+</body>
+</html>

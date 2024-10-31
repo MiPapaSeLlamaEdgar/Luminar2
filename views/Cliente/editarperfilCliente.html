@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--==FLATICON==-->
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
+
+    <!--==SWIPER CSS==-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <!--==CSS==-->
+    <link rel="stylesheet" href="css/style.css">
+    <title>Página de Inicio - LUMINAR</title>
+
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil | Luminar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <!--link rel="stylesheet" href="/css/dashboard.css"-->
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <style>
+        :root {
+            --primary-color: #D6266F;
+            --secondary-color: #4A2828;
+        /*    --background-color: #f8f9fa;*/
+            --card-color: #ffffff;
+            --text-color: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .container {
+            display: flex;
+            min-height: 10vh;
+        }
+
+        /* Sidebar (mantener consistente con el dashboard) */
+        .sidebar {
+            width: 280px;
+            background-color: var(--card-color);
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            background-color: var(--background-color);
+        }
+
+        /* Modifica estas clases en la sección de estilos */
+.profile-section {
+    max-width: 1000px; /* Aumentado de 800px a 1000px */
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.profile-header {
+    background-color: var(--card-color);
+    padding: 40px; /* Aumentado de 30px a 40px */
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.profile-form {
+    background-color: var(--card-color);
+    padding: 40px; /* Aumentado de 30px a 40px */
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px; /* Aumentado de 20px a 30px */
+}
+
+/* Ajustar el espacio entre elementos */
+.form-group {
+    margin-bottom: 25px; /* Aumentado de 20px a 25px */
+}
+
+/* Ajustar el responsive */
+@media (max-width: 1024px) {
+    .profile-section {
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-section {
+        max-width: 100%;
+        padding: 0 15px;
+    }
+    
+    .profile-header,
+    .profile-form {
+        padding: 20px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .save-btn, .cancel-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+         .save-btn {
+            background-color: var(--primary-color);
+            color: white;
+         }
+
+        .save-btn:hover {
+            background-color: #bf1b5d;
+        }
+
+        .cancel-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            background-color: #5a6268;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .save-btn, .cancel-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+   <!--== HEADER ==-->
+   <header class="header">
+    <div class="header__top">
+        <div class="header__container container">
+            <div class="header__contact">
+                <span>luminaropa@gmail.com</span>
+                <span>+57 3134717406</span>
+            </div>
+
+            <p class="header__alert-news">LUMINAR</p>
+
+            <a href="/" class="header__top-action">
+                Cierre de sesión
+            </a>
+        </div>
+    </div>
+
+    <nav class="nav container">
+        <a href="/indexCliente" class="nav__logo">
+            <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
+        </a>
+
+        <div class="nav__menu" id="nav__menu">
+            <ul class="nav__list">
+                <li class="nav__item">
+                    <a href="/indexCliente" class="nav__link active-link">INICIO</a>
+                </li>
+                <li class="nav__item">
+                    <a href="/shopCliente" class="nav__link">Tienda</a>
+                </li>
+                <li class="nav__item">
+                    <a href="/editarperfilCliente" class="nav__link">Mi cuenta</a>
+                </li>
+                <li class="nav__item">
+                    <a href="/ordersCliente" class="nav__link">Pedidos</a>
+                </li>
+            </ul>
+
+            <div class="header_search">
+                <input type="text" placeholder="Buscar productos..." class="form__input">
+               <!--  <button class="search__btn">
+                    <i class="fi fi-rr-search"></i>
+                </button> -->
+            </div>
+        </div>
+
+        <div class="header__user-actions">
+            <a href="/whishlistCliente" class="header__action-btn">
+                <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
+                <span class="count"></span>
+            </a>
+
+            <a href="/cartCliente" class="header__action-btn">
+                <img src="assets/img/icon-cart.svg" alt="Carrito">
+                <span class="count"></span>
+            </a>
+        </div>
+    </nav>
+</header>
+
+
+
+
+    <div class="container">
+        <!-- Sidebar -->
+        <!-- <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Panel Vendedor</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/vendedor/dashboard-vendedor">Inicio</a></li>
+                <li><a href="/vendedor/ventas">Ventas</a></li>
+                <li><a href="/vendedor/clientes" class="active">Clientes</a></li>
+                <li><a href="/vendedor/inventario">Inventario</a></li>
+                <li><a href="/vendedor/reportes">Reportes</a></li>
+            </ul>
+        </nav>-->
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="profile-section">
+                <div class="profile-header">
+                    <div class="profile-image-container">
+                        <form id="uploadForm" method="post" enctype="multipart/form-data">
+                            <img src="" alt="Foto de perfil" class="profile-image" id="profileImagePreview">
+                            <input type="file" id="photoInput" name="profilePhoto" accept="image/*" style="display: none;" onchange="previewImage(event)">
+                            <button type="button" class="change-photo-btn" title="Cambiar foto" onclick="document.getElementById('photoInput').click()">
+                                <i class="fi fi-sr-camera" style="font-size: 1.5em;"></i>
+                            </button>
+                            <!--button type="submit" class="save-photo-btn">Guardar</button-->
+                        </form>
+                    </div>
+                    <h2>Editar Perfil</h2>
+                </div>
+
+                <form class="profile-form" id="profileForm">
+                    <div class="form-section">
+                        <h3>Información Personal</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <input type="text" id="nombre" name="nombre" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Apellido</label>
+                                <input type="text" id="apellido" name="apellido" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Correo Electrónico</label>
+                            <input type="email" id="correo_electronico" name="correo_electronico" required>
+                        </div> 
+                        <div class="form-group">
+                            <label>Último Acceso</label>
+                            <input type="text" id="ultimo_acceso" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de Registro</label>
+                            <input type="text" id="fecha_registro" disabled>
+                        </div>
+                    </div>
+                
+                    <div class="form-section">
+                        <h3>Cambiar Contraseña</h3>
+                        <div class="form-group">
+                            <label>Contraseña Actual</label>
+                            <input type="password" id="contrasena_actual" name="contrasena_actual">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nueva Contraseña</label>
+                                <input type="password" id="nueva_contrasena" name="nueva_contrasena">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirmar Nueva Contraseña</label>
+                                <input type="password" id="confirmar_contrasena">
+                            </div>
+                        </div>
+                    </div>
+                
+                
+                    <div class="action-buttons">
+                        <button type="button" class="cancel-btn" onclick="window.history.back()">Cancelar</button>
+                        <button type="submit" class="save-btn">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+       
+        // Recuperar el usuario_id del localStorage
+        var usuarioId = localStorage.getItem('usuario_id');
+
+        document.addEventListener('DOMContentLoaded', function() {
+    
+            // Cargar datos del usuario
+            async function cargarDatosUsuario() {
+                try {
+                    
+                    if (!usuarioId) {
+                        alert('No se ha encontrado el ID del usuario en el localStorage.');
+                        return;
+                    }
+
+                    // Hacer las consultas
+                    const response = await fetch(`/api/user/${usuarioId}`);
+                    console.log("datos",response);
+                    if (!response.ok) {
+                        throw new Error('Error al obtener datos del usuario');
+                    }
+                    const usuario = await response.json();
+                    //-------------------
+
+                    const ahora = new Date();
+    
+                    // Configurar las opciones para la zona horaria de Colombia
+                    const opciones = {
+                        timeZone: 'America/Bogota', 
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false 
+                    };
+
+                    // Obtener la fecha en formato local para Colombia
+                    const fechaLocal = ahora.toLocaleString('es-ES', opciones);
+
+                    // Llenar el formulario con los datos
+                    document.getElementById('nombre').value = usuario.nombre;
+                    document.getElementById('apellido').value = usuario.apellido;
+                    document.getElementById('correo_electronico').value = usuario.correo_electronico;
+                    document.getElementById('fecha_registro').value = formatDate(fechaLocal);
+                    document.getElementById('ultimo_acceso').value = formatDate(fechaLocal); 
+                    
+                    // Mostrar imagen de perfil actual
+                    if (usuario.imagen_perfil) {
+                        document.querySelector('.profile-image').src = usuario.imagen_perfil;
+                    } else {
+                        // Si no hay imagen, puedes asignar una imagen por defecto
+                        //document.querySelector('.profile-image').src = 'public/images/bg-01.jpg';
+                        //alert("imagen no encontrada")
+                    }
+                } catch (error) {
+                    console.error('Error al cargar datos:', error);
+                }
+            }
+
+            // Manejar envío del formulario
+            const form = document.getElementById('profileForm');
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Validar contraseñas
+                const nuevaContrasena = document.getElementById('nueva_contrasena').value;
+                const confirmarContrasena = document.getElementById('confirmar_contrasena').value;
+                
+                if (nuevaContrasena && nuevaContrasena !== confirmarContrasena) {
+                    alert('Las contraseñas no coinciden');
+                    return;
+                }
+
+                const fechaRegistro = adjustDateBySubtractingHours(document.getElementById('fecha_registro').value, 10);
+                const ultimoAcceso = adjustDateBySubtractingHours(document.getElementById('ultimo_acceso').value, 10);
+
+                 // Crear objeto con los datos del formulario
+                const usuarioData = {
+                    nombre: document.getElementById('nombre').value,
+                    apellido: document.getElementById('apellido').value,
+                    correo_electronico: document.getElementById('correo_electronico').value,
+                    contrasena_actual: document.getElementById('contrasena_actual').value,
+                    fecha_registro: fechaRegistro,
+                    ultimo_acceso: ultimoAcceso,
+                    nueva_contrasena: nuevaContrasena || null
+                };
+            
+                // Recuperar el usuario_id del localStorage
+                if (!usuarioId) {
+                    alert('No se ha encontrado el ID del usuario en el localStorage.');
+                    return;
+                }
+
+                try {
+                    // Hacer la solicitud PUT para actualizar los datos del usuario
+                    const response = await fetch(`/api/user/${usuarioId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(usuarioData)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Error al actualizar el perfil');
+                    }
+
+                    // Llamar a la función de envío de imagen
+                    await subirImagenPerfil(usuarioId);
+        
+                    const updatedUser = await response.json();
+                    // ---------------------------
+                    console.log('Perfil actualizado:', updatedUser);
+                    alert('Perfil actualizado exitosamente');
+                } catch (error) {
+                    console.error('Error al actualizar perfil:', error);
+                    alert('Error al actualizar el perfil');
+                }
+            });
+
+            function formatDate(dateString) {
+                const dateParts = dateString.split(',')[0].trim().split('/');
+                const timeParts = dateString.split(',')[1].trim().split(':');
+
+                const year = dateParts[2]; 
+                const month = dateParts[1];
+                const day = dateParts[0];
+                const hours = timeParts[0].padStart(2, '0'); 
+                const minutes = timeParts[1].padStart(2, '0'); 
+                const seconds = timeParts[2].padStart(2, '0'); 
+
+                return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+            }
+
+            function adjustDateBySubtractingHours(dateString, hours) {
+                const date = new Date(dateString);
+                // Restar las horas
+                date.setHours(date.getHours() - hours);
+                return date.toISOString().slice(0, 19).replace('T', ' '); // Formato YYYY-MM-DD HH:mm:ss
+            }
+
+            // Cargar datos iniciales
+            cargarDatosUsuario();
+        });
+    </script>
+    <!---almacenar la imagen -->
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            const reader = new FileReader();
+        
+            reader.onload = function() {
+                const preview = document.getElementById('profileImagePreview');
+                preview.src = reader.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        async function subirImagenPerfil(usuarioId) {
+            // Obtener el formulario de subida de imagen
+            const form = document.getElementById('uploadForm');
+            const formData = new FormData(form);   
+
+            if (!usuarioId) {
+                alert('No se ha encontrado el ID del usuario en el localStorage.');
+                return;
+            }
+            const uploadUrl = `/api/user/upload-photo/${usuarioId}`;
+
+            try {
+                const response = await fetch(uploadUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.text();
+                    alert(result);  // Notificación de éxito
+                } else {
+                    alert('Error al subir la imagen');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al procesar la solicitud.');
+            }
+        };
+
+        </script>
+</body>
+</html>
