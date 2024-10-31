@@ -62,8 +62,55 @@ const apiRoutes = {
     'category': '/api/category',
     'user': '/api/user',
     'orderDetail': '/api/orderDetail',
-    'whishlist': '/api/whishlist'
+    'wishlist': '/api/wishlist',
+    'orderTracking': '/api/orderTracking'
 
+};
+
+const viewRoutes = {
+    '/': 'views/login-register.html',
+    '/index': 'views/index.html',
+    
+    // Rutas para Cliente
+    '/indexCliente': 'views/Cliente/indexCliente.html',
+    '/cartCliente': 'views/Cliente/cartCliente.html',
+    '/detailsCliente': 'views/Cliente/detailsCliente.html',
+    '/editarperfilCliente': 'views/Cliente/editarperfilCliente.html',
+    '/ordersCliente': 'views/Cliente/ordersCliente.html',
+    '/shopCliente': 'views/Cliente/shopCliente.html',
+    '/whishlistCliente': 'views/Cliente/whishlistCliente.html',
+    
+    // Rutas para Vendedor
+    '/vendedor/clientes': 'views/Vendedor/clientes.html',
+    '/vendedor/dashboard': 'views/Vendedor/dashboard-vendedor.html',
+    '/vendedor/editar-perfil': 'views/Vendedor/editar-perfil.html',
+    '/vendedor/inventario': 'views/Vendedor/inventario.html',
+    '/vendedor/reportes': 'views/Vendedor/reportes.html',
+    '/vendedor/ventas': 'views/Vendedor/ventas.html',
+    '/vendedor/nueva-venta': 'views/Vendedor/nueva-venta.html',
+    '/vendedor/nuevo-cliente': 'views/Vendedor/nuevo-cliente.html',
+    '/vendedor/nuevo-producto': 'views/Vendedor/nuevo-producto.html',
+    
+    // Rutas para Admin
+    '/dashboard-admin': 'views/Admin/dashboard-admin.html',
+    '/admin/roles': 'views/Admin/roles.html',
+    '/admin/clientes': 'views/Admin/clientes.html',
+    '/admin/config': 'views/Admin/config-admin.html',
+    '/admin/editar-perfil': 'views/Admin/editar-perfil.html',
+    '/admin/inventario': 'views/Admin/inventario.html',
+    '/admin/notificaciones': 'views/Admin/notificaciones.html',
+    '/admin/ordenes': 'views/Admin/ordenes.html',
+    '/admin/pedidos': 'views/Admin/pedidos.html',
+    '/admin/productos': 'views/Admin/productos.html',
+    '/admin/reportes': 'views/Admin/reportes.html',
+    '/admin/usuarios': 'views/Admin/usuarios.html',
+    '/admin/ventas': 'views/Admin/ventas.html',
+
+    // Rutas adicionales
+    '/privacy-policy': 'views/privacy-policy.html',
+    '/indexPortal': 'views/indexPortal.html',
+    '/shopPortal': 'views/shopPortal.html',
+    '/details': 'views/details.html',
 };
 
 // Función para cargar rutas de manera segura
