@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 module.exports = (models) => {
-    const { Cart } = models;
+    const { Cart, Product } = models; // Asegúrate de importar Product
 
     // Obtener todos los items del carrito
     router.get('/', async (req, res) => {
@@ -21,14 +21,16 @@ module.exports = (models) => {
     });
 
     // Obtener items del carrito por cliente
-    router.get('/cliente/:clienteId', async (req, res) => {
+    router.get('/cliente/:clienteId', async (req, res) => { 
         try {
             const cartItems = await Cart.findAll({
                 where: { cliente_id: req.params.clienteId },
-                include: ['Producto']
+                include: [{ model: Product, as: 'Producto' }]  
             });
+
             res.json(cartItems);
         } catch (error) {
+            console.error("Error ", error);
             res.status(500).json({
                 message: 'Error al obtener items del carrito',
                 error: error.message

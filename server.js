@@ -29,7 +29,7 @@ app.use(session({
 }));
  
 // Configuración de la base de datos
-const sequelize = new Sequelize('luminar', 'root', '1234', {
+const sequelize = new Sequelize('luminar', 'root', 'SEBAS2002sara723', {
     host: 'localhost',
     dialect: 'mysql',
     logging: false,

@@ -1,6 +1,5 @@
-// models/cart.model.js
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('Cart', {
+    const Cart = sequelize.define('Cart', {
         carrito_id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -27,4 +26,14 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'Carrito',
         timestamps: false
     });
+
+    // Definir la asociación con el modelo `Product`
+    Cart.associate = models => {
+        Cart.belongsTo(models.Product, {
+            foreignKey: 'producto_id',
+            as: 'Producto'  // Alias usado en el include
+        });
+    };
+
+    return Cart;
 };

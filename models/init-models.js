@@ -55,8 +55,8 @@ function initModels(sequelize) {
     Cart.belongsTo(Client, { foreignKey: 'cliente_id' });
 
     // Relaciones entre Product y Cart
-    Product.hasMany(Cart, { foreignKey: 'producto_id' });
-    Cart.belongsTo(Product, { foreignKey: 'producto_id' });
+    Product.hasMany(Cart, { foreignKey: 'producto_id', as: 'Producto' }); // Asegúrate de usar 'Producto' aquí
+    Cart.belongsTo(Product, { foreignKey: 'producto_id', as: 'Producto' }); // Asegúrate de usar 'Producto' aquí
 
     // Relaciones entre Client y Wishlist
     Client.hasMany(Wishlist, { foreignKey: 'cliente_id' });

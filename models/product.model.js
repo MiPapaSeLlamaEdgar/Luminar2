@@ -1,6 +1,5 @@
-// models/product.model.js
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('Product', {
+    const Product = sequelize.define('Product', {
         producto_id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -93,4 +92,14 @@ module.exports = (sequelize, DataTypes) => {
             }
         ]
     });
+
+    // Relación con Cart (opcional)
+    Product.associate = models => {
+        Product.hasMany(models.Cart, {
+            foreignKey: 'producto_id',
+            as: 'Carts'
+        });
+    };
+
+    return Product;
 };
