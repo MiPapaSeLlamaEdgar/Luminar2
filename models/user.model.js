@@ -32,7 +32,8 @@ module.exports = (sequelize, DataTypes) => {
         },
         rol_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
+            defaultValue: 1 // Valor predeterminado para rol_id
         },
         fecha_registro: {
             type: DataTypes.DATE,

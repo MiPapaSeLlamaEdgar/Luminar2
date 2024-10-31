@@ -1,28 +1,24 @@
-// controllers/auth.controller.js
+// auth.js
 class AuthController {
     constructor() {
-        // Configuración de rutas API
         this.API_ROUTES = {
-            register: '/api/users',
-            login: '/api/users/login',
-            lastAccess: '/api/users/:id/last-access',
-            createClient: '/api/clients' // Nueva ruta para crear cliente
+            register: '/api/user',
+            login: '/api/user/login',
+            lastAccess: '/api/user/:id/last-access',
+            createClient: '/api/client' // Ruta para crear cliente
         };
 
-        // Configuración de redirecciones
         this.REDIRECT_ROUTES = {
-            1: '/dashboard-cliente',
+            1: '/indexCliente',
             2: '/Vendedor/dashboard-vendedor',
             3: '/dashboard-admin'
         };
 
-        // Inicializar eventos cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', () => this.initializeEventListeners());
     }
 
     initializeEventListeners() {
         try {
-            // Elementos DOM
             const container = document.getElementById('container');
             const registerBtn = document.getElementById('signUp');
             const loginBtn = document.getElementById('signIn');
@@ -31,16 +27,13 @@ class AuthController {
             const registerForm = document.getElementById('register-form');
             const loginForm = document.getElementById('login-form');
 
-            // Verificar que todos los elementos existan
             if (!container || !registerBtn || !loginBtn || !registerFormBtn || !loginFormBtn || !registerForm || !loginForm) {
                 throw new Error('Elementos del DOM no encontrados');
             }
 
-            // Toggle formularios
             registerBtn.addEventListener('click', () => container.classList.add("active"));
             loginBtn.addEventListener('click', () => container.classList.remove("active"));
 
-            // Event Listeners para botones y formularios
             registerFormBtn.addEventListener('click', (e) => this.handleRegister(e));
             loginFormBtn.addEventListener('click', (e) => this.handleLogin(e));
             registerForm.addEventListener('submit', (e) => this.handleRegister(e));
@@ -53,9 +46,8 @@ class AuthController {
 
     async handleRegister(event) {
         event?.preventDefault();
-        
+
         try {
-            // Datos comunes para usuario y cliente
             const commonData = {
                 nombre: document.getElementById('register-nombre').value.trim(),
                 apellido: document.getElementById('register-apellido').value.trim(),
@@ -64,7 +56,6 @@ class AuthController {
                 direccion: document.getElementById('register-direccion').value.trim()
             };
 
-            // Datos específicos del usuario
             const userData = {
                 ...commonData,
                 contrasena: document.getElementById('register-password').value.trim(),
@@ -75,7 +66,7 @@ class AuthController {
 
             await this.validateFormData(userData);
 
-            // Primero crear el usuario
+            // Crear el usuario
             const userResponse = await fetch(this.API_ROUTES.register, {
                 method: 'POST',
                 headers: {
@@ -92,8 +83,9 @@ class AuthController {
 
             const userData_response = await userResponse.json();
 
-            // Luego crear el cliente
+            // Crear el cliente después de la creación del usuario
             const clientData = {
+                usuario_id: userData_response.usuario_id, // Asociar con el usuario recién creado
                 ...commonData,
                 fecha_registro: new Date().toISOString()
             };
@@ -130,7 +122,7 @@ class AuthController {
 
     async handleLogin(event) {
         event?.preventDefault();
-        
+
         try {
             const formData = {
                 correo_electronico: document.getElementById('login-email').value.trim(),
@@ -157,9 +149,8 @@ class AuthController {
 
             const data = await response.json();
 
-            // Si es cliente, obtener el cliente_id
             if (data.rol_id === 1) {
-                const clientResponse = await fetch(`/api/clients/email/${formData.correo_electronico}`, {
+                const clientResponse = await fetch(`/api/client/email/${formData.correo_electronico}`, {
                     headers: {
                         'Authorization': `Bearer ${data.token}`
                     }

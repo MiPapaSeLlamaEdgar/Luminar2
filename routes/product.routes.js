@@ -1,15 +1,18 @@
-// routes/product.routes.js
 const express = require('express');
 const router = express.Router();
 
 module.exports = (models) => {
-    const { Product } = models;
+    const { Product, Categoria } = models; // Asegúrate de obtener el modelo Categoria
 
     // Obtener todos los productos
     router.get('/', async (req, res) => {
         try {
             const products = await Product.findAll({
-                include: ['Categoria']
+                include: {
+                    model: Categoria, // Referencia directa al modelo
+                    as: 'Categoria',  // El alias debe coincidir con el definido en la relación del modelo
+                    attributes: ['nombre_categoria'] // Traer solo los atributos necesarios
+                }
             });
             res.json(products);
         } catch (error) {
@@ -24,7 +27,11 @@ module.exports = (models) => {
     router.get('/:id', async (req, res) => {
         try {
             const product = await Product.findByPk(req.params.id, {
-                include: ['Categoria']
+                include: {
+                    model: Categoria,
+                    as: 'Categoria',
+                    attributes: ['nombre_categoria']
+                }
             });
             if (!product) {
                 return res.status(404).json({ message: 'Producto no encontrado' });
@@ -87,4 +94,3 @@ module.exports = (models) => {
 
     return router;
 };
-

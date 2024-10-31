@@ -1,6 +1,6 @@
 // models/order.model.js
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('Order', {
+    const Order = sequelize.define('Order', {
         orden_id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -8,35 +8,71 @@ module.exports = (sequelize, DataTypes) => {
         },
         cliente_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
+            references: {
+                model: 'Clientes',
+                key: 'cliente_id'
+            }
         },
         usuario_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true,
+            references: {
+                model: 'Usuarios',
+                key: 'usuario_id'
+            }
         },
         codigo_orden: {
             type: DataTypes.STRING(20),
+            allowNull: false,
             unique: true
         },
         fecha_orden: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW
         },
-        fecha_entrega_estimada: DataTypes.DATE,
-        fecha_entrega_real: DataTypes.DATE,
-        subtotal: DataTypes.DECIMAL(10, 2),
-        impuestos: DataTypes.DECIMAL(10, 2),
-        descuento: DataTypes.DECIMAL(10, 2),
-        total: DataTypes.DECIMAL(10, 2),
+        fecha_entrega_estimada: {
+            type: DataTypes.DATE,
+            allowNull: true
+        },
+        fecha_entrega_real: {
+            type: DataTypes.DATE,
+            allowNull: true
+        },
+        subtotal: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: false
+        },
+        impuestos: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: false
+        },
+        descuento: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: true,
+            defaultValue: 0
+        },
+        total: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: false
+        },
         estado: {
             type: DataTypes.ENUM('pendiente', 'confirmada', 'en proceso', 'enviada', 'entregada', 'cancelada'),
-            defaultValue: 'pendiente'
+            defaultValue: 'pendiente',
+            allowNull: false
         },
-        direccion_envio: DataTypes.TEXT,
-        notas: DataTypes.TEXT
+        direccion_envio: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        notas: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        }
     }, {
         tableName: 'Ordenes',
         timestamps: false
     });
-};
 
+    
+};

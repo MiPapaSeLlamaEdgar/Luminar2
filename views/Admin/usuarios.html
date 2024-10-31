@@ -9,116 +9,253 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-   
 </head>
-    <body>
-        <header>
-            <h1>Dashboard de Usuarios</h1>
-        </header>
-        <div class="container">
-            <!-- Sidebar -->
-            <aside class="sidebar">
-                <div class="sidebar-header">
-                    <a href="/dashboard-admin" class="back-button"><i class="fas fa-arrow-left"></i></a>
-                    <h2>Admin Panel</h2>
-                </div>
-                <nav class="sidebar">
-                    <ul class="nav-links">
-                        <li><a href="/dashboard-admin" class="active"><i class="fas fa-home"></i> Inicio</a></li>
-                        <li><a href="/admin/usuarios"><i class="fas fa-user"></i> Usuarios</a></li>
-                        <li><a href="/admin/clientes"><i class="fas fa-users"></i> Clientes</a></li>
-                        <li><a href="/admin/ordenes"><i class="fas fa-clipboard-list"></i> Órdenes</a></li>
-                        <li><a href="/admin/productos"><i class="fas fa-box-open"></i> Productos</a></li>
-                        <li><a href="/admin/inventario"><i class="fas fa-warehouse"></i> Inventario</a></li>
-                        <li><a href="/admin/roles"><i class="fas fa-user-tag"></i> Roles</a></li>
-                        <li><a href="/admin/reportes"><i class="fas fa-chart-line"></i> Reportes</a></li>
-                        <li><a href="/admin/ventas"><i class="fas fa-dollar-sign"></i> Ventas</a></li>
-                        <li><a href="/admin/config"><i class="fas fa-cogs"></i> Configuración</a></li>
-                    </ul>
-                </nav>
-            </aside>
+<body>
+    <header>
+        <h1>Dashboard de Usuarios</h1>
+    </header>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/dashboard-admin" class="back-button"><i class="fas fa-arrow-left"></i></a>
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="sidebar">
+                <ul class="nav-links">
+                    <li><a href="/dashboard-admin" class="active"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="/admin/usuarios"><i class="fas fa-user"></i> Usuarios</a></li>
+                    <li><a href="/admin/clientes"><i class="fas fa-users"></i> Clientes</a></li>
+                    <li><a href="/admin/ordenes"><i class="fas fa-clipboard-list"></i> Órdenes</a></li>
+                    <li><a href="/admin/productos"><i class="fas fa-box-open"></i> Productos</a></li>
+                    <li><a href="/admin/inventario"><i class="fas fa-warehouse"></i> Inventario</a></li>
+                    <li><a href="/admin/roles"><i class="fas fa-user-tag"></i> Roles</a></li>
+                    <li><a href="/admin/reportes"><i class="fas fa-chart-line"></i> Reportes</a></li>
+                    <li><a href="/admin/ventas"><i class="fas fa-dollar-sign"></i> Ventas</a></li>
+                    <li><a href="/admin/config"><i class="fas fa-cogs"></i> Configuración</a></li>
+                </ul>
+            </nav>
+        </aside>
 
-            <!-- Main Content -->
-            <div class="main-content">
-                <!-- Top Bar -->
-                <div class="top-bar">
-                    <div class="search-box">
-                        <input type="text" placeholder="Buscar usuarios...">
-                    </div>
-                    <button class="nuevo-cliente-btn" onclick="mostrarModal()">Nuevo Usuario</button>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar usuarios..." id="searchInput" onkeyup="buscarUsuario()">
                 </div>
-    
-                <!-- Tabla de Usuarios -->
-                <div class="clientes-table">
-                    <table id="usuariosTable">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Email</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usuariosBody">
-                            <!-- Filas dinámicas generadas por JavaScript -->
-                        </tbody>
-                    </table>
+                <button class="nuevo-cliente-btn" onclick="mostrarModal()">Nuevo Usuario</button>
+            </div>
+
+            <!-- Tabla de Usuarios -->
+            <div class="clientes-table">
+                <table id="usuariosTable">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usuariosBody">
+                        <!-- Filas dinámicas generadas por JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal" id="usuarioModal">
+                <div class="modal-content">
+                    <span onclick="cerrarModal()" style="cursor:pointer;">&times;</span>
+                    <form id="usuarioForm">
+                        <input type="hidden" id="usuarioId">
+                        <div class="form-group">
+                            <label for="nombre">Nombre:</label>
+                            <input type="text" id="nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="apellido">Apellido:</label>
+                            <input type="text" id="apellido" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="imagenPerfil">Imagen de Perfil:</label>
+                            <input type="text" id="imagenPerfil" placeholder="URL de la imagen">
+                        </div>
+                        <div class="form-group" id="contrasena-group" style="display: none;">
+                            <label for="contrasena">Contraseña:</label>
+                            <input type="password" id="contrasena" placeholder="Ingrese una contraseña">
+                        </div>
+                        <div class="form-group">
+                            <label for="rol">Rol:</label>
+                            <select id="rol" required>
+                                <option value="1">Cliente</option>
+                                <option value="2">Vendedor</option>
+                                <option value="3">Administrador</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="estado">Estado:</label>
+                            <select id="estado" required>
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">Inactivo</option>
+                                <option value="suspendido">Suspendido</option>
+                            </select>
+                        </div>
+                        <!-- Botones del modal -->
+                        <div class="modal-buttons">
+                            <button type="submit" class="save-btn">Guardar</button>
+                            <button type="button" onclick="cerrarModal()" class="cancel-btn">Cancelar</button>
+                        </div>
+                    </form>
                 </div>
-    
-                <!-- Modal para CRUD -->
-                <div class="modal" id="usuarioModal">
-                    <div class="modal-content">
-                        <span onclick="cerrarModal()" style="cursor:pointer;">&times;</span>
-                        <form id="usuarioForm">
-                            <div class="form-group">
-                                <label for="nombre">Nombre:</label>
-                                <input type="text" id="nombre" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email:</label>
-                                <input type="email" id="email" required>
-                            </div>
-                            <!-- Botones del modal -->
-                            <div class="modal-buttons">
-                                <button type="submit" class="save-btn">Guardar</button>
-                                <button type="button" onclick="cerrarModal()" class="cancel-btn">Cancelar</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-    
-            </div> <!-- Fin del main-content -->
-        </div> <!-- Fin del container -->
-    
-        <!-- Scripts necesarios -->
-        <script src="../public/js/dashboard.js"></script>
-    
-        <!-- Script para manejo CRUD -->
-        <script>
-            // Funciones para abrir y cerrar el modal
-            function mostrarModal() {
-                document.getElementById('usuarioModal').style.display = 'block';
-            }
-    
-            function cerrarModal() {
-                document.getElementById('usuarioModal').style.display = 'none';
-            }
-    
-            // Función para manejar el formulario
-            document.getElementById('usuarioForm').addEventListener('submit', function(event) {
-                event.preventDefault();
-                // Aquí implementa la lógica para guardar los datos
-                cerrarModal();
-            });
-    
-            // Lógica para cargar y manejar usuarios
-            function cargarUsuarios() {
-                // Aquí implementa la lógica para cargar los usuarios desde una fuente de datos
-            }
-    
-            // Inicializar carga de usuarios
-            cargarUsuarios();
-        </script>
-    
-    </body>
-    </html>
+            </div>
+
+            <script>
+                const apiUrl = '/api/user';
+            
+                function mostrarModal(usuario = null) {
+                    const modal = document.getElementById('usuarioModal');
+                    const contrasenaGroup = document.getElementById('contrasena-group');
+            
+                    if (usuario) {
+                        // Modo editar
+                        document.getElementById('usuarioId').value = usuario.usuario_id;
+                        document.getElementById('nombre').value = usuario.nombre;
+                        document.getElementById('apellido').value = usuario.apellido;
+                        document.getElementById('email').value = usuario.correo_electronico;
+                        document.getElementById('imagenPerfil').value = usuario.imagen_perfil || '';
+                        document.getElementById('rol').value = usuario.rol_id;
+                        document.getElementById('estado').value = usuario.estado;
+            
+                        // Ocultar campo de contraseña en modo editar
+                        contrasenaGroup.style.display = 'none';
+                    } else {
+                        // Modo crear
+                        document.getElementById('usuarioForm').reset();
+                        document.getElementById('usuarioId').value = '';
+                        contrasenaGroup.style.display = 'block'; // Mostrar campo de contraseña en modo crear
+                    }
+            
+                    modal.style.display = 'block';
+                }
+            
+                function cerrarModal() {
+                    document.getElementById('usuarioModal').style.display = 'none';
+                }
+            
+                document.getElementById('usuarioForm').addEventListener('submit', async function (event) {
+                    event.preventDefault();
+                    const usuarioId = document.getElementById('usuarioId').value;
+                    const method = usuarioId ? 'PUT' : 'POST';
+                    const url = usuarioId ? `${apiUrl}/${usuarioId}` : apiUrl;
+            
+                    const usuario = {
+                        nombre: document.getElementById('nombre').value.trim(),
+                        apellido: document.getElementById('apellido').value.trim(),
+                        correo_electronico: document.getElementById('email').value.trim(),
+                        rol_id: parseInt(document.getElementById('rol').value, 10),
+                        estado: document.getElementById('estado').value,
+                        imagen_perfil: document.getElementById('imagenPerfil').value.trim() || null,
+                    };
+            
+                    // Añadir contraseña solo si se está creando un nuevo usuario
+                    if (!usuarioId) {
+                        usuario.contrasena = document.getElementById('contrasena').value.trim();
+                    }
+            
+                    try {
+                        const response = await fetch(url, {
+                            method,
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(usuario),
+                        });
+            
+                        if (response.ok) {
+                            cargarUsuarios();
+                            cerrarModal();
+                        } else {
+                            const errorData = await response.json();
+                            console.error('Error al guardar el usuario:', errorData.message || 'Error desconocido');
+                            alert(`Error al guardar el usuario: ${errorData.message || 'Error desconocido'}`);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error al conectar con el servidor');
+                    }
+                });
+            
+                async function cargarUsuarios() {
+                    try {
+                        const response = await fetch(apiUrl);
+                        if (!response.ok) throw new Error('Error al obtener usuarios');
+                        const usuarios = await response.json();
+            
+                        const usuariosBody = document.getElementById('usuariosBody');
+                        usuariosBody.innerHTML = '';
+                        usuarios.forEach(usuario => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${usuario.nombre}</td>
+                                <td>${usuario.apellido}</td>
+                                <td>${usuario.correo_electronico}</td>
+                                <td>${usuario.Rol ? usuario.Rol.nombre_rol : 'N/A'}</td>
+                                <td>${usuario.estado}</td>
+                                <td>
+                                    <button onclick='mostrarModal(${JSON.stringify(usuario)})'>Editar</button>
+                                    <button onclick='eliminarUsuario(${usuario.usuario_id})'>Eliminar</button>
+                                </td>
+                            `;
+                            usuariosBody.appendChild(row);
+                        });
+                    } catch (error) {
+                        console.error('Error al cargar usuarios:', error);
+                        alert('Error al cargar usuarios');
+                    }
+                }
+            
+                async function eliminarUsuario(usuarioId) {
+                    const confirmacion = confirm('¿Estás seguro de que deseas eliminar este usuario?');
+                    if (!confirmacion) return;
+            
+                    try {
+                        const response = await fetch(`${apiUrl}/${usuarioId}`, {
+                            method: 'DELETE',
+                        });
+            
+                        if (response.ok) {
+                            cargarUsuarios();
+                        } else {
+                            const errorData = await response.json();
+                            console.error('Error al eliminar el usuario:', errorData.message || 'Error desconocido');
+                            alert(`Error al eliminar el usuario: ${errorData.message || 'Error desconocido'}`);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error al conectar con el servidor');
+                    }
+                }
+            
+                function buscarUsuario() {
+                    const input = document.getElementById('searchInput').value.toLowerCase();
+                    const filas = document.querySelectorAll('#usuariosBody tr');
+                    filas.forEach(fila => {
+                        const nombre = fila.children[0].textContent.toLowerCase();
+                        const apellido = fila.children[1].textContent.toLowerCase();
+                        const email = fila.children[2].textContent.toLowerCase();
+                        if (nombre.includes(input) || apellido.includes(input) || email.includes(input)) {
+                            fila.style.display = '';
+                        } else {
+                            fila.style.display = 'none';
+                        }
+                    });
+                }
+            
+                cargarUsuarios();
+            </script>
+</body>
+</html>

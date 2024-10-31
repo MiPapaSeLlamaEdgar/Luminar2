@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/dashboard-vendedor.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
@@ -15,7 +15,6 @@
         <h1>Dashboard de Clientes</h1>
     </header>
     <div class="container">
-        <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <a href="/dashboard-admin" class="back-button"><i class="fas fa-arrow-left"></i></a>
@@ -37,30 +36,22 @@
             </nav>
         </aside>
 
-        <!-- Main Content -->
         <div class="main-content">
-            <!-- Top Bar -->
             <div class="top-bar">
                 <div class="search-box">
-                    <input type="text" placeholder="Buscar clientes...">
+                    <input type="text" placeholder="Buscar clientes..." id="searchInput" onkeyup="buscarCliente()">
                 </div>
-                <!-- Botones de acción del usuario -->
-                <div class="header__user-actions">
-                    <a href="#" class="header__action-btn"><i class="fas fa-bell"></i></a>
-                    <a href="#" class="header__action-btn"><i class="fas fa-cog"></i></a>
-                    <a href="#" class="header__action-btn"><i class="fas fa-sign-out-alt"></i></a>
-                </div>
+                <button class="nuevo-cliente-btn" onclick="mostrarModal()">Nuevo Cliente</button>
             </div>
 
-            <!-- Tabla de Clientes -->
             <div class="clientes-table">
                 <h3>Clientes Registrados</h3>
-                <button class="nuevo-cliente-btn" onclick="mostrarModal()">Nuevo Cliente</button>
                 <table id="clientesTable">
                     <thead>
                         <tr>
                             <th>ID Cliente</th>
                             <th>Nombre</th>
+                            <th>Apellido</th>
                             <th>Email</th>
                             <th>Teléfono</th>
                             <th>Acciones</th>
@@ -76,16 +67,29 @@
             <div class="modal" id="clienteModal">
                 <div class="modal-content">
                     <span onclick="cerrarModal()" style="cursor:pointer;">&times;</span>
-                    <!-- Formulario para editar o crear un cliente -->
                     <form id="clienteForm">
-                        <!-- Campos del formulario -->
-                        <!-- Ejemplo: -->
+                        <input type="hidden" id="clienteId">
                         <div class="form-group">
                             <label for="nombre">Nombre:</label>
                             <input type="text" id="nombre" required>
                         </div>
+                        <div class="form-group">
+                            <label for="apellido">Apellido:</label>
+                            <input type="text" id="apellido" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="telefono">Teléfono:</label>
+                            <input type="text" id="telefono">
+                        </div>
+                        <div class="form-group">
+                            <label for="direccion">Dirección:</label>
+                            <input type="text" id="direccion">
+                        </div>
 
-                        <!-- Botones del modal -->
                         <div class="modal-buttons">
                             <button type="submit" class="save-btn">Guardar</button>
                             <button type="button" onclick="cerrarModal()" class="cancel-btn">Cancelar</button>
@@ -93,37 +97,127 @@
                     </form>
                 </div>
             </div>
-
-        </div> <!-- Fin del main-content -->
-    </div> <!-- Fin del container -->
+        </div>
+    </div>
 
     <!-- Scripts necesarios -->
-    <script src="../public/js/dashboard.js"></script>
-
-    <!-- Script para manejo CRUD y visualización dinámica -->
     <script>
-        // Funciones para abrir y cerrar el modal
-        function mostrarModal() {
-            document.getElementById('clienteModal').style.display = 'block';
+        const apiUrl = '/api/client';
+
+        function mostrarModal(cliente = null) {
+            const modal = document.getElementById('clienteModal');
+            if (cliente) {
+                document.getElementById('clienteId').value = cliente.cliente_id;
+                document.getElementById('nombre').value = cliente.nombre;
+                document.getElementById('apellido').value = cliente.apellido;
+                document.getElementById('email').value = cliente.correo_electronico;
+                document.getElementById('telefono').value = cliente.telefono || '';
+                document.getElementById('direccion').value = cliente.direccion || '';
+            } else {
+                document.getElementById('clienteForm').reset();
+                document.getElementById('clienteId').value = '';
+            }
+            modal.style.display = 'block';
         }
 
         function cerrarModal() {
             document.getElementById('clienteModal').style.display = 'none';
         }
 
-        // Función para manejar el formulario
-        document.getElementById('clienteForm').addEventListener('submit', function(event) {
+        document.getElementById('clienteForm').addEventListener('submit', async function (event) {
             event.preventDefault();
-            // Aquí implementa la lógica para guardar los datos
-            cerrarModal();
+            const clienteId = document.getElementById('clienteId').value;
+            const method = clienteId ? 'PUT' : 'POST';
+            const url = clienteId ? `${apiUrl}/${clienteId}` : apiUrl;
+            const cliente = {
+                nombre: document.getElementById('nombre').value.trim(),
+                apellido: document.getElementById('apellido').value.trim(),
+                correo_electronico: document.getElementById('email').value.trim(),
+                telefono: document.getElementById('telefono').value.trim() || null,
+                direccion: document.getElementById('direccion').value.trim() || null
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(cliente),
+                });
+
+                if (response.ok) {
+                    cargarClientes();
+                    cerrarModal();
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error al guardar el cliente: ${errorData.message || 'Error desconocido'}`);
+                }
+            } catch (error) {
+                alert('Error al conectar con el servidor');
+            }
         });
 
-        // Lógica para cargar y manejar clientes
-        function cargarClientes() {
-            // Aquí implementa la lógica para cargar los clientes desde una fuente de datos
+        async function cargarClientes() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error('Error al obtener clientes');
+                const clientes = await response.json();
+
+                const clientesBody = document.getElementById('clientesBody');
+                clientesBody.innerHTML = '';
+                clientes.forEach(cliente => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${cliente.cliente_id}</td>
+                        <td>${cliente.nombre}</td>
+                        <td>${cliente.apellido}</td>
+                        <td>${cliente.correo_electronico}</td>
+                        <td>${cliente.telefono || 'N/A'}</td>
+                        <td>
+                            <button onclick='mostrarModal(${JSON.stringify(cliente)})'>Editar</button>
+                            <button onclick='eliminarCliente(${cliente.cliente_id})'>Eliminar</button>
+                        </td>
+                    `;
+                    clientesBody.appendChild(row);
+                });
+            } catch (error) {
+                alert('Error al cargar clientes');
+            }
         }
 
-        // Inicializar carga de clientes
+        async function eliminarCliente(clienteId) {
+            const confirmacion = confirm('¿Estás seguro de que deseas eliminar este cliente?');
+            if (!confirmacion) return;
+
+            try {
+                const response = await fetch(`${apiUrl}/${clienteId}`, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    cargarClientes();
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error al eliminar el cliente: ${errorData.message || 'Error desconocido'}`);
+                }
+            } catch (error) {
+                alert('Error al conectar con el servidor');
+            }
+        }
+
+        function buscarCliente() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const filas = document.querySelectorAll('#clientesBody tr');
+            filas.forEach(fila => {
+                const nombre = fila.children[1].textContent.toLowerCase();
+                const apellido = fila.children[2].textContent.toLowerCase();
+                if (nombre.includes(input) || apellido.includes(input)) {
+                    fila.style.display = '';
+                } else {
+                    fila.style.display = 'none';
+                }
+            });
+        }
+
         cargarClientes();
     </script>
 
