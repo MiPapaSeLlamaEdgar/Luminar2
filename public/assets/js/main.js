@@ -102,7 +102,7 @@
         }, 3000);
     }
 
-    async function updateCartCount() {
+    /*async function updateCartCount() {
         try {
             const response = await fetch('/api/cart/count');
             if (response.ok) {
@@ -130,9 +130,9 @@
         } catch (error) {
             console.error('Error updating wishlist count:', error);
         }
-    }
+    }*/
 
     // Initialize counts on page load
-    updateCartCount();
-    updateWishlistCount();
+    //updateCartCount();
+    //updateWishlistCount();
     });

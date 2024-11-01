@@ -44,7 +44,7 @@ function initModels(sequelize) {
 
     // Relaciones entre Category y Product
     Category.hasMany(Product, { foreignKey: 'categoria_id' });
-    Product.belongsTo(Category, { foreignKey: 'categoria_id' });
+    Product.belongsTo(Category, { foreignKey: 'categoria_id', as: 'Categoria' });
 
     // Relaciones de categorías padre-hijo
     Category.belongsTo(Category, { as: 'CategoriaPadre', foreignKey: 'categoria_padre_id' });
@@ -55,8 +55,8 @@ function initModels(sequelize) {
     Cart.belongsTo(Client, { foreignKey: 'cliente_id' });
 
     // Relaciones entre Product y Cart
-    Product.hasMany(Cart, { foreignKey: 'producto_id' });
-    Cart.belongsTo(Product, { foreignKey: 'producto_id' });
+    Product.hasMany(Cart, { foreignKey: 'producto_id', as: 'Producto' }); 
+    Cart.belongsTo(Product, { foreignKey: 'producto_id', as: 'Producto' }); 
 
     // Relaciones entre Client y Wishlist
     Client.hasMany(Wishlist, { foreignKey: 'cliente_id' });

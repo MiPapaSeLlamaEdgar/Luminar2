@@ -21,7 +21,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Perfil | Luminar</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/dashboard.css">
+    <!--link rel="stylesheet" href="/css/dashboard.css"-->
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
     <style>
         :root {
@@ -261,10 +261,14 @@
             <div class="profile-section">
                 <div class="profile-header">
                     <div class="profile-image-container">
-                        <img src="/images/foto.png" alt="Foto de perfil" class="profile-image">
-                        <button class="change-photo-btn" title="Cambiar foto">
-                            <i class="fi fi-sr-camera" style="font-size: 1.5em;"></i>
-                        </button>
+                        <form id="uploadForm" method="post" enctype="multipart/form-data">
+                            <img src="" alt="Foto de perfil" class="profile-image" id="profileImagePreview">
+                            <input type="file" id="photoInput" name="profilePhoto" accept="image/*" style="display: none;" onchange="previewImage(event)">
+                            <button type="button" class="change-photo-btn" title="Cambiar foto" onclick="document.getElementById('photoInput').click()">
+                                <i class="fi fi-sr-camera" style="font-size: 1.5em;"></i>
+                            </button>
+                            <!--button type="submit" class="save-photo-btn">Guardar</button-->
+                        </form>
                     </div>
                     <h2>Editar Perfil</h2>
                 </div>
@@ -325,107 +329,195 @@
     </div>
 
     <script>
-        document.getElementById('profileForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+       
+        // Recuperar el usuario_id del localStorage
+        var usuarioId = localStorage.getItem('usuario_id');
+
+        document.addEventListener('DOMContentLoaded', function() {
+    
+            // Cargar datos del usuario
+            async function cargarDatosUsuario() {
+                try {
+                    
+                    if (!usuarioId) {
+                        alert('No se ha encontrado el ID del usuario en el localStorage.');
+                        return;
+                    }
+
+                    // Hacer las consultas
+                    const response = await fetch(`/api/user/${usuarioId}`);
+                    console.log("datos",response);
+                    if (!response.ok) {
+                        throw new Error('Error al obtener datos del usuario');
+                    }
+                    const usuario = await response.json();
+                    //-------------------
+
+                    const ahora = new Date();
+    
+                    // Configurar las opciones para la zona horaria de Colombia
+                    const opciones = {
+                        timeZone: 'America/Bogota', 
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false 
+                    };
+
+                    // Obtener la fecha en formato local para Colombia
+                    const fechaLocal = ahora.toLocaleString('es-ES', opciones);
+
+                    // Llenar el formulario con los datos
+                    document.getElementById('nombre').value = usuario.nombre;
+                    document.getElementById('apellido').value = usuario.apellido;
+                    document.getElementById('correo_electronico').value = usuario.correo_electronico;
+                    document.getElementById('fecha_registro').value = formatDate(fechaLocal);
+                    document.getElementById('ultimo_acceso').value = formatDate(fechaLocal); 
+                    
+                    // Mostrar imagen de perfil actual
+                    if (usuario.imagen_perfil) {
+                        document.querySelector('.profile-image').src = usuario.imagen_perfil;
+                    } else {
+                        // Si no hay imagen, puedes asignar una imagen por defecto
+                        //document.querySelector('.profile-image').src = 'public/images/bg-01.jpg';
+                        //alert("imagen no encontrada")
+                    }
+                } catch (error) {
+                    console.error('Error al cargar datos:', error);
+                }
+            }
+
+            // Manejar envío del formulario
+            const form = document.getElementById('profileForm');
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Validar contraseñas
+                const nuevaContrasena = document.getElementById('nueva_contrasena').value;
+                const confirmarContrasena = document.getElementById('confirmar_contrasena').value;
+                
+                if (nuevaContrasena && nuevaContrasena !== confirmarContrasena) {
+                    alert('Las contraseñas no coinciden');
+                    return;
+                }
+
+                const fechaRegistro = adjustDateBySubtractingHours(document.getElementById('fecha_registro').value, 10);
+                const ultimoAcceso = adjustDateBySubtractingHours(document.getElementById('ultimo_acceso').value, 10);
+
+                 // Crear objeto con los datos del formulario
+                const usuarioData = {
+                    nombre: document.getElementById('nombre').value,
+                    apellido: document.getElementById('apellido').value,
+                    correo_electronico: document.getElementById('correo_electronico').value,
+                    contrasena_actual: document.getElementById('contrasena_actual').value,
+                    fecha_registro: fechaRegistro,
+                    ultimo_acceso: ultimoAcceso,
+                    nueva_contrasena: nuevaContrasena || null
+                };
             
-            // Validar contraseñas
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            if (newPassword && newPassword !== confirmPassword) {
-                alert('Las contraseñas no coinciden');
+                // Recuperar el usuario_id del localStorage
+                if (!usuarioId) {
+                    alert('No se ha encontrado el ID del usuario en el localStorage.');
+                    return;
+                }
+
+                try {
+                    // Hacer la solicitud PUT para actualizar los datos del usuario
+                    const response = await fetch(`/api/user/${usuarioId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(usuarioData)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Error al actualizar el perfil');
+                    }
+
+                    // Llamar a la función de envío de imagen
+                    await subirImagenPerfil(usuarioId);
+        
+                    const updatedUser = await response.json();
+                    // ---------------------------
+                    console.log('Perfil actualizado:', updatedUser);
+                    alert('Perfil actualizado exitosamente');
+                } catch (error) {
+                    console.error('Error al actualizar perfil:', error);
+                    alert('Error al actualizar el perfil');
+                }
+            });
+
+            function formatDate(dateString) {
+                const dateParts = dateString.split(',')[0].trim().split('/');
+                const timeParts = dateString.split(',')[1].trim().split(':');
+
+                const year = dateParts[2]; 
+                const month = dateParts[1];
+                const day = dateParts[0];
+                const hours = timeParts[0].padStart(2, '0'); 
+                const minutes = timeParts[1].padStart(2, '0'); 
+                const seconds = timeParts[2].padStart(2, '0'); 
+
+                return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+            }
+
+            function adjustDateBySubtractingHours(dateString, hours) {
+                const date = new Date(dateString);
+                // Restar las horas
+                date.setHours(date.getHours() - hours);
+                return date.toISOString().slice(0, 19).replace('T', ' '); // Formato YYYY-MM-DD HH:mm:ss
+            }
+
+            // Cargar datos iniciales
+            cargarDatosUsuario();
+        });
+    </script>
+    <!---almacenar la imagen -->
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            const reader = new FileReader();
+        
+            reader.onload = function() {
+                const preview = document.getElementById('profileImagePreview');
+                preview.src = reader.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        async function subirImagenPerfil(usuarioId) {
+            // Obtener el formulario de subida de imagen
+            const form = document.getElementById('uploadForm');
+            const formData = new FormData(form);   
+
+            if (!usuarioId) {
+                alert('No se ha encontrado el ID del usuario en el localStorage.');
                 return;
             }
-            
-            // Aquí iría la lógica para guardar los cambios
-            alert('Cambios guardados exitosamente');
-        });
+            const uploadUrl = `/api/user/upload-photo/${usuarioId}`;
 
-        // Cambiar foto de perfil
-        document.querySelector('.change-photo-btn').addEventListener('click', function() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.onchange = function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        document.querySelector('.profile-image').src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
+            try {
+                const response = await fetch(uploadUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.text();
+                    alert(result);  // Notificación de éxito
+                } else {
+                    alert('Error al subir la imagen');
                 }
-            };
-            input.click();
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('profileForm');
-    
-    // Cargar datos del usuario
-    async function cargarDatosUsuario() {
-        try {
-            const query = `
-                SELECT 
-                    u.*,
-                    r.nombre_rol
-                FROM Usuarios u
-                JOIN Roles r ON u.rol_id = r.rol_id
-                WHERE u.usuario_id = ?
-            `;
-            
-            // Aquí iría tu lógica para obtener los datos del usuario
-            const usuario = {
-                nombre: 'Andres',
-                apellido: 'Mora',
-                correo_electronico: 'andres@luminar.com',
-                ultimo_acceso: '2024-03-20 15:30:00',
-                fecha_registro: '2024-01-01 09:00:00',
-                imagen_perfil: '/images/foto.png'
-            };
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al procesar la solicitud.');
+            }
+        };
 
-            // Llenar el formulario con los datos
-            document.getElementById('nombre').value = usuario.nombre;
-            document.getElementById('apellido').value = usuario.apellido;
-            document.getElementById('correo_electronico').value = usuario.correo_electronico;
-            document.getElementById('ultimo_acceso').value = new Date(usuario.ultimo_acceso).toLocaleString();
-            document.getElementById('fecha_registro').value = new Date(usuario.fecha_registro).toLocaleString();
-            
-            // Mostrar imagen de perfil actual
-            document.querySelector('.profile-image').src = usuario.imagen_perfil;
-        } catch (error) {
-            console.error('Error al cargar datos:', error);
-        }
-    }
-
-    // Manejar envío del formulario
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        // Validar contraseñas
-        const nuevaContrasena = document.getElementById('nueva_contrasena').value;
-        const confirmarContrasena = document.getElementById('confirmar_contrasena').value;
-        
-        if (nuevaContrasena && nuevaContrasena !== confirmarContrasena) {
-            alert('Las contraseñas no coinciden');
-            return;
-        }
-
-        // Crear FormData para manejar la imagen
-        const formData = new FormData(this);
-        
-        try {
-            // Aquí iría tu lógica para actualizar los datos del usuario
-            console.log('Datos a actualizar:', Object.fromEntries(formData));
-            alert('Perfil actualizado exitosamente');
-        } catch (error) {
-            console.error('Error al actualizar perfil:', error);
-            alert('Error al actualizar el perfil');
-        }
-    });
-
-    // Cargar datos iniciales
-    cargarDatosUsuario();
-});
-    </script>
+        </script>
 </body>
 </html>

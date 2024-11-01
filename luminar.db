@@ -118,14 +118,14 @@ CREATE TABLE Pagos (
 
 -- Tabla de Lista de Deseos (Modificada)
 CREATE TABLE Lista_Deseos (
-    whishlist_id INT PRIMARY KEY AUTO_INCREMENT,
+    wishlist_id INT PRIMARY KEY AUTO_INCREMENT,
     cliente_id INT,
     producto_id INT,
     fecha_agregado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     notificar_disponibilidad BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id),
     FOREIGN KEY (producto_id) REFERENCES Productos(producto_id),
-    UNIQUE KEY unique_whishlist_item (cliente_id, producto_id)
+    UNIQUE KEY unique_wishlist_item (cliente_id, producto_id)
 );
 
 -- Tabla de Carrito (Modificada)

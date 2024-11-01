@@ -1,6 +1,5 @@
-// models/product.model.js
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('Product', {
+    const Product = sequelize.define('Product', {
         producto_id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -63,11 +62,11 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         imagenes: {
-            type: DataTypes.JSON,
+            type: DataTypes.STRING(100),
             allowNull: true
         },
         especificaciones: {
-            type: DataTypes.JSON,
+            type: DataTypes.STRING(100),
             allowNull: true
         },
         estado: {
@@ -93,4 +92,19 @@ module.exports = (sequelize, DataTypes) => {
             }
         ]
     });
+
+    // Relación con Cart (opcional)
+    Product.associate = models => {
+        Product.hasMany(models.Cart, {
+            foreignKey: 'producto_id',
+            as: 'Carts'
+        });
+    };  
+
+    // Relación con Categoria (opcional)
+    Product.associate = (models) => {
+        Product.belongsTo(models.Category, { foreignKey: 'categoria_id', as: 'Categoria' });
+    };
+
+    return Product;
 };

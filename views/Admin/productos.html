@@ -73,22 +73,72 @@
                     <span onclick="cerrarModal()" style="cursor:pointer;">&times;</span>
                     <form id="productoForm">
                         <input type="hidden" id="productoId">
+                        
                         <div class="form-group">
                             <label for="nombre">Nombre:</label>
                             <input type="text" id="nombre" required>
                         </div>
+                        
                         <div class="form-group">
-                            <label for="categoriaId">Categoría:</label>
-                            <select id="categoriaId" required></select>
+                            <label for="descripcion">Descripción:</label>
+                            <textarea id="descripcion"></textarea>
                         </div>
+                        
+                        <div class="form-group">
+                            <label for="talla">Talla:</label>
+                            <input type="text" id="talla">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="color">Color:</label>
+                            <input type="text" id="color">
+                        </div>
+                        
                         <div class="form-group">
                             <label for="precio">Precio:</label>
                             <input type="number" id="precio" step=".01" required>
                         </div>
+                        
                         <div class="form-group">
                             <label for="stock">Stock:</label>
-                            <input type="number" id="stock" required>
+                            <input type="number" id="cantidad_stock">
                         </div>
+                        
+                        <div class="form-group">
+                            <label for="categoriaId">Categoría:</label>
+                            <select id="categoriaId" required></select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="imagenes">Imágenes:</label>
+                            <input type="file" id="imagenes" name="imagenes" accept="image/*">
+                            <img id="imagenPrevisualizacion" src="" alt="Previsualización" style="display: none; max-width: 100%; margin-top: 10px;">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="especificaciones">Especificaciones:</label>
+                            <textarea id="especificaciones"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="estado">Estado:</label>
+                            <select id="estado">
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">Inactivo</option>
+                                <option value="agotado">Agotado</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fecha_creacion">Fecha de Creación:</label>
+                            <input type="datetime-local" id="fecha_creacion">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fecha_modificacion">Fecha de Modificación:</label>
+                            <input type="datetime-local" id="fecha_modificacion">
+                        </div>
+                        
                         <div class="modal-buttons">
                             <button type="submit" class="save-btn">Guardar</button>
                             <button type="button" onclick="cerrarModal()" class="cancel-btn">Cancelar</button>
@@ -96,32 +146,106 @@
                     </form>
                 </div>
             </div>
+            
+            <style>
+                /* Estilos para el fondo del modal */
+                .modal {
+                    display: none;
+                    justify-content: center;
+                    align-items: center;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.5);
+                    z-index: 1000;
+                    overflow: hidden;
+                }
+            
+                /* Estilos para el contenido del modal */
+                .modal-content {
+                    background-color: #fff;
+                    border-radius: 8px;
+                    max-width: 500px;
+                    width: 90%;
+                    max-height: 80%; /* Limita la altura máxima */
+                    overflow-y: auto; /* Activa el desplazamiento vertical */
+                    padding: 20px;
+                    box-sizing: border-box;
+                }
+            
+                /* Estilos para el formulario */
+                .form-group {
+                    margin-bottom: 15px;
+                }
+            
+                /* Estilos para los botones del modal */
+                .modal-buttons {
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 10px;
+                    margin-top: 20px;
+                }
+                
+            </style>
+            
         </div>
     </div>
 
     <script>
-        const apiUrl = '/api/productos';
-        const apiCategoriasUrl = '/api/categorias';
-
+        const apiCategoriasUrl = '/api/category';
+        const apiUrl = '/api/product/';
+        
+        //abrir modal 
         function mostrarModal(producto = null) {
             const modal = document.getElementById('productoModal');
             if (producto) {
                 document.getElementById('productoId').value = producto.producto_id;
                 document.getElementById('nombre').value = producto.nombre_producto;
-                document.getElementById('categoriaId').value = producto.categoria_id;
+                document.getElementById('descripcion').value = producto.descripcion;
+                document.getElementById('talla').value = producto.talla;
+                document.getElementById('color').value = producto.color;
                 document.getElementById('precio').value = producto.precio;
-                document.getElementById('stock').value = producto.cantidad_stock;
-            } else {
+                document.getElementById('cantidad_stock').value = producto.cantidad_stock;
+                document.getElementById('categoriaId').value = producto.categoria_id;
+                document.getElementById('especificaciones').value = producto.especificaciones;
+                console.log("1-",producto.fecha_creacion)
+                console.log("2-",producto.fecha_modificacion)
+                document.getElementById('fecha_creacion').value = formatFecha(producto.fecha_creacion);
+                document.getElementById('fecha_modificacion').value = formatFecha(producto.fecha_modificacion);
+                // Manejar la imagen
+                if (producto.imagenes) {
+                    imagenPrevisualizacion.src = producto.imagenes; // Asigna la ruta de la imagen
+                    imagenPrevisualizacion.style.display = 'block'; // Muestra la imagen
+                } else {
+                    imagenPrevisualizacion.style.display = 'none'; // Oculta la imagen si no hay
+                }
+            }else{
                 document.getElementById('productoForm').reset();
                 document.getElementById('productoId').value = '';
+                imagenPrevisualizacion.style.display = 'none'; // Oculta la imagen al crear nuevo producto
             }
             modal.style.display = 'block';
         }
 
+        // Función para formatear la fecha al formato esperado por 'datetime-local'
+        function formatFecha(fecha) {
+            const date = new Date(fecha);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
+        //cerar modal 
         function cerrarModal() {
             document.getElementById('productoModal').style.display = 'none';
         }
 
+        //selector catalogos 
         async function cargarCategorias() {
             try {
                 const response = await fetch(apiCategoriasUrl);
@@ -141,37 +265,7 @@
             }
         }
 
-        document.getElementById('productoForm').addEventListener('submit', async function (event) {
-            event.preventDefault();
-            const productoId = document.getElementById('productoId').value;
-            const method = productoId ? 'PUT' : 'POST';
-            const url = productoId ? `${apiUrl}/${productoId}` : apiUrl;
-            const producto = {
-                nombre_producto: document.getElementById('nombre').value.trim(),
-                categoria_id: parseInt(document.getElementById('categoriaId').value.trim()),
-                precio: parseFloat(document.getElementById('precio').value.trim()),
-                cantidad_stock: parseInt(document.getElementById('stock').value.trim()),
-            };
-
-            try {
-                const response = await fetch(url, {
-                    method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(producto),
-                });
-
-                if (response.ok) {
-                    cargarProductos();
-                    cerrarModal();
-                } else {
-                    const errorData = await response.json();
-                    alert(`Error al guardar el producto: ${errorData.message || 'Error desconocido'}`);
-                }
-            } catch (error) {
-                alert('Error al conectar con el servidor');
-            }
-        });
-
+        //datos tabla
         async function cargarProductos() {
             try {
                 const response = await fetch(apiUrl);
@@ -186,7 +280,7 @@
                         <td>${producto.producto_id}</td>
                         <td>${producto.nombre_producto}</td>
                         <td>${producto.Categoria.nombre_categoria}</td>
-                        <td>$${producto.precio.toFixed(2)}</td>
+                        <td>${producto.precio}</td>
                         <td>${producto.cantidad_stock}</td>
                         <td class="action-buttons">
                             <button onclick='mostrarModal(${JSON.stringify(producto)})' class="editar-btn"><i class="fas fa-edit"></i> Editar</button>
@@ -196,10 +290,12 @@
                     productosBody.appendChild(row);
                 });
             } catch (error) {
+                console.error("error 2: ",error)
                 alert('Error al cargar productos');
             }
         }
 
+        // eleminar prodcto 
         async function eliminarProducto(productoId) {
             const confirmacion = confirm('¿Estás seguro de que deseas eliminar este producto?');
             if (!confirmacion) return;
@@ -220,6 +316,7 @@
             }
         }
 
+        //buscador producto
         function buscarProducto() {
             const input = document.getElementById('searchInput').value.toLowerCase();
             const filas = document.querySelectorAll('#productosBody tr');
@@ -232,6 +329,60 @@
                 }
             });
         }
+
+        document.getElementById("productoForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const productoId = document.getElementById("productoId").value;
+            const formData = new FormData();
+            formData.append("nombre_producto", document.getElementById("nombre").value);
+            formData.append("descripcion", document.getElementById("descripcion").value);
+            formData.append("talla", document.getElementById("talla").value);
+            formData.append("color", document.getElementById("color").value);
+            formData.append("precio", parseFloat(document.getElementById("precio").value));
+            formData.append("cantidad_stock", parseInt(document.getElementById("cantidad_stock").value));
+            formData.append("categoria_id", document.getElementById("categoriaId").value);
+            formData.append("especificaciones", document.getElementById("especificaciones").value);
+            formData.append("estado", document.getElementById("estado").value);
+            formData.append("fecha_creacion", document.getElementById("fecha_creacion").value);
+            formData.append("fecha_modificacion", document.getElementById("fecha_modificacion").value);
+
+            // Agregar la imagen seleccionada
+            const imagenes = document.getElementById("imagenes").files[0];
+            if (imagenes) {
+                formData.append("imagenes", imagenes);
+            }
+
+            try {
+                let url = '/api/product';
+                let method = 'POST';
+
+                if (productoId) {
+                    url += `/${productoId}`;
+                    method = 'PUT';
+                }
+
+                const response = await fetch(url, {
+                    method: method,
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log("Producto guardado:", result);
+                    cargarProductos();
+                    alert(`Producto ${productoId ? "actualizado" : "creado"} exitosamente.`);
+                    cerrarModal();
+                } else {
+                    const error = await response.json();
+                    cargarProductos();
+                    alert(`Error al ${productoId ? "actualizar" : "crear"} producto: ${error.message}`);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert(`Error en el servidor: ${error.message}`);
+            }
+        });
 
         // Inicializar la carga
         cargarCategorias();
