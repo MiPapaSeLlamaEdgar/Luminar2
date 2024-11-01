@@ -22,7 +22,6 @@
             </div>
             <nav class="sidebar">
                 <ul class="nav-links">
-                    <!-- Menú de navegación -->
                     <li><a href="/dashboard-admin" class="active"><i class="fas fa-home"></i> Inicio</a></li>
                     <li><a href="/admin/usuarios"><i class="fas fa-user"></i> Usuarios</a></li>
                     <li><a href="/admin/clientes"><i class="fas fa-users"></i> Clientes</a></li>
@@ -128,7 +127,6 @@
                 document.getElementById('total').value = orden.total;
                 document.getElementById('estado').value = orden.estado;
                 document.getElementById('direccionEnvio').value = orden.direccion_envio;
-                // Detalles de productos en un formato legible
                 const detallesFormat = orden.OrderDetails.map(det => `${det.producto_id}, ${det.cantidad}`).join('; ');
                 document.getElementById('detalles').value = detallesFormat;
             } else {
@@ -148,7 +146,6 @@
             const method = ordenId ? 'PUT' : 'POST';
             const url = ordenId ? `${apiUrl}/${ordenId}` : apiUrl;
 
-            // Crear objeto de detalles
             const detallesString = document.getElementById('detalles').value.trim();
             const detalles = detallesString.split(';').map(det => {
                 const [productoId, cantidad] = det.split(',').map(d => d.trim());

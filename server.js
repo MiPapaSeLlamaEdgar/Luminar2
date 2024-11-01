@@ -82,7 +82,7 @@ const viewRoutes = {
     
     // Rutas para Vendedor
     '/vendedor/clientes': 'views/Vendedor/clientes.html',
-    '/vendedor/dashboard': 'views/Vendedor/dashboard-vendedor.html',
+    '/vendedor/dashboard-vendedor': 'views/Vendedor/dashboard-vendedor.html',
     '/vendedor/editar-perfil': 'views/Vendedor/editar-perfil.html',
     '/vendedor/inventario': 'views/Vendedor/inventario.html',
     '/vendedor/reportes': 'views/Vendedor/reportes.html',
