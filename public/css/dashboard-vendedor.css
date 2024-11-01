@@ -94,6 +94,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    
 }
 
 .header__action-btn:hover {
@@ -729,6 +730,7 @@ th {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1000; /* Asegúrate de que sea suficientemente alto */
+    overflow: auto;
 }
 
 .modal-content {

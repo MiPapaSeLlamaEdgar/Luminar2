@@ -1,28 +1,35 @@
 // models/orderDetail.model.js
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('OrderDetail', {
-        seguimiento_id: {
+        detalle_id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true
         },
         orden_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
+            references: {
+                model: 'Ordenes',
+                key: 'orden_id'
+            },
+            onDelete: 'CASCADE'
         },
-        estado: DataTypes.STRING(50),
-        descripcion: DataTypes.TEXT,
-        fecha_actualizacion: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW
+        producto_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'Productos',
+                key: 'producto_id'
+            },
+            onDelete: 'CASCADE'
         },
-        usuario_id: {
+        cantidad: {
             type: DataTypes.INTEGER,
             allowNull: false
         }
     }, {
-        tableName: 'Seguimiento_Ordenes',
+        tableName: 'Order_Details',
         timestamps: false
     });
 };
-
