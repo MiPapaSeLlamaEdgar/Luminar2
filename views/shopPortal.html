@@ -6,6 +6,35 @@
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="stylesheet" href="assets/css/style.css">
     <title>Shop - Luminar</title>
+    <style>
+        /* Estilo para los tabs de categorías */
+        .categories {
+            padding: 20px 0;
+            background-color: #f5f5f5;
+        }
+        .categories__tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .category__tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .category__tab:hover,
+        .category__tab.active {
+            background-color: #333;
+            color: #fff;
+            border-color: #333;
+        }
+        
+    </style>
 </head>
 <body>
     <!-- HEADER -->
@@ -20,7 +49,7 @@
                 <p class="header__alert-news">LUMINAR</p>
 
                 <a href="/" class="header__top-action">
-                    Iniciar sesión / Registrarse
+                    Cierre de sesión
                 </a>
             </div>
         </div>
@@ -68,80 +97,33 @@
         </nav>
     </header>
 
+    <!-- CATEGORÍAS (TABS) -->
+    <section class="categories section">
+        <div class="categories__container">
+            <ul class="categories__tabs">
+                <li class="category__tab active" data-category="all">Todos</li>
+                <li class="category__tab" data-category="blazer">Blazer</li>
+                <li class="category__tab" data-category="abrigos">Abrigos</li>
+                <li class="category__tab" data-category="faldas">Faldas</li>
+                <li class="category__tab" data-category="pantalones">Pantalones</li>
+                <li class="category__tab" data-category="chaquetas">Chaquetas</li>
+                <li class="category__tab" data-category="gabanes">Gabanes</li>
+                <li class="category__tab" data-category="tops">Tops</li>
+                <li class="category__tab" data-category="legis">Legis</li>
+                <li class="category__tab" data-category="corset">Corset</li>
+                <li class="category__tab" data-category="blusas">Blusas</li>
+                <li class="category__tab" data-category="chalecos">Chalecos</li>
+            </ul>
+        </div>
+    </section>
+
     <!-- MAIN SHOP SECTION -->
     <main class="main">
         <section class="shop section">
             <div class="shop__container container">
                 <h2 class="section__title">Tienda</h2>
-
                 <div class="products__container grid">
-                    <!-- Product Item -->
-                    <div class="product__item">
-                        <div class="product__banner">
-                            <a href="/" class="product__images">
-                                <img src="assets/img/product-1-1.jpg" alt="Product Image" class="product__img default">
-                                <img src="assets/img/product-1-2.jpg" alt="Product Image Hover" class="product__img hover">
-                            </a>
-                            <div class="product__badge light-pink">Hot</div>
-                        </div>
-                        <div class="product__content">
-                            <span class="product__category">Clothing</span>
-                            <a href="/">
-                                <h3 class="product__title">Colorful Pattern Shirt</h3>
-                            </a>
-                            <div class="product__rating">
-                                <i class="fi fi-rs-star"></i>
-                                <i class="fi fi-rs-star"></i>
-                                <i class="fi fi-rs-star"></i>
-                                <i class="fi fi-rs-star"></i>
-                                <i class="fi fi-rs-star"></i>
-                            </div>
-                            <div class="product__price flex">
-                                <span class="new__price">$238.85</span>
-                                <span class="old__price">$245.80</span>
-                            </div>
-                            <a href="#" class="action__btn Wishlist" aria-label="Add to Wishlist">
-                                <i class="fi fi-rs-shopping-bag-add"></i>
-                            </a>
-                            <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
-                                <i class="fi fi-rs-shopping-bag-add"></i>
-                            </a><!--Boton de añadir al carrito-->
-                        </div>
-                    </div>
-                    <!-- More Product Items -->
-                    <div class="product__item">
-                        <div class="product__banner">
-                            <a href="/" class="product__images">
-                                <img src="assets/img/product-2-1.jpg" alt="Product Image" class="product__img default">
-                                <img src="assets/img/product-2-2.jpg" alt="Product Image Hover" class="product__img hover">
-                            </a>
-                            <div class="product__badge light-green">-30%</div>
-                        </div>
-                        <div class="product__content">
-                            <span class="product__category">Accessories</span>
-                            <a href="/">
-                                <h3 class="product__title">Leather Handbag</h3>
-                            </a>
-                            <div class="product__rating">
-                                <i class="fi fi-rs-star"></i>
-                                <i class="fi fi-rs-star"></i>
-                                <i class="fi fi-rs-star"></i>
-                                <i class="fi fi-rs-star"></i>
-                                <i class="fi fi-rs-star"></i>
-                            </div>
-                            <div class="product__price flex">
-                                <span class="new__price">$178.99</span>
-                                <span class="old__price">$210.50</span>
-                            </div>
-                            <a href="#" class="action__btn Wishlist" aria-label="Add to Wishlist">
-                                <i class="fi fi-rs-shopping-bag-add"></i>
-                            </a>
-                            <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
-                                <i class="fi fi-rs-shopping-bag-add"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <!-- Repeat similar product items as necessary -->
+                    <!-- Los productos se renderizan dinámicamente aquí -->
                 </div>
             </div>
         </section>
@@ -186,297 +168,118 @@
         </div>
     </footer>
 
-    <!-- SWIPER JS -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- MAIN JS -->
+    <script src="assets/js/main.js"></script>
 
-<!-- SWEETALERT2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Script para productos quemados y categorías -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const productContainer = document.querySelector('.products__container');
+            const categoryTabs = document.querySelectorAll('.category__tab');
 
-<!-- MAIN JS -->
-<script src="assets/js/main.js"></script>
-
-<!-- Wishlist and Cart Functionality Script -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Función para mostrar notificaciones
-    const showNotification = (message, type = 'success') => {
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        });
-
-        Toast.fire({
-            icon: type,
-            title: message
-        });
-    };
-
-    // Función para actualizar el contador de la lista de deseos
-    const updateWishlistCount = async () => {
-        try {
-            const response = await fetch('/api/wishlist/count');
-            const data = await response.json();
-            document.querySelectorAll('.count').forEach(element => {
-                element.textContent = data.count;
-            });
-        } catch (error) {
-            console.error('Error al actualizar contador:', error);
-        }
-    };
-
-    // Función para manejar el botón de lista de deseos
-    const handleWishlistButton = async (button, productName, productPrice) => {
-        try {
-            const response = await fetch('/api/wishlist/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
+            // Productos quemados (datos simulados)
+            const productsData = [
+                {
+                    id: 1,
+                    imageUrl1: "assets/img/product-1-1.jpg",
+                    imageUrl2: "assets/img/product-1-2.jpg",
+                    badge: "Hot",
+                    category: "blazer",
+                    name: "Colorful Pattern Shirt",
+                    rating: 5,
+                    priceNew: 238.85,
+                    priceOld: 245.80
                 },
-                body: JSON.stringify({
-                    nombre_producto: productName,
-                    precio: productPrice
-                })
-            });
-
-            const data = await response.json();
-            showNotification(data.message);
-            
-            // Actualizar el estilo del botón
-            button.classList.toggle('in-wishlist');
-            if (button.classList.contains('in-wishlist')) {
-                button.style.backgroundColor = 'var(--first-color)';
-                button.style.color = 'var(--body-color)';
-            } else {
-                button.style.backgroundColor = 'var(--first-color-alt)';
-                button.style.color = 'var(--text-color)';
-            }
-            
-            // Actualizar el contador
-            updateWishlistCount();
-
-        } catch (error) {
-            console.error('Error:', error);
-            showNotification('Error al actualizar la lista de deseos', 'error');
-        }
-    };
-
-    // Función para manejar el botón de carrito
-    const handleCartButton = async (button, productName, productPrice) => {
-        try {
-            const response = await fetch('/api/cart/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
+                {
+                    id: 2,
+                    imageUrl1: "assets/img/product-2-1.jpg",
+                    imageUrl2: "assets/img/product-2-2.jpg",
+                    badge: "-30%",
+                    category: "accesorios",
+                    name: "Leather Handbag",
+                    rating: 5,
+                    priceNew: 178.99,
+                    priceOld: 210.50
                 },
-                body: JSON.stringify({
-                    nombre_producto: productName,
-                    precio: productPrice,
-                    cantidad: 1
-                })
-            });
+                {
+                    id: 3,
+                    imageUrl1: "assets/img/product-3-1.jpg",
+                    imageUrl2: "assets/img/product-3-2.jpg",
+                    badge: "New",
+                    category: "pantalones",
+                    name: "Casual Blue Jeans",
+                    rating: 4,
+                    priceNew: 99.99,
+                    priceOld: 120.00
+                },
+                // Añade más productos aquí según sea necesario
+            ];
 
-            const data = await response.json();
-            showNotification(data.message);
+            // Función para cargar productos por categoría
+            const loadProductsByCategory = (category) => {
+                // Limpiar el contenedor de productos antes de agregar nuevos
+                productContainer.innerHTML = '';
 
-        } catch (error) {
-            console.error('Error:', error);
-            showNotification('Error al agregar al carrito', 'error');
-        }
-    };
+                // Filtrar productos según la categoría seleccionada
+                const filteredProducts = category === 'all'
+                    ? productsData
+                    : productsData.filter(product => product.category === category);
 
-    // Agregar event listeners a los botones
-    document.querySelectorAll('.action__btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const productCard = this.closest('.product__item');
-            const productName = productCard.querySelector('.product__title').textContent;
-            const productPrice = productCard.querySelector('.new__price').textContent.replace('$', '');
-            
-            if (this.getAttribute('aria-label') === 'Add to Wishlist') {
-                handleWishlistButton(this, productName, productPrice);
-            } else if (this.getAttribute('aria-label') === 'Add to Cart') {
-                handleCartButton(this, productName, productPrice);
-            }
-        });
-
-        // Mostrar tooltips al hover
-        button.addEventListener('mouseenter', function() {
-            const label = this.getAttribute('aria-label');
-            if (label) {
-                this.setAttribute('data-tooltip', label);
-            }
-        });
-
-        button.addEventListener('mouseleave', function() {
-            this.removeAttribute('data-tooltip');
-        });
-    });
-
-    // Inicializar contadores al cargar la página
-    updateWishlistCount();
-});
-</script>
-<!-- Antes de cerrar el body, después de los otros scripts -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Función para mostrar notificaciones
-        const showNotification = (message, type = 'success') => {
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
-    
-            Toast.fire({
-                icon: type,
-                title: message
-            });
-        };
-    
-        // Función para actualizar contadores
-        const updateCounters = async () => {
-            try {
-                // Actualizar contador de wishlist
-                const wishlistResponse = await fetch('/api/wishlist/count');
-                const wishlistData = await wishlistResponse.json();
-                
-                // Actualizar contador de carrito
-                const cartResponse = await fetch('/api/cart/count');
-                const cartData = await cartResponse.json();
-                
-                // Actualizar los contadores en el DOM
-                document.querySelectorAll('.header__action-btn .count').forEach(counter => {
-                    if (counter.closest('a[href="/whishlist"]')) {
-                        counter.textContent = wishlistData.count;
-                    } else if (counter.closest('a[href="/cart"]')) {
-                        counter.textContent = cartData.count;
-                    }
+                // Renderizar productos filtrados por categoría
+                filteredProducts.forEach(product => {
+                    const productItem = document.createElement('div');
+                    productItem.classList.add('product__item');
+                    productItem.innerHTML = `
+                        <div class="product__banner">
+                            <a href="/detailsCliente?productId=${product.id}" class="product__images">
+                                <img src="${product.imageUrl1}" alt="Product Image" class="product__img default">
+                                <img src="${product.imageUrl2}" alt="Product Image Hover" class="product__img hover">
+                            </a>
+                            ${product.badge ? `<div class="product__badge">${product.badge}</div>` : ''}
+                        </div>
+                        <div class="product__content">
+                            <span class="product__category">${product.category.charAt(0).toUpperCase() + product.category.slice(1)}</span>
+                            <a href="/detailsCliente?productId=${product.id}">
+                                <h3 class="product__title">${product.name}</h3>
+                            </a>
+                            <div class="product__rating">
+                                ${'<i class="fi fi-rs-star"></i>'.repeat(product.rating)}
+                            </div>
+                            <div class="product__price flex">
+                                <span class="new__price">$${product.priceNew.toFixed(2)}</span>
+                                ${product.priceOld ? `<span class="old__price">$${product.priceOld.toFixed(2)}</span>` : ''}
+                            </div>
+                            <a href="#" class="action__btn Wishlist" aria-label="Add to Wishlist">
+                                <i class="fi fi-rs-shopping-bag-add"></i>
+                            </a>
+                            <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
+                                <i class="fi fi-rs-shopping-bag-add"></i>
+                            </a>
+                        </div>
+                    `;
+                    productContainer.appendChild(productItem);
                 });
-            } catch (error) {
-                console.error('Error al actualizar contadores:', error);
-            }
-        };
-    
-        // Función para manejar el botón de wishlist
-        const handleWishlistButton = async (button, productName, productPrice) => {
-            try {
-                const response = await fetch('/api/wishlist/add', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        nombre_producto: productName,
-                        precio: productPrice
-                    })
+            };
+
+            // Event listener para clics en tabs de categorías
+            categoryTabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const selectedCategory = this.getAttribute('data-category');
+
+                    // Remover la clase active de todos los tabs
+                    categoryTabs.forEach(tab => tab.classList.remove('active'));
+                    // Agregar la clase active al tab seleccionado
+                    this.classList.add('active');
+
+                    // Cargar productos según la categoría seleccionada
+                    loadProductsByCategory(selectedCategory);
                 });
-    
-                const data = await response.json();
-                
-                // Mostrar notificación
-                showNotification(data.message);
-                
-                // Actualizar el estilo del botón
-                button.classList.toggle('in-wishlist');
-                if (button.classList.contains('in-wishlist')) {
-                    button.style.backgroundColor = 'var(--first-color)';
-                    button.style.color = 'var(--body-color)';
-                } else {
-                    button.style.backgroundColor = 'var(--first-color-alt)';
-                    button.style.color = 'var(--text-color)';
-                }
-                
-                // Actualizar contadores
-                updateCounters();
-    
-            } catch (error) {
-                console.error('Error:', error);
-                showNotification('Error al actualizar la lista de deseos', 'error');
-            }
-        };
-    
-        // Función para manejar el botón de carrito
-        const handleCartButton = async (button, productName, productPrice) => {
-            try {
-                const response = await fetch('/api/cart/add', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        nombre_producto: productName,
-                        precio: productPrice,
-                        cantidad: 1
-                    })
-                });
-    
-                const data = await response.json();
-                
-                // Mostrar notificación
-                showNotification(data.message);
-                
-                // Actualizar el estilo del botón temporalmente
-                button.style.backgroundColor = 'var(--first-color)';
-                button.style.color = 'var(--body-color)';
-                
-                setTimeout(() => {
-                    button.style.backgroundColor = '';
-                    button.style.color = '';
-                }, 1000);
-                
-                // Actualizar contadores
-                updateCounters();
-    
-            } catch (error) {
-                console.error('Error:', error);
-                showNotification('Error al agregar al carrito', 'error');
-            }
-        };
-    
-        // Agregar event listeners a los botones
-        document.querySelectorAll('.action__btn').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const productCard = this.closest('.product__item');
-                const productName = productCard.querySelector('.product__title').textContent;
-                const productPrice = productCard.querySelector('.new__price').textContent.replace('$', '');
-                
-                if (this.classList.contains('Wishlist__btn')) {
-                    handleWishlistButton(this, productName, productPrice);
-                } else if (this.classList.contains('cart__btn')) {
-                    handleCartButton(this, productName, productPrice);
-                }
             });
-    
-            // Mostrar tooltips al hover
-            button.addEventListener('mouseenter', function() {
-                const label = this.getAttribute('aria-label');
-                if (label) {
-                    this.setAttribute('data-tooltip', label);
-                }
-            });
-    
-            button.addEventListener('mouseleave', function() {
-                this.removeAttribute('data-tooltip');
-            });
+
+            // Cargar productos de la pestaña "Todos" al iniciar
+            loadProductsByCategory('all');
         });
-    
-        // Inicializar contadores al cargar la página
-        updateCounters();
-    });
     </script>
 </body>
 </html>
