@@ -11,10 +11,10 @@ module.exports = (models) => {
     // Configuración de multer para guardar los archivos subidos
     const storage = multer.diskStorage({
         destination: (req, file, cb) => {
-            cb(null, path.join(__dirname, '../public/images'));  // Carpeta donde se guardarán las imágenes
+            cb(null, path.join(__dirname, '../public/images')); 
         },
         filename: (req, file, cb) => {
-            cb(null, Date.now() + path.extname(file.originalname)); // Nombre único basado en la fecha
+            cb(null, Date.now() + path.extname(file.originalname));
         }
     });
 
@@ -228,9 +228,9 @@ module.exports = (models) => {
             }
         
             // Procesar la imagen subida
-            const imagen_perfil = `/images/${req.file.filename}`; // Ruta accesible de la imagen
+            const imagen_perfil = `/images/${req.file.filename}`; 
         
-            await user.update({ imagen_perfil });  // Guarda la ruta en la base de datos
+            await user.update({ imagen_perfil }); 
 
             res.status(200).send(`Imagen subida exitosamente. Ruta: ${imagen_perfil}`);
         } catch (error) {

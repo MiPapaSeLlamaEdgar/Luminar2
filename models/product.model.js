@@ -62,11 +62,11 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         imagenes: {
-            type: DataTypes.JSON,
+            type: DataTypes.STRING(100),
             allowNull: true
         },
         especificaciones: {
-            type: DataTypes.JSON,
+            type: DataTypes.STRING(100),
             allowNull: true
         },
         estado: {
@@ -99,6 +99,11 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'producto_id',
             as: 'Carts'
         });
+    };  
+
+    // Relación con Categoria (opcional)
+    Product.associate = (models) => {
+        Product.belongsTo(models.Category, { foreignKey: 'categoria_id', as: 'Categoria' });
     };
 
     return Product;
