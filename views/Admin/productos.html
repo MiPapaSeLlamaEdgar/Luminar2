@@ -106,7 +106,21 @@
                         
                         <div class="form-group">
                             <label for="categoriaId">Categoría:</label>
-                            <select id="categoriaId" required></select>
+                            <select id="categoriaId" required>
+                                <!-- Opciones de categorías actualizadas -->
+                                <option value="">Seleccione una categoría</option>
+                                <option value="1">Blazer</option>
+                                <option value="2">Abrigos</option>
+                                <option value="3">Faldas</option>
+                                <option value="4">Pantalones</option>
+                                <option value="5">Chaquetas</option>
+                                <option value="6">Gabanes</option>
+                                <option value="7">Tops</option>
+                                <option value="8">Leggings</option>
+                                <option value="9">Corset</option>
+                                <option value="10">Blusas</option>
+                                <option value="11">Chalecos</option>
+                            </select>
                         </div>
                         
                         <div class="form-group">
@@ -148,7 +162,6 @@
             </div>
             
             <style>
-                /* Estilos para el fondo del modal */
                 .modal {
                     display: none;
                     justify-content: center;
@@ -163,24 +176,21 @@
                     overflow: hidden;
                 }
             
-                /* Estilos para el contenido del modal */
                 .modal-content {
                     background-color: #fff;
                     border-radius: 8px;
                     max-width: 500px;
                     width: 90%;
-                    max-height: 80%; /* Limita la altura máxima */
-                    overflow-y: auto; /* Activa el desplazamiento vertical */
+                    max-height: 80%;
+                    overflow-y: auto;
                     padding: 20px;
                     box-sizing: border-box;
                 }
             
-                /* Estilos para el formulario */
                 .form-group {
                     margin-bottom: 15px;
                 }
             
-                /* Estilos para los botones del modal */
                 .modal-buttons {
                     display: flex;
                     justify-content: flex-end;
@@ -194,10 +204,8 @@
     </div>
 
     <script>
-        const apiCategoriasUrl = '/api/category';
         const apiUrl = '/api/product/';
         
-        //abrir modal 
         function mostrarModal(producto = null) {
             const modal = document.getElementById('productoModal');
             if (producto) {
@@ -210,26 +218,23 @@
                 document.getElementById('cantidad_stock').value = producto.cantidad_stock;
                 document.getElementById('categoriaId').value = producto.categoria_id;
                 document.getElementById('especificaciones').value = producto.especificaciones;
-                console.log("1-",producto.fecha_creacion)
-                console.log("2-",producto.fecha_modificacion)
                 document.getElementById('fecha_creacion').value = formatFecha(producto.fecha_creacion);
                 document.getElementById('fecha_modificacion').value = formatFecha(producto.fecha_modificacion);
-                // Manejar la imagen
+
                 if (producto.imagenes) {
-                    imagenPrevisualizacion.src = producto.imagenes; // Asigna la ruta de la imagen
-                    imagenPrevisualizacion.style.display = 'block'; // Muestra la imagen
+                    imagenPrevisualizacion.src = producto.imagenes;
+                    imagenPrevisualizacion.style.display = 'block';
                 } else {
-                    imagenPrevisualizacion.style.display = 'none'; // Oculta la imagen si no hay
+                    imagenPrevisualizacion.style.display = 'none';
                 }
-            }else{
+            } else {
                 document.getElementById('productoForm').reset();
                 document.getElementById('productoId').value = '';
-                imagenPrevisualizacion.style.display = 'none'; // Oculta la imagen al crear nuevo producto
+                imagenPrevisualizacion.style.display = 'none';
             }
             modal.style.display = 'block';
         }
 
-        // Función para formatear la fecha al formato esperado por 'datetime-local'
         function formatFecha(fecha) {
             const date = new Date(fecha);
             const year = date.getFullYear();
@@ -240,32 +245,10 @@
             return `${year}-${month}-${day}T${hours}:${minutes}`;
         }
 
-        //cerar modal 
         function cerrarModal() {
             document.getElementById('productoModal').style.display = 'none';
         }
 
-        //selector catalogos 
-        async function cargarCategorias() {
-            try {
-                const response = await fetch(apiCategoriasUrl);
-                if (!response.ok) throw new Error('Error al obtener categorías');
-                const categorias = await response.json();
-
-                const categoriaSelect = document.getElementById('categoriaId');
-                categoriaSelect.innerHTML = '<option value="">Seleccione una categoría</option>';
-                categorias.forEach(categoria => {
-                    const option = document.createElement('option');
-                    option.value = categoria.categoria_id;
-                    option.textContent = categoria.nombre_categoria;
-                    categoriaSelect.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error al cargar categorías:', error);
-            }
-        }
-
-        //datos tabla
         async function cargarProductos() {
             try {
                 const response = await fetch(apiUrl);
@@ -290,12 +273,11 @@
                     productosBody.appendChild(row);
                 });
             } catch (error) {
-                console.error("error 2: ",error)
+                console.error("Error al cargar productos:", error);
                 alert('Error al cargar productos');
             }
         }
 
-        // eleminar prodcto 
         async function eliminarProducto(productoId) {
             const confirmacion = confirm('¿Estás seguro de que deseas eliminar este producto?');
             if (!confirmacion) return;
@@ -316,17 +298,12 @@
             }
         }
 
-        //buscador producto
         function buscarProducto() {
             const input = document.getElementById('searchInput').value.toLowerCase();
             const filas = document.querySelectorAll('#productosBody tr');
             filas.forEach(fila => {
                 const nombre = fila.children[1].textContent.toLowerCase();
-                if (nombre.includes(input)) {
-                    fila.style.display = '';
-                } else {
-                    fila.style.display = 'none';
-                }
+                fila.style.display = nombre.includes(input) ? '' : 'none';
             });
         }
 
@@ -347,14 +324,13 @@
             formData.append("fecha_creacion", document.getElementById("fecha_creacion").value);
             formData.append("fecha_modificacion", document.getElementById("fecha_modificacion").value);
 
-            // Agregar la imagen seleccionada
             const imagenes = document.getElementById("imagenes").files[0];
             if (imagenes) {
                 formData.append("imagenes", imagenes);
             }
 
             try {
-                let url = '/api/product';
+                let url = apiUrl;
                 let method = 'POST';
 
                 if (productoId) {
@@ -368,8 +344,6 @@
                 });
 
                 if (response.ok) {
-                    const result = await response.json();
-                    console.log("Producto guardado:", result);
                     cargarProductos();
                     alert(`Producto ${productoId ? "actualizado" : "creado"} exitosamente.`);
                     cerrarModal();
@@ -384,8 +358,6 @@
             }
         });
 
-        // Inicializar la carga
-        cargarCategorias();
         cargarProductos();
     </script>
 

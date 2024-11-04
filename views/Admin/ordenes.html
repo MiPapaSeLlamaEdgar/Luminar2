@@ -55,10 +55,19 @@
                     <thead>
                         <tr>
                             <th>ID Orden</th>
-                            <th>Cliente</th>
+                            <th>Cliente ID</th>
+                            <th>Usuario ID</th>
+                            <th>Código Orden</th>
+                            <th>Fecha Orden</th>
+                            <th>Fecha Entrega Estimada</th>
+                            <th>Fecha Entrega Real</th>
+                            <th>Subtotal</th>
+                            <th>Impuestos</th>
+                            <th>Descuento</th>
                             <th>Total</th>
                             <th>Estado</th>
-                            <th>Fecha Orden</th>
+                            <th>Dirección Envío</th>
+                            <th>Notas</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -83,8 +92,36 @@
                             <input type="number" id="usuarioId">
                         </div>
                         <div class="form-group">
+                            <label for="codigoOrden">Código Orden:</label>
+                            <input type="text" id="codigoOrden" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fechaOrden">Fecha Orden:</label>
+                            <input type="date" id="fechaOrden">
+                        </div>
+                        <div class="form-group">
+                            <label for="fechaEntregaEstimada">Fecha Entrega Estimada:</label>
+                            <input type="date" id="fechaEntregaEstimada">
+                        </div>
+                        <div class="form-group">
+                            <label for="fechaEntregaReal">Fecha Entrega Real:</label>
+                            <input type="date" id="fechaEntregaReal">
+                        </div>
+                        <div class="form-group">
+                            <label for="subtotal">Subtotal:</label>
+                            <input type="number" id="subtotal" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="impuestos">Impuestos:</label>
+                            <input type="number" id="impuestos" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="descuento">Descuento:</label>
+                            <input type="number" id="descuento" step="0.01">
+                        </div>
+                        <div class="form-group">
                             <label for="total">Total:</label>
-                            <input type="number" id="total" required>
+                            <input type="number" id="total" step="0.01" required>
                         </div>
                         <div class="form-group">
                             <label for="estado">Estado:</label>
@@ -102,8 +139,8 @@
                             <textarea id="direccionEnvio"></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="detalles">Detalles de Productos:</label>
-                            <textarea id="detalles" placeholder="Formato: Producto ID, Cantidad; Producto ID, Cantidad"></textarea>
+                            <label for="notas">Notas:</label>
+                            <textarea id="notas"></textarea>
                         </div>
                         <div class="modal-buttons">
                             <button type="submit" class="save-btn">Guardar</button>
@@ -116,22 +153,27 @@
     </div>
 
     <script>
-        const apiUrl = '/api/orders';
+        const apiUrl = '/api/order';
 
         function mostrarModal(orden = null) {
             const modal = document.getElementById('ordenModal');
             if (orden) {
-                document.getElementById('ordenId').value = orden.orden_id;
-                document.getElementById('clienteId').value = orden.cliente_id;
-                document.getElementById('usuarioId').value = orden.usuario_id;
-                document.getElementById('total').value = orden.total;
-                document.getElementById('estado').value = orden.estado;
-                document.getElementById('direccionEnvio').value = orden.direccion_envio;
-                const detallesFormat = orden.OrderDetails.map(det => `${det.producto_id}, ${det.cantidad}`).join('; ');
-                document.getElementById('detalles').value = detallesFormat;
+                document.getElementById('ordenId').value = orden.orden_id || '';
+                document.getElementById('clienteId').value = orden.cliente_id || '';
+                document.getElementById('usuarioId').value = orden.usuario_id || '';
+                document.getElementById('codigoOrden').value = orden.codigo_orden || '';
+                document.getElementById('fechaOrden').value = orden.fecha_orden ? new Date(orden.fecha_orden).toISOString().substring(0, 10) : '';
+                document.getElementById('fechaEntregaEstimada').value = orden.fecha_entrega_estimada ? new Date(orden.fecha_entrega_estimada).toISOString().substring(0, 10) : '';
+                document.getElementById('fechaEntregaReal').value = orden.fecha_entrega_real ? new Date(orden.fecha_entrega_real).toISOString().substring(0, 10) : '';
+                document.getElementById('subtotal').value = orden.subtotal || '';
+                document.getElementById('impuestos').value = orden.impuestos || '';
+                document.getElementById('descuento').value = orden.descuento || '';
+                document.getElementById('total').value = orden.total || '';
+                document.getElementById('estado').value = orden.estado || 'pendiente';
+                document.getElementById('direccionEnvio').value = orden.direccion_envio || '';
+                document.getElementById('notas').value = orden.notas || '';
             } else {
                 document.getElementById('ordenForm').reset();
-                document.getElementById('ordenId').value = '';
             }
             modal.style.display = 'block';
         }
@@ -146,19 +188,20 @@
             const method = ordenId ? 'PUT' : 'POST';
             const url = ordenId ? `${apiUrl}/${ordenId}` : apiUrl;
 
-            const detallesString = document.getElementById('detalles').value.trim();
-            const detalles = detallesString.split(';').map(det => {
-                const [productoId, cantidad] = det.split(',').map(d => d.trim());
-                return { producto_id: parseInt(productoId), cantidad: parseInt(cantidad) };
-            });
-
             const orden = {
                 cliente_id: parseInt(document.getElementById('clienteId').value.trim()),
                 usuario_id: document.getElementById('usuarioId').value ? parseInt(document.getElementById('usuarioId').value.trim()) : null,
+                codigo_orden: document.getElementById('codigoOrden').value.trim(),
+                fecha_orden: document.getElementById('fechaOrden').value,
+                fecha_entrega_estimada: document.getElementById('fechaEntregaEstimada').value,
+                fecha_entrega_real: document.getElementById('fechaEntregaReal').value,
+                subtotal: parseFloat(document.getElementById('subtotal').value.trim()),
+                impuestos: parseFloat(document.getElementById('impuestos').value.trim()),
+                descuento: parseFloat(document.getElementById('descuento').value.trim() || 0),
                 total: parseFloat(document.getElementById('total').value.trim()),
                 estado: document.getElementById('estado').value,
                 direccion_envio: document.getElementById('direccionEnvio').value.trim(),
-                detalles
+                notas: document.getElementById('notas').value.trim()
             };
 
             try {
@@ -192,10 +235,19 @@
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${orden.orden_id}</td>
-                        <td>${orden.Cliente.nombre} ${orden.Cliente.apellido}</td>
+                        <td>${orden.cliente_id}</td>
+                        <td>${orden.usuario_id || ''}</td>
+                        <td>${orden.codigo_orden}</td>
+                        <td>${orden.fecha_orden ? new Date(orden.fecha_orden).toLocaleDateString() : ''}</td>
+                        <td>${orden.fecha_entrega_estimada ? new Date(orden.fecha_entrega_estimada).toLocaleDateString() : ''}</td>
+                        <td>${orden.fecha_entrega_real ? new Date(orden.fecha_entrega_real).toLocaleDateString() : ''}</td>
+                        <td>$${orden.subtotal.toFixed(2)}</td>
+                        <td>$${orden.impuestos.toFixed(2)}</td>
+                        <td>$${orden.descuento.toFixed(2)}</td>
                         <td>$${orden.total.toFixed(2)}</td>
-                        <td><span class="status ${orden.estado.toLowerCase()}">${orden.estado}</span></td>
-                        <td>${new Date(orden.fecha_orden).toLocaleDateString()}</td>
+                        <td><span class="status ${orden.estado.replace(/ /g, '-').toLowerCase()}">${orden.estado}</span></td>
+                        <td>${orden.direccion_envio}</td>
+                        <td>${orden.notas}</td>
                         <td class="action-buttons">
                             <button onclick='mostrarModal(${JSON.stringify(orden)})' class="editar-btn"><i class="fas fa-edit"></i> Editar</button>
                             <button onclick='eliminarOrden(${orden.orden_id})' class="delete-btn"><i class="fas fa-trash-alt"></i> Eliminar</button>
@@ -233,11 +285,7 @@
             const filas = document.querySelectorAll('#ordenesBody tr');
             filas.forEach(fila => {
                 const cliente = fila.children[1].textContent.toLowerCase();
-                if (cliente.includes(input)) {
-                    fila.style.display = '';
-                } else {
-                    fila.style.display = 'none';
-                }
+                fila.style.display = cliente.includes(input) ? '' : 'none';
             });
         }
 

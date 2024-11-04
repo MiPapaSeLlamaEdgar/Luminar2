@@ -78,7 +78,7 @@ const viewRoutes = {
     '/editarperfilCliente': 'views/Cliente/editarperfilCliente.html',
     '/ordersCliente': 'views/Cliente/ordersCliente.html',
     '/shopCliente': 'views/Cliente/shopCliente.html',
-    '/whishlistCliente': 'views/Cliente/whishlistCliente.html',
+    '/whishlistCliente': 'views/Cliente/wishlistCliente.html',
     
     // Rutas para Vendedor
     '/vendedor/clientes': 'views/Vendedor/clientes.html',

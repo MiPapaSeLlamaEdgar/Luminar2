@@ -1,6 +1,6 @@
 // models/wishlist.model.js
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('Wishlist', {
+    const Wishlist = sequelize.define('Wishlist', {
         wishlist_id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -32,5 +32,12 @@ module.exports = (sequelize, DataTypes) => {
             }
         ]
     });
-};
 
+    // Asociaciones con Client y Product
+    Wishlist.associate = models => {
+        Wishlist.belongsTo(models.Client, { foreignKey: 'cliente_id', as: 'Cliente' });
+        Wishlist.belongsTo(models.Product, { foreignKey: 'producto_id', as: 'Producto' });
+    };
+
+    return Wishlist;
+};

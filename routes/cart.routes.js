@@ -1,15 +1,17 @@
-// routes/cart.routes.js
 const express = require('express');
 const router = express.Router();
 
 module.exports = (models) => {
-    const { Cart, Product } = models; // Asegúrate de importar Product
+    const { Cart, Product, Client } = models; // Importa Product y Client para las asociaciones correctas
 
     // Obtener todos los items del carrito
     router.get('/', async (req, res) => {
         try {
             const cartItems = await Cart.findAll({
-                include: ['Cliente', 'Producto']
+                include: [
+                    { model: Client, as: 'Cliente' },  // Carga la información del cliente
+                    { model: Product, as: 'Producto' } // Usa el alias 'Producto' para cargar el producto
+                ]
             });
             res.json(cartItems);
         } catch (error) {
@@ -25,7 +27,7 @@ module.exports = (models) => {
         try {
             const cartItems = await Cart.findAll({
                 where: { cliente_id: req.params.clienteId },
-                include: [{ model: Product, as: 'Producto' }]  
+                include: [{ model: Product, as: 'Producto' }]  // Alias 'Producto' en la relación con Product
             });
 
             res.json(cartItems);
@@ -87,4 +89,3 @@ module.exports = (models) => {
 
     return router;
 };
-

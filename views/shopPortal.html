@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="stylesheet" href="assets/css/style.css">
     <title>Shop - Luminar</title>
     <style>
@@ -171,115 +170,85 @@
     <!-- MAIN JS -->
     <script src="assets/js/main.js"></script>
 
-    <!-- Script para productos quemados y categorías -->
+    <!-- Script para cargar y filtrar productos según la categoría seleccionada -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const productContainer = document.querySelector('.products__container');
-            const categoryTabs = document.querySelectorAll('.category__tab');
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Función para cargar productos con opción de filtrar por categoría
+            async function loadProducts(category = 'all') {
+                try {
+                    const response = await fetch('/api/product');
+                    const products = await response.json();
 
-            // Productos quemados (datos simulados)
-            const productsData = [
-                {
-                    id: 1,
-                    imageUrl1: "assets/img/product-1-1.jpg",
-                    imageUrl2: "assets/img/product-1-2.jpg",
-                    badge: "Hot",
-                    category: "blazer",
-                    name: "Colorful Pattern Shirt",
-                    rating: 5,
-                    priceNew: 238.85,
-                    priceOld: 245.80
-                },
-                {
-                    id: 2,
-                    imageUrl1: "assets/img/product-2-1.jpg",
-                    imageUrl2: "assets/img/product-2-2.jpg",
-                    badge: "-30%",
-                    category: "accesorios",
-                    name: "Leather Handbag",
-                    rating: 5,
-                    priceNew: 178.99,
-                    priceOld: 210.50
-                },
-                {
-                    id: 3,
-                    imageUrl1: "assets/img/product-3-1.jpg",
-                    imageUrl2: "assets/img/product-3-2.jpg",
-                    badge: "New",
-                    category: "pantalones",
-                    name: "Casual Blue Jeans",
-                    rating: 4,
-                    priceNew: 99.99,
-                    priceOld: 120.00
-                },
-                // Añade más productos aquí según sea necesario
-            ];
+                    // Filtrar productos por categoría si se selecciona una
+                    const filteredProducts = category === 'all' ? products : products.filter(product => product.Categoria && product.Categoria.nombre_categoria.toLowerCase() === category.toLowerCase());
 
-            // Función para cargar productos por categoría
-            const loadProductsByCategory = (category) => {
-                // Limpiar el contenedor de productos antes de agregar nuevos
-                productContainer.innerHTML = '';
+                    // Contenedor de productos
+                    const productsContainer = document.querySelector('.products__container');
+                    productsContainer.innerHTML = '';
 
-                // Filtrar productos según la categoría seleccionada
-                const filteredProducts = category === 'all'
-                    ? productsData
-                    : productsData.filter(product => product.category === category);
+                    // Crear HTML de cada producto
+                    filteredProducts.forEach(product => {
+                        const productHTML = `
+                            <div class="product__item">
+                                <div class="product__banner">
+                                    <a href="/" class="product__images">
+                                        <img src="${product.imagenes}" alt="${product.nombre_producto}" class="product__img default">
+                                    </a>
+                                    ${product.estado === 'agotado' ? '<div class="product__badge light-red">Agotado</div>' : ''}
+                                </div>
+                                <div class="product__content">
+                                    <span class="product__category">${product.Categoria ? product.Categoria.nombre_categoria : 'Sin categoría'}</span>
+                                    <h3 class="product__title">${product.nombre_producto}</h3>
+                                    <div class="product__price flex">
+                                        <span class="new__price">$${product.precio}</span>
+                                    </div>
+                                    <a href="#" class="action_btn cart_btn" data-product-id="${product.producto_id}" aria-label="Add To Cart">
+                                        <i class="fi fi-fs-shopping-bag-add"></i>
+                                    </a>
+                                </div>
+                            </div>`;
+                        productsContainer.insertAdjacentHTML('beforeend', productHTML);
+                    });
 
-                // Renderizar productos filtrados por categoría
-                filteredProducts.forEach(product => {
-                    const productItem = document.createElement('div');
-                    productItem.classList.add('product__item');
-                    productItem.innerHTML = `
-                        <div class="product__banner">
-                            <a href="/detailsCliente?productId=${product.id}" class="product__images">
-                                <img src="${product.imageUrl1}" alt="Product Image" class="product__img default">
-                                <img src="${product.imageUrl2}" alt="Product Image Hover" class="product__img hover">
-                            </a>
-                            ${product.badge ? `<div class="product__badge">${product.badge}</div>` : ''}
-                        </div>
-                        <div class="product__content">
-                            <span class="product__category">${product.category.charAt(0).toUpperCase() + product.category.slice(1)}</span>
-                            <a href="/detailsCliente?productId=${product.id}">
-                                <h3 class="product__title">${product.name}</h3>
-                            </a>
-                            <div class="product__rating">
-                                ${'<i class="fi fi-rs-star"></i>'.repeat(product.rating)}
-                            </div>
-                            <div class="product__price flex">
-                                <span class="new__price">$${product.priceNew.toFixed(2)}</span>
-                                ${product.priceOld ? `<span class="old__price">$${product.priceOld.toFixed(2)}</span>` : ''}
-                            </div>
-                            <a href="#" class="action__btn Wishlist" aria-label="Add to Wishlist">
-                                <i class="fi fi-rs-shopping-bag-add"></i>
-                            </a>
-                            <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
-                                <i class="fi fi-rs-shopping-bag-add"></i>
-                            </a>
-                        </div>
-                    `;
-                    productContainer.appendChild(productItem);
-                });
-            };
+                    // Agregar event listeners a los botones de carrito
+                    document.querySelectorAll('.cart__btn').forEach(button => {
+                        button.addEventListener('click', async function(e) {
+                            e.preventDefault();
+                            const productId = this.getAttribute('data-product-id');
 
-            // Event listener para clics en tabs de categorías
-            categoryTabs.forEach(tab => {
-                tab.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const selectedCategory = this.getAttribute('data-category');
+                            try {
+                                const response = await fetch('/api/cart/add', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ producto_id: productId })
+                                });
+                                const result = await response.json();
+                                alert(result.message);
+                            } catch (error) {
+                                console.error('Error:', error);
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.error('Error al cargar productos:', error);
+                }
+            }
 
-                    // Remover la clase active de todos los tabs
-                    categoryTabs.forEach(tab => tab.classList.remove('active'));
-                    // Agregar la clase active al tab seleccionado
+            // Inicializar productos y categorías
+            loadProducts();
+
+            // Evento para cambiar la categoría activa y recargar productos
+            document.querySelectorAll('.category__tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.category__tab').forEach(t => t.classList.remove('active'));
                     this.classList.add('active');
-
-                    // Cargar productos según la categoría seleccionada
-                    loadProductsByCategory(selectedCategory);
+                    const selectedCategory = this.getAttribute('data-category');
+                    loadProducts(selectedCategory);
                 });
             });
-
-            // Cargar productos de la pestaña "Todos" al iniciar
-            loadProductsByCategory('all');
+            
         });
+        
     </script>
 </body>
 </html>

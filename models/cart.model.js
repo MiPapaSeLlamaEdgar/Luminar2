@@ -27,11 +27,11 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: false
     });
 
-    // Definir la asociación con el modelo `Product`
+    // Definir la asociación con el modelo `Product` usando el alias `Producto`
     Cart.associate = models => {
         Cart.belongsTo(models.Product, {
             foreignKey: 'producto_id',
-            as: 'Producto'  // Alias usado en el include
+            as: 'Producto'  // Alias correcto para el include en las rutas
         });
     };
 

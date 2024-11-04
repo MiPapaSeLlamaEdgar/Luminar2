@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 module.exports = (models) => {
-    const { Order, OrderDetail, Client, User } = models;
+    const { Order, OrderDetail, Client, User, Product } = models;
 
     // Obtener todas las órdenes
     router.get('/', async (req, res) => {
@@ -11,11 +11,11 @@ module.exports = (models) => {
             const orders = await Order.findAll({
                 include: [
                     { model: Client, attributes: ['nombre', 'apellido'] },
-                    { model: User, attributes: ['nombre', 'apellido'] },
+                    { model: User, as: 'Usuario', attributes: ['nombre', 'apellido'] },
                     { 
-                        model: OrderDetail, 
+                        model: OrderDetail,
                         attributes: ['producto_id', 'cantidad'],
-                        include: [{ model: models.Product, attributes: ['nombre_producto', 'precio'] }]
+                        include: [{ model: Product, attributes: ['nombre_producto', 'precio'] }]
                     }
                 ]
             });
@@ -32,10 +32,10 @@ module.exports = (models) => {
             const order = await Order.findByPk(req.params.id, {
                 include: [
                     { model: Client, attributes: ['nombre', 'apellido', 'correo_electronico'] },
-                    { model: User, attributes: ['nombre', 'apellido', 'correo_electronico'] },
+                    { model: User, as: 'Usuario', attributes: ['nombre', 'apellido', 'correo_electronico'] },
                     {
                         model: OrderDetail,
-                        include: [{ model: models.Product, attributes: ['nombre_producto', 'precio'] }]
+                        include: [{ model: Product, attributes: ['nombre_producto', 'precio'] }]
                     }
                 ]
             });
@@ -83,7 +83,7 @@ module.exports = (models) => {
             // Actualizar los datos de la orden
             await order.update(orderData);
 
-            // Si hay detalles, actualizarlos (aquí podrías agregar lógica adicional según tus requerimientos)
+            // Actualizar detalles de la orden si se proporcionan
             if (detalles && detalles.length > 0) {
                 await OrderDetail.destroy({ where: { orden_id: order.orden_id } }); // Eliminar detalles anteriores
                 for (const detalle of detalles) {
