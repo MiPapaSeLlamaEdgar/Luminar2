@@ -1,8 +1,6 @@
 // models/init-models.js
-
 const { Sequelize, DataTypes } = require('sequelize');
 
-// Importar modelos desde archivos
 const RoleModel = require('./role.model');
 const UserModel = require('./user.model');
 const ClientModel = require('./client.model');
@@ -13,10 +11,9 @@ const OrderDetailModel = require('./orderDetail.model');
 const PaymentModel = require('./payment.model');
 const CartModel = require('./cart.model');
 const WishlistModel = require('./wishlist.model');
-const OrderTrackingModel = require('./orderTracking.model');  // También llamado "SeguimientoOrdenes" en un archivo previo
+const OrderTrackingModel = require('./orderTracking.model');
 
 function initModels(sequelize) {
-    // Inicializar modelos
     const Role = RoleModel(sequelize, DataTypes);
     const User = UserModel(sequelize, DataTypes);
     const Client = ClientModel(sequelize, DataTypes);
@@ -29,65 +26,49 @@ function initModels(sequelize) {
     const Wishlist = WishlistModel(sequelize, DataTypes);
     const OrderTracking = OrderTrackingModel(sequelize, DataTypes);
 
-    // Definir relaciones entre modelos según el esquema de base de datos
-
-    // Relación entre Role y User
+    // Definir las relaciones aquí
     Role.hasMany(User, { foreignKey: 'rol_id' });
     User.belongsTo(Role, { foreignKey: 'rol_id' });
 
-    // Relación entre Client y Order
     Client.hasMany(Order, { foreignKey: 'cliente_id' });
     Order.belongsTo(Client, { foreignKey: 'cliente_id' });
 
-    // Relación entre User y Order (Usuario que gestiona la orden)
     User.hasMany(Order, { foreignKey: 'usuario_id', as: 'OrdenesGestionadas' });
     Order.belongsTo(User, { foreignKey: 'usuario_id', as: 'Usuario' });
 
-    // Relación entre Category y Product
     Category.hasMany(Product, { foreignKey: 'categoria_id' });
-    Product.belongsTo(Category, { foreignKey: 'categoria_id' });
+    Product.belongsTo(Category, { foreignKey: 'categoria_id', as: 'Categoria' });
 
-    // Relación de categorías padre-hijo
     Category.belongsTo(Category, { as: 'CategoriaPadre', foreignKey: 'categoria_padre_id' });
     Category.hasMany(Category, { as: 'SubCategorias', foreignKey: 'categoria_padre_id' });
 
-    // Relación entre Client y Cart
-    Client.hasMany(Cart, { foreignKey: 'cliente_id' });
-    Cart.belongsTo(Client, { foreignKey: 'cliente_id' });
+    Client.hasMany(Cart, { foreignKey: 'cliente_id', as: 'Carritos' });
+    Cart.belongsTo(Client, { foreignKey: 'cliente_id', as: 'Cliente' });
 
-    // Relación entre Product y Cart
-    Product.hasMany(Cart, { foreignKey: 'producto_id' });
-    Cart.belongsTo(Product, { foreignKey: 'producto_id' });
+    Product.hasMany(Cart, { foreignKey: 'producto_id', as: 'Carritos' });
+    Cart.belongsTo(Product, { foreignKey: 'producto_id', as: 'Producto' });
 
-    // Relación entre Client y Wishlist
-    Client.hasMany(Wishlist, { foreignKey: 'cliente_id' });
-    Wishlist.belongsTo(Client, { foreignKey: 'cliente_id' });
+    Client.hasMany(Wishlist, { foreignKey: 'cliente_id', as: 'Wishlists' });
+    Wishlist.belongsTo(Client, { foreignKey: 'cliente_id', as: 'Cliente' });
 
-    // Relación entre Product y Wishlist
-    Product.hasMany(Wishlist, { foreignKey: 'producto_id' });
-    Wishlist.belongsTo(Product, { foreignKey: 'producto_id' });
+    Product.hasMany(Wishlist, { foreignKey: 'producto_id', as: 'Wishlists' });
+    Wishlist.belongsTo(Product, { foreignKey: 'producto_id', as: 'Producto' });
 
-    // Relación entre Order y OrderDetail (Una orden tiene varios detalles de productos)
-    Order.hasMany(OrderDetail, { foreignKey: 'orden_id' });
-    OrderDetail.belongsTo(Order, { foreignKey: 'orden_id' });
+    Order.hasMany(OrderDetail, { foreignKey: 'orden_id', as: 'Detalles' });
+    OrderDetail.belongsTo(Order, { foreignKey: 'orden_id', as: 'Orden' });
 
-    // Relación entre OrderDetail y Product (Un detalle de orden se relaciona con un producto)
-    Product.hasMany(OrderDetail, { foreignKey: 'producto_id' });
-    OrderDetail.belongsTo(Product, { foreignKey: 'producto_id' });
+    Product.hasMany(OrderDetail, { foreignKey: 'producto_id', as: 'Detalles' });
+    OrderDetail.belongsTo(Product, { foreignKey: 'producto_id', as: 'Producto' });
 
-    // Relación entre Order y Payment
-    Order.hasMany(Payment, { foreignKey: 'orden_id' });
-    Payment.belongsTo(Order, { foreignKey: 'orden_id' });
+    Order.hasMany(Payment, { foreignKey: 'orden_id', as: 'Pagos' });
+    Payment.belongsTo(Order, { foreignKey: 'orden_id', as: 'Orden' });
 
-    // Relación entre Order y OrderTracking (seguimiento de órdenes)
-    Order.hasMany(OrderTracking, { foreignKey: 'orden_id' });
-    OrderTracking.belongsTo(Order, { foreignKey: 'orden_id' });
+    Order.hasMany(OrderTracking, { foreignKey: 'orden_id', as: 'Seguimientos' });
+    OrderTracking.belongsTo(Order, { foreignKey: 'orden_id', as: 'Orden' });
 
-    // Relación entre User y OrderTracking (Usuario que gestiona el seguimiento)
-    User.hasMany(OrderTracking, { foreignKey: 'usuario_id' });
-    OrderTracking.belongsTo(User, { foreignKey: 'usuario_id' });
+    User.hasMany(OrderTracking, { foreignKey: 'usuario_id', as: 'SeguimientosGestionados' });
+    OrderTracking.belongsTo(User, { foreignKey: 'usuario_id', as: 'Usuario' });
 
-    // Exportar todos los modelos inicializados
     return {
         Role,
         User,

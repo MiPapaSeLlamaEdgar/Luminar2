@@ -119,6 +119,7 @@ CREATE TABLE Pagos (
 -- Tabla de Lista de Deseos (Modificada)
 CREATE TABLE Lista_Deseos (
     wishlist_id INT PRIMARY KEY AUTO_INCREMENT,
+    wishlist_id INT PRIMARY KEY AUTO_INCREMENT,
     cliente_id INT,
     producto_id INT,
     fecha_agregado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

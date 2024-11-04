@@ -1,17 +1,31 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
 
 module.exports = (models) => {
-    const { Product, Categoria } = models; // Asegúrate de obtener el modelo Categoria
+    const { Product, Category } = models;
+
+    // Configurar almacenamiento con multer
+    const storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, path.join(__dirname, '../public/images'));  
+        },
+        filename: (req, file, cb) => {
+            cb(null, Date.now() + path.extname(file.originalname)); 
+        }
+    });
+
+    const upload = multer({ storage: storage });
 
     // Obtener todos los productos
     router.get('/', async (req, res) => {
         try {
             const products = await Product.findAll({
                 include: {
-                    model: Categoria, // Referencia directa al modelo
-                    as: 'Categoria',  // El alias debe coincidir con el definido en la relación del modelo
-                    attributes: ['nombre_categoria'] // Traer solo los atributos necesarios
+                    model: Category,
+                    as: 'Categoria',
+                    attributes: ['nombre_categoria']
                 }
             });
             res.json(products);
@@ -46,9 +60,11 @@ module.exports = (models) => {
     });
 
     // Crear nuevo producto
-    router.post('/', async (req, res) => {
+    router.post('/', upload.single('imagenes'), async (req, res) => {
         try {
-            const product = await Product.create(req.body);
+            const imageUrl = req.file ? `/images/${req.file.filename}` : null;
+            const productData = { ...req.body, imagenes: imageUrl };
+            const product = await Product.create(productData);
             res.status(201).json(product);
         } catch (error) {
             res.status(500).json({
@@ -59,13 +75,18 @@ module.exports = (models) => {
     });
 
     // Actualizar producto
-    router.put('/:id', async (req, res) => {
+    router.put('/:id', upload.single('imagenes'), async (req, res) => {
         try {
             const product = await Product.findByPk(req.params.id);
             if (!product) {
                 return res.status(404).json({ message: 'Producto no encontrado' });
             }
-            await product.update(req.body);
+            
+            // Si hay una nueva imagen, usa esa; si no, mantén la existente
+            const imageUrl = req.file ? `/images/${req.file.filename}` : product.imagenes; 
+            const updatedData = { ...req.body, imagenes: imageUrl };
+            
+            await product.update(updatedData);
             res.json(product);
         } catch (error) {
             res.status(500).json({
@@ -91,6 +112,9 @@ module.exports = (models) => {
             });
         }
     });
+
+    // Configura la carpeta pública para que sea accesible
+    router.use('/images', express.static(path.join(__dirname, '../public/images')));
 
     return router;
 };

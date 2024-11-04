@@ -158,23 +158,22 @@
         function mostrarModal(orden = null) {
             const modal = document.getElementById('ordenModal');
             if (orden) {
-                document.getElementById('ordenId').value = orden.orden_id;
-                document.getElementById('clienteId').value = orden.cliente_id;
-                document.getElementById('usuarioId').value = orden.usuario_id;
-                document.getElementById('codigoOrden').value = orden.codigo_orden;
+                document.getElementById('ordenId').value = orden.orden_id || '';
+                document.getElementById('clienteId').value = orden.cliente_id || '';
+                document.getElementById('usuarioId').value = orden.usuario_id || '';
+                document.getElementById('codigoOrden').value = orden.codigo_orden || '';
                 document.getElementById('fechaOrden').value = orden.fecha_orden ? new Date(orden.fecha_orden).toISOString().substring(0, 10) : '';
                 document.getElementById('fechaEntregaEstimada').value = orden.fecha_entrega_estimada ? new Date(orden.fecha_entrega_estimada).toISOString().substring(0, 10) : '';
                 document.getElementById('fechaEntregaReal').value = orden.fecha_entrega_real ? new Date(orden.fecha_entrega_real).toISOString().substring(0, 10) : '';
-                document.getElementById('subtotal').value = orden.subtotal;
-                document.getElementById('impuestos').value = orden.impuestos;
-                document.getElementById('descuento').value = orden.descuento;
-                document.getElementById('total').value = orden.total;
-                document.getElementById('estado').value = orden.estado;
-                document.getElementById('direccionEnvio').value = orden.direccion_envio;
-                document.getElementById('notas').value = orden.notas;
+                document.getElementById('subtotal').value = orden.subtotal || '';
+                document.getElementById('impuestos').value = orden.impuestos || '';
+                document.getElementById('descuento').value = orden.descuento || '';
+                document.getElementById('total').value = orden.total || '';
+                document.getElementById('estado').value = orden.estado || 'pendiente';
+                document.getElementById('direccionEnvio').value = orden.direccion_envio || '';
+                document.getElementById('notas').value = orden.notas || '';
             } else {
                 document.getElementById('ordenForm').reset();
-                document.getElementById('ordenId').value = '';
             }
             modal.style.display = 'block';
         }
@@ -239,14 +238,14 @@
                         <td>${orden.cliente_id}</td>
                         <td>${orden.usuario_id || ''}</td>
                         <td>${orden.codigo_orden}</td>
-                        <td>${new Date(orden.fecha_orden).toLocaleDateString()}</td>
+                        <td>${orden.fecha_orden ? new Date(orden.fecha_orden).toLocaleDateString() : ''}</td>
                         <td>${orden.fecha_entrega_estimada ? new Date(orden.fecha_entrega_estimada).toLocaleDateString() : ''}</td>
                         <td>${orden.fecha_entrega_real ? new Date(orden.fecha_entrega_real).toLocaleDateString() : ''}</td>
                         <td>$${orden.subtotal.toFixed(2)}</td>
                         <td>$${orden.impuestos.toFixed(2)}</td>
                         <td>$${orden.descuento.toFixed(2)}</td>
                         <td>$${orden.total.toFixed(2)}</td>
-                        <td><span class="status ${orden.estado.toLowerCase()}">${orden.estado}</span></td>
+                        <td><span class="status ${orden.estado.replace(/ /g, '-').toLowerCase()}">${orden.estado}</span></td>
                         <td>${orden.direccion_envio}</td>
                         <td>${orden.notas}</td>
                         <td class="action-buttons">
@@ -286,11 +285,7 @@
             const filas = document.querySelectorAll('#ordenesBody tr');
             filas.forEach(fila => {
                 const cliente = fila.children[1].textContent.toLowerCase();
-                if (cliente.includes(input)) {
-                    fila.style.display = '';
-                } else {
-                    fila.style.display = 'none';
-                }
+                fila.style.display = cliente.includes(input) ? '' : 'none';
             });
         }
 

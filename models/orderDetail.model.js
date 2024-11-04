@@ -1,4 +1,5 @@
 // models/orderDetail.model.js
+
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('OrderDetail', {
         detalle_id: {
@@ -13,7 +14,8 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'Ordenes',
                 key: 'orden_id'
             },
-            onDelete: 'CASCADE'
+            onDelete: 'CASCADE',  // Si se elimina la orden, también se eliminan los detalles
+            onUpdate: 'CASCADE'
         },
         producto_id: {
             type: DataTypes.INTEGER,
@@ -22,14 +24,19 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'Productos',
                 key: 'producto_id'
             },
-            onDelete: 'CASCADE'
+            onDelete: 'CASCADE',  // Si se elimina el producto, se eliminan los detalles asociados
+            onUpdate: 'CASCADE'
         },
         cantidad: {
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        precio_unitario: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: false
         }
     }, {
-        tableName: 'Order_Details',
+        tableName: 'Order_Details', // Nombre de la tabla en la base de datos
         timestamps: false
     });
 };
