@@ -115,7 +115,7 @@
         const wishlistContainer = document.getElementById('wishlistItemsBody');
         const emptyMessage = document.getElementById('emptyWishlistMessage');
 
-        const clienteId = 1; // ID del cliente estático como ejemplo
+        const clienteId = localStorage.getItem("cliente_id");
 
         // Función para mostrar notificaciones
         const showNotification = (message, type = 'success') => {
@@ -129,19 +129,7 @@
             });
         };
 
-        // Función para actualizar el contador de la lista de deseos
-        const updateWishlistCount = async () => {
-            try {
-                const response = await fetch(`/api/wishlist/count?clienteId=${clienteId}`);
-                const data = await response.json();
-                document.querySelectorAll('.count').forEach(element => {
-                    element.textContent = data.count;
-                });
-            } catch (error) {
-                console.error('Error al actualizar contador:', error);
-            }
-        };
-
+    
         // Función para cargar los items de la lista de deseos
         const loadWishlistItems = async () => {
             try {
@@ -158,11 +146,12 @@
                 emptyMessage.style.display = 'none';
 
                 wishlistContainer.innerHTML = items.map(item => `
-                    <div class="product__item" data-id="${item.producto_id}">
+                    <div class="product__item" data-id="${item.wishlist_id}">
                         <div class="product__banner">
                             <a href="/product/${item.producto_id}" class="product__images">
                                 <img src="${item.Producto.imagen_url}" alt="${item.Producto.nombre_producto}" class="product__img">
                             </a>
+                            ${item.Producto.estado === 'agotado' ? '<div class="product__badge light-red">Agotado</div>' : ''}
                         </div>
                         <div class="product__content">
                             <span class="product__category">${item.Producto.categoria}</span>
@@ -172,11 +161,17 @@
                             <div class="product__price flex">
                                 <span class="new__price">$${item.Producto.precio}</span>
                             </div>
+                             <!-- Contador de cantidad -->
+                            <div class="product__quantity">
+                                <button type="button" class="quantity__button" onclick="decreaseQuantity(${item.producto_id})">-</button>
+                                <input type="number" id="quantity-${item.producto_id}" class="quantity__input" value="1" min="1">
+                                <button type="button" class="quantity__button" onclick="increaseQuantity(${item.producto_id})">+</button>
+                            </div>
                             <div class="product__buttons">
-                                <button class="action__btn remove-from-wishlist" aria-label="Remove from Wishlist">
+                                <button class="action__btn remove-from-wishlist">
                                     <i class="fi fi-rs-trash"></i>
                                 </button>
-                                <button class="action__btn add-to-cart" aria-label="Add to Cart">
+                                <button class="action__btn add-to-cart" data-product-id="${item.producto_id}" onclick="AddToCart(${item.producto_id})">
                                     <i class="fi fi-rs-shopping-cart"></i>
                                 </button>
                             </div>
@@ -193,7 +188,7 @@
             }
         };
 
-        // Función para agregar event listeners a los botones
+        // Función para eliminar event listeners a los botones
         const attachButtonListeners = () => {
             document.querySelectorAll('.remove-from-wishlist').forEach(button => {
                 button.addEventListener('click', async function() {
@@ -209,7 +204,7 @@
                         const data = await response.json();
                         showNotification(data.message);
                         productItem.remove();
-                        updateWishlistCount();
+                        contador(clientId);
 
                         if (wishlistContainer.children.length === 0) {
                             wishlistContainer.style.display = 'none';
@@ -221,34 +216,97 @@
                     }
                 });
             });
-
-            // Botones de agregar al carrito
-            document.querySelectorAll('.add-to-cart').forEach(button => {
-                button.addEventListener('click', async function() {
-                    const productItem = this.closest('.product__item');
-                    const productId = productItem.dataset.id;
-
-                    try {
-                        const response = await fetch('/api/cart/add', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ cliente_id: clienteId, producto_id: productId, cantidad: 1 })
-                        });
-
-                        const data = await response.json();
-                        showNotification(data.message || 'Producto agregado al carrito');
-                    } catch (error) {
-                        console.error('Error:', error);
-                        showNotification('Error al agregar al carrito', 'error');
-                    }
-                });
-            });
         };
 
         // Inicializar lista de deseos y contador
         loadWishlistItems();
-        updateWishlistCount();
+
+        //traer contadores de carrito y de lista de deceos 
+        const clientId = localStorage.getItem("cliente_id");
+        if (clientId) {
+            contador(clientId);
+        }
     });
+
+    async function contador(clientId) {
+        try {
+            // Obtener conteo de la lista de deseos
+            const wishlistResponse = await fetch(`/api/wishlist/count/${clientId}`);
+            const wishlistData = await wishlistResponse.json(); // Espera la respuesta JSON
+            document.querySelector(".header__user-actions .header__action-btn[href='/whishlistCliente'] .count").textContent = wishlistData.count;
+
+            // Obtener conteo del carrito
+            const cartResponse = await fetch(`/api/cart/count/${clientId}`);
+            const cartData = await cartResponse.json(); // Espera la respuesta JSON
+            document.querySelector(".header__user-actions .header__action-btn[href='/cartCliente'] .count").textContent = cartData.count;
+        } catch (error) {
+            console.error("Error al obtener conteos de lista de deseos y carrito:", error);
+        }
+    }
+
+    function decreaseQuantity(productId) {
+        const quantityInput = document.getElementById(`quantity-${productId}`);
+        if (quantityInput.value > 1) {
+            quantityInput.value = parseInt(quantityInput.value) - 1;
+        }
+    }
+
+    function increaseQuantity(productId) {
+        const quantityInput = document.getElementById(`quantity-${productId}`);
+        quantityInput.value = parseInt(quantityInput.value) + 1;
+    }
+
+    //agregar a carrito 
+    function AddToCart(productId) {
+        event.preventDefault();
+
+        // Obtener elementos relevantes
+        const quantity = document.getElementById(`quantity-${productId}`).value;
+        const clientId = localStorage.getItem("cliente_id");
+        const productStatus = document.querySelector(`[data-product-id="${productId}"]`)
+                            .closest(".product__item")
+                            .querySelector(".product__badge");
+
+        // Verificar si el producto está agotado
+        if (productStatus && productStatus.textContent.trim() === "Agotado") {
+            alert("Este producto está agotado");
+            return;
+        }
+
+        // Configurar los datos para enviar al servidor
+        const cartData = {
+            cliente_id: clientId,
+            producto_id: productId,
+            cantidad: quantity,
+            fecha_agregado: new Date().toISOString()
+        };
+
+        // Realizar solicitud POST al servidor
+        fetch("/api/cart/cart", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(cartData)
+        })
+        .then(response => {
+            if (response.ok) {
+                contador(clientId);
+                return response.json();
+            } else {
+                return response.json().then(error => {
+                    throw new Error(error.message);
+                });
+            }
+        })
+        .then(result => {
+            alert("Producto agregado al carrito con éxito");
+        })
+        .catch(error => {
+            alert(`Error al agregar el producto: ${error.message}`);
+        });
+    }
+
     </script>
 </body>
 </html>

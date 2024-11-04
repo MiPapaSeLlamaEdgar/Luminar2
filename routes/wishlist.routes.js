@@ -80,6 +80,7 @@ module.exports = (models) => {
 
     // Eliminar item de la lista de deseos
     router.delete('/:id', async (req, res) => {
+        console.error("id de ingreso a eliminar", req.params.id);
         try {
             const wishlistItem = await Wishlist.findByPk(req.params.id);
             if (!wishlistItem) {

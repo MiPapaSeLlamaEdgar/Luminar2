@@ -157,105 +157,87 @@
     <script src="assets/js/main.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const clienteid = localStorage.getItem('cliente_id');
-            const cartItemsBody = document.getElementById('cartItemsBody');
-            const cartTotalAmount = document.getElementById('cartTotalAmount');
-            const emptyCartMessage = document.getElementById('emptyCartMessage');
-            const checkoutButton = document.getElementById('checkoutButton');
 
-            async function loadCartItems() {
-                try {
-                    if (!clienteid) {
-                        alert('No se ha encontrado el ID del usuario en el localStorage.');
-                        return;
-                    }
+        const clienteid = localStorage.getItem('cliente_id');
+        const cartItemsBody = document.getElementById('cartItemsBody');
+        const cartTotalAmount = document.getElementById('cartTotalAmount');
+        const emptyCartMessage = document.getElementById('emptyCartMessage');
+        const checkoutButton = document.getElementById('checkoutButton');
 
-                    const response = await fetch(`/api/cart/cliente/${clienteid}`);
-                    if (!response.ok) throw new Error('Error al obtener los items del carrito');
-                    
-                    const cartItems = await response.json();
-                    populateCartTable(cartItems);
-
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Hubo un problema al cargar los artículos del carrito.');
-                }
-            }
-
-            function populateCartTable(cartItems) {
-                cartItemsBody.innerHTML = ''; 
-                let totalAmount = 0;
-
-                if (cartItems.length === 0) {
-                    emptyCartMessage.style.display = 'block';
-                    checkoutButton.style.display = 'none';
+        async function loadCartItems() {
+            try {
+                if (!clienteid) {
+                    alert('No se ha encontrado el ID del usuario en el localStorage.');
                     return;
                 }
 
-                cartItems.forEach(item => {
-                    const itemTotal = item.Producto.precio * item.cantidad;
-                    totalAmount += itemTotal;
+                const response = await fetch(`/api/cart/cliente/${clienteid}`);
+                if (!response.ok) throw new Error('Error al obtener los items del carrito');
+                
+                const cartItems = await response.json();
+                populateCartTable(cartItems);
+             
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Hubo un problema al cargar los artículos del carrito.');
+            }
+        }
 
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${item.Producto.nombre_producto}</td>
-                        <td>$${item.Producto.precio}</td>
-                        <td><input type="number" class="cart__quantity" value="${item.cantidad}" min="1" data-producto-id="${item.producto_id}"></td>
-                        <td>$${itemTotal.toFixed(2)}</td>
-                        <td><button class="btn btn-remove" onclick="removeFromCart(${item.carrito_id})">Eliminar</button></td>
-                    `;
-                    cartItemsBody.appendChild(row);
+        function populateCartTable(cartItems) {
+            cartItemsBody.innerHTML = ''; 
+            let totalAmount = 0;
+
+            if (cartItems.length === 0) {
+                emptyCartMessage.style.display = 'block';
+                checkoutButton.style.display = 'none';
+                return;
+            }
+
+            cartItems.forEach(item => {
+                const itemTotal = item.Producto.precio * item.cantidad;
+                totalAmount += itemTotal;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.Producto.nombre_producto}</td>
+                    <td>$${item.Producto.precio}</td>
+                    <td><input type="number" class="cart__quantity" value="${item.cantidad}" min="1" data-carrito-id="${item.carrito_id}"></td>
+                    <td>$${itemTotal.toFixed(2)}</td>
+                    <td><button class="btn btn-remove" onclick="removeFromCart(${item.carrito_id})">Eliminar</button></td>
+                `;
+                cartItemsBody.appendChild(row);
+            });
+
+            cartTotalAmount.textContent = `$${totalAmount.toFixed(2)}`;
+            emptyCartMessage.style.display = 'none';
+            checkoutButton.style.display = 'block';
+
+            // Actualizamos el evento para que use el carrito_id
+            document.querySelectorAll('.cart__quantity').forEach(input => {
+                input.addEventListener('change', function() {
+                    updateQuantity(this.dataset.carritoId, this.value); 
                 });
+            });
+        }
 
-                cartTotalAmount.textContent = `$${totalAmount.toFixed(2)}`;
-                emptyCartMessage.style.display = 'none';
-                checkoutButton.style.display = 'block';
-
-                document.querySelectorAll('.cart__quantity').forEach(input => {
-                    input.addEventListener('change', function() {
-                        updateQuantity(this.dataset.productoId, this.value);
-                    });
+        async function updateQuantity(productId, newQuantity) {
+            console.log("Cantidad a actualizar ", newQuantity);
+            console.log("productId a actualizar ", productId);
+            try {
+                const response = await fetch(`/api/cart/${productId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cantidad: newQuantity })
                 });
+                if (!response.ok) throw new Error('Error al actualizar cantidad');
+                loadCartItems(); 
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'No se pudo actualizar la cantidad', 'error');
             }
+        }
 
-            async function updateQuantity(productId, newQuantity) {
-                try {
-                    const response = await fetch(`/api/cart/${productId}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ cantidad: newQuantity })
-                    });
-                    if (!response.ok) throw new Error('Error al actualizar cantidad');
-                    loadCartItems();
-                } catch (error) {
-                    console.error('Error:', error);
-                    Swal.fire('Error', 'No se pudo actualizar la cantidad', 'error');
-                }
-            }
-
-            async function removeFromCart(cartId) { 
-                try {
-                    const result = await Swal.fire({
-                        title: '¿Estás seguro?',
-                        text: "¿Deseas eliminar este producto del carrito?",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Sí, eliminar',
-                        cancelButtonText: 'Cancelar'
-                    });
-
-                    if (result.isConfirmed) {
-                        const response = await fetch(`/api/cart/${cartId}`, { method: 'DELETE' });
-                        if (!response.ok) throw new Error('Error al eliminar producto');
-                        loadCartItems();
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    Swal.fire('Error', 'No se pudo eliminar el producto', 'error');
-                }
-            }
-
+        document.addEventListener('DOMContentLoaded', function() {
             loadCartItems();
 
             //traer contadores de carrito y de lista de deceos 
@@ -279,6 +261,39 @@
                 document.querySelector(".header__user-actions .header__action-btn[href='/cartCliente'] .count").textContent = cartData.count;
             } catch (error) {
                 console.error("Error al obtener conteos de lista de deseos y carrito:", error);
+            }
+        }
+        
+        async function removeFromCart(cartId) { 
+            try {
+                const result = await Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "¿Deseas eliminar este producto del carrito?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                });
+
+                if (result.isConfirmed) {
+                    const response = await fetch(`/api/cart/${cartId}`, { method: 'DELETE' });
+                    if (!response.ok) throw new Error('Error al eliminar producto');
+                    alert('Producto eliminado del carrito.');
+
+                    // Obtener conteo de la lista de deseos
+                    const wishlistResponse = await fetch(`/api/wishlist/count/${clienteid}`);
+                    const wishlistData = await wishlistResponse.json(); // Espera la respuesta JSON
+                    document.querySelector(".header__user-actions .header__action-btn[href='/whishlistCliente'] .count").textContent = wishlistData.count;
+
+                    // Obtener conteo del carrito
+                    const cartResponse = await fetch(`/api/cart/count/${clienteid}`);
+                    const cartData = await cartResponse.json(); // Espera la respuesta JSON
+                    document.querySelector(".header__user-actions .header__action-btn[href='/cartCliente'] .count").textContent = cartData.count;
+                    loadCartItems();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'No se pudo eliminar el producto', 'error');
             }
         }
     </script>

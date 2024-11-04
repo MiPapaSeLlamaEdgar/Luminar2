@@ -67,14 +67,18 @@ module.exports = (models) => {
 
     // Actualizar cantidad de item
     router.put('/:id', async (req, res) => {
+        console.log("Cantidad que entra en controlador", req.body.cantidad); 
+        console.log("ID que entra en controlador", req.params.id);
         try {
             const cartItem = await Cart.findByPk(req.params.id);
             if (!cartItem) {
-                return res.status(404).json({ message: 'Item no encontrado' });
+                return res.status(404).json({ message: 'Item no encontrado' }); 
             }
-            await cartItem.update(req.body);
+            
+            await cartItem.update({ cantidad: req.body.cantidad }); 
             res.json(cartItem);
         } catch (error) {
+            console.error('Error en el controlador:', error.message); 
             res.status(500).json({
                 message: 'Error al actualizar item del carrito',
                 error: error.message
@@ -82,8 +86,10 @@ module.exports = (models) => {
         }
     });
 
+
     // Eliminar item del carrito
     router.delete('/:id', async (req, res) => {
+        console.error("id que entra ", req.params.id);
         try {
             const cartItem = await Cart.findByPk(req.params.id);
             if (!cartItem) {
