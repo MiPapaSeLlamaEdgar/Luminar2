@@ -257,7 +257,30 @@
             }
 
             loadCartItems();
+
+            //traer contadores de carrito y de lista de deceos 
+            const clientId = localStorage.getItem("cliente_id");
+            if (clientId) {
+                contador(clientId);
+            }
+
         });
+
+        async function contador(clientId) {
+            try {
+                // Obtener conteo de la lista de deseos
+                const wishlistResponse = await fetch(`/api/wishlist/count/${clientId}`);
+                const wishlistData = await wishlistResponse.json(); // Espera la respuesta JSON
+                document.querySelector(".header__user-actions .header__action-btn[href='/whishlistCliente'] .count").textContent = wishlistData.count;
+
+                // Obtener conteo del carrito
+                const cartResponse = await fetch(`/api/cart/count/${clientId}`);
+                const cartData = await cartResponse.json(); // Espera la respuesta JSON
+                document.querySelector(".header__user-actions .header__action-btn[href='/cartCliente'] .count").textContent = cartData.count;
+            } catch (error) {
+                console.error("Error al obtener conteos de lista de deseos y carrito:", error);
+            }
+        }
     </script>
 </body>
 </html>

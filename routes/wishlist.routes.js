@@ -1,6 +1,6 @@
 // routes/wishlist.routes.js
 const express = require('express');
-const router = express.Router();
+const router = express.Router(); 
 
 module.exports = (models) => {
     const { Wishlist, Client, Product, Cart } = models;
@@ -42,12 +42,39 @@ module.exports = (models) => {
     });
 
     // Agregar item a la lista de deseos
-    router.post('/', async (req, res) => {
+     router.post('/List', async (req, res) => { 
+        console.error("entra en guardar list ");
+        console.error("datos ", req.body);
         try {
-            const wishlistItem = await Wishlist.create(req.body);
-            res.status(201).json(wishlistItem);
+            const { cliente_id, producto_id, fecha_agregado } = req.body;
+
+            // Verifica si el producto ya está en la lista de deseos
+            const existingItem = await Wishlist.findOne({
+                where: {
+                    cliente_id,
+                    producto_id
+                }
+            });
+
+            if (existingItem) {
+                // Si el producto ya está en la lista de deseos, avisa al usuario
+                return res.status(409).json({ message: 'El producto ya está en la lista de deseos' });
+            }
+
+            // Crea un nuevo registro en la tabla Cart
+            const cartItem = await Wishlist.create({
+                cliente_id,
+                producto_id,
+                fecha_agregado,
+                fecha_modificacion: new Date()
+            });
+
+            res.status(201).json(cartItem);
         } catch (error) {
-            res.status(500).json({ message: 'Error al agregar item a lista de deseos', error: error.message });
+            res.status(500).json({
+                message: 'Error al agregar item a lista de deseos',
+                error: error.message
+            });
         }
     });
 
@@ -88,6 +115,18 @@ module.exports = (models) => {
             });
         } catch (error) {
             res.status(500).json({ message: 'Error al mover producto al carrito', error: error.message });
+        }
+    });
+
+    // Obtener conteo de lista de deseos por cliente
+    router.get('/count/:clienteId', async (req, res) => {
+        try {
+            const wishlistCount = await Wishlist.count({
+                where: { cliente_id: req.params.clienteId }
+            });
+            res.json({ count: wishlistCount });
+        } catch (error) {
+            res.status(500).json({ message: 'Error al obtener conteo de lista de deseos', error: error.message });
         }
     });
 

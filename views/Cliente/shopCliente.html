@@ -83,12 +83,12 @@
             <div class="header__user-actions">
                 <a href="/whishlistCliente" class="header__action-btn">
                     <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
-                    <span class="count">3</span>
+                    <span class="count">0</span>
                 </a>
 
                 <a href="/cartCliente" class="header__action-btn">
                     <img src="assets/img/icon-cart.svg" alt="Carrito">
-                    <span class="count">3</span>
+                    <span class="count">0</span>
                 </a>
             </div>
         </nav>
@@ -189,7 +189,7 @@
                         const productHTML = `
                             <div class="product__item">
                                 <div class="product__banner">
-                                    <a href="/" class="product__images">
+                                    <a href="#" class="product__images">
                                         <img src="${product.imagenes}" alt="${product.nombre_producto}" class="product__img default">
                                     </a>
                                     ${product.estado === 'agotado' ? '<div class="product__badge light-red">Agotado</div>' : ''}
@@ -200,8 +200,23 @@
                                     <div class="product__price flex">
                                         <span class="new__price">$${product.precio}</span>
                                     </div>
-                                    <a href="#" class="action_btn cart_btn" data-product-id="${product.producto_id}" aria-label="Add To Cart">
-                                        <i class="fi fi-fs-shopping-bag-add"></i>
+                                    <!-- Contador de cantidad -->
+                                    <div class="product__quantity">
+                                        <button type="button" class="quantity__button" onclick="decreaseQuantity(${product.producto_id})">-</button>
+                                        <input type="number" id="quantity-${product.producto_id}" class="quantity__input" value="1" min="1">
+                                        <button type="button" class="quantity__button" onclick="increaseQuantity(${product.producto_id})">+</button>
+                                    </div>
+                                    <!--carrito-->
+                                    <a href="#" class="action_btn cart_btn" data-product-id="${product.producto_id}" aria-label="Add To Cart" onclick="AddToCart(${product.producto_id})">card
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
+                                            <path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z"/>
+                                        </svg>
+                                    </a>
+                                     <!--List deseos -->
+                                    <a href="#" class="action_btn List_btn" data-product-id="${product.producto_id}" aria-label="Add To List" onclick="AddToList(${product.producto_id})">lista
+                                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
+                                            <path d="M440-501Zm0 381L313-234q-72-65-123.5-116t-85-96q-33.5-45-49-87T40-621q0-94 63-156.5T260-840q52 0 99 22t81 62q34-40 81-62t99-22q81 0 136 45.5T831-680h-85q-18-40-53-60t-73-20q-51 0-88 27.5T463-660h-46q-31-45-70.5-72.5T260-760q-57 0-98.5 39.5T120-621q0 33 14 67t50 78.5q36 44.5 98 104T440-228q26-23 61-53t56-50l9 9 19.5 19.5L605-283l9 9q-22 20-56 49.5T498-172l-58 52Zm280-160v-120H600v-80h120v-120h80v120h120v80H800v120h-80Z"/>
+                                        </svg>
                                     </a>
                                 </div>
                             </div>`;
@@ -244,9 +259,140 @@
                     loadProducts(selectedCategory);
                 });
             });
-            
+         
+            //traer contadores de carrito y de lista de deceos 
+            const clientId = localStorage.getItem("cliente_id");
+            if (clientId) {
+                contador(clientId);
+            }
         });
-        
-    </script>
+
+        //funcion que llama a los contadores de carrito y de lista de decesos  
+        async function contador(clientId) {
+            try {
+                // Obtener conteo de la lista de deseos
+                const wishlistResponse = await fetch(`/api/wishlist/count/${clientId}`);
+                const wishlistData = await wishlistResponse.json(); // Espera la respuesta JSON
+                document.querySelector(".header__user-actions .header__action-btn[href='/whishlistCliente'] .count").textContent = wishlistData.count;
+
+                // Obtener conteo del carrito
+                const cartResponse = await fetch(`/api/cart/count/${clientId}`);
+                const cartData = await cartResponse.json(); // Espera la respuesta JSON
+                document.querySelector(".header__user-actions .header__action-btn[href='/cartCliente'] .count").textContent = cartData.count;
+            } catch (error) {
+                console.error("Error al obtener conteos de lista de deseos y carrito:", error);
+            }
+        }
+
+        function increaseQuantity(productId) {
+            const quantityInput = document.getElementById(`quantity-${productId}`);
+            quantityInput.value = parseInt(quantityInput.value) + 1;
+        }
+
+        function decreaseQuantity(productId) {
+            const quantityInput = document.getElementById(`quantity-${productId}`);
+            if (quantityInput.value > 1) {
+                quantityInput.value = parseInt(quantityInput.value) - 1;
+            }
+        }
+
+        //agregar a carrito 
+        function AddToCart(productId) {
+            event.preventDefault();
+
+            // Obtener elementos relevantes
+            const quantity = document.getElementById(`quantity-${productId}`).value;
+            const clientId = localStorage.getItem("cliente_id");
+            const productStatus = document.querySelector(`[data-product-id="${productId}"]`)
+                                .closest(".product__item")
+                                .querySelector(".product__badge");
+
+            // Verificar si el producto está agotado
+            if (productStatus && productStatus.textContent.trim() === "Agotado") {
+                alert("Este producto está agotado");
+                return;
+            }
+
+            // Configurar los datos para enviar al servidor
+            const cartData = {
+                cliente_id: clientId,
+                producto_id: productId,
+                cantidad: quantity,
+                fecha_agregado: new Date().toISOString()
+            };
+
+            // Realizar solicitud POST al servidor
+            fetch("/api/cart/cart", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(cartData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    contador(clientId);
+                    return response.json();
+                } else {
+                    return response.json().then(error => {
+                        throw new Error(error.message);
+                    });
+                }
+            })
+            .then(result => {
+                alert("Producto agregado al carrito con éxito");
+            })
+            .catch(error => {
+                alert(`Error al agregar el producto: ${error.message}`);
+            });
+        }
+
+        //agregar a List deceos 
+        function AddToList(productId) {
+            event.preventDefault();
+
+            // Obtener elementos relevantes
+            const quantity = document.getElementById(`quantity-${productId}`).value;
+            const clientId = localStorage.getItem("cliente_id");
+          
+            // Configurar los datos para enviar al servidor
+            const cartData = {
+                cliente_id: clientId,
+                producto_id: productId,
+                fecha_agregado: new Date().toISOString()
+            };
+
+            // Realizar solicitud POST al servidor
+            fetch("/api/wishlist/List", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(cartData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    contador(clientId);
+                    return response.json();
+                } else {
+                    return response.json().then(error => {
+                        throw new Error(error.message);
+                    });
+                }
+            })
+            .then(result => {
+                alert("Producto agregado a la lista de deseos con éxito");
+            })
+            .catch(error => {
+                if(error.message == "El producto ya está en la lista de deseos"){
+                    alert(`${error.message}`);
+                }else{
+                    alert(`Error al agregar el producto: ${error.message}`);
+                }
+            });
+        }
+   
+   
+   </script>
 </body>
 </html>
