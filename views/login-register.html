@@ -1,75 +1,123 @@
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- Primero los CDN de SweetAlert2 y FontAwesome -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-        <link rel="stylesheet" href="css/login.css">
-        <title>Login - LUMINAR</title>
-    </head>
-    <body>
-        <h1>Luminar Login</h1>
+    <link rel="stylesheet" href="css/login.css">
+    <title>Login - LUMINAR</title>
+    <style>
+        /* Icon style for toggle password visibility */
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888;
+        }
+        .toggle-password:hover {
+            color: #e75480;
+        }
 
-        <div class="container" id="container">
-            <!-- Registro -->
-            <div class="form-container sign-up">
-                <form id="register-form">
-                    <h1>Crea tu cuenta</h1>
-                    <div class="social-icons">
-                        <a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://www.tiktok.com/@luminar.2023" target="_blank" class="social-icon"><i class="fab fa-tiktok"></i></a>
-                        <a href="https://www.instagram.com/luminar.2023/" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>            
-                    </div>
-                    <span>Utilice su correo electrónico para registrarse</span>
-                    <input type="text" id="register-nombre" placeholder="Nombre" required>
-                    <input type="text" id="register-apellido" placeholder="Apellido" required>
-                    <input type="email" id="register-email" placeholder="Email" required>
+        /* Position adjustment for input wrapper */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Luminar Login</h1>
+
+    <div class="container" id="container">
+        <!-- Registro -->
+        <div class="form-container sign-up">
+            <form id="register-form">
+                <h1>Crea tu cuenta</h1>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.tiktok.com/@luminar.2023" target="_blank" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.instagram.com/luminar.2023/" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>            
+                </div>
+                <span>Utilice su correo electrónico para registrarse</span>
+                <input type="text" id="register-nombre" placeholder="Nombre" required>
+                <input type="text" id="register-apellido" placeholder="Apellido" required>
+                <input type="email" id="register-email" placeholder="Email" required>
+
+                <!-- Password field with toggle icon -->
+                <div class="password-wrapper">
                     <input type="password" id="register-password" placeholder="Password" required minlength="6">
-                    <input type="tel" id="register-telefono" placeholder="Teléfono" required>
-                    <input type="text" id="register-direccion" placeholder="Dirección" required>
-                    <button type="button" id="register">Registrarte</button>
-                </form>
-            </div>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('register-password')">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
 
-            <!-- Inicio de Sesión -->
-            <div class="form-container sign-in">
-                <form id="login-form">
-                    <h1>Iniciar sesión</h1>
-                    <div class="social-icons">
-                        <a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://www.tiktok.com/@luminar.2023" target="_blank" class="social-icon"><i class="fab fa-tiktok"></i></a>
-                        <a href="https://www.instagram.com/luminar.2023/" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
-                    </div>
-                    <span>Utiliza tu correo electrónico y contraseña</span>
-                    <input type="email" id="login-email" placeholder="Email" required>
+                <input type="tel" id="register-telefono" placeholder="Teléfono" required>
+                <input type="text" id="register-direccion" placeholder="Dirección" required>
+                <button type="button" id="register">Registrarte</button>
+            </form>
+        </div>
+
+        <!-- Inicio de Sesión -->
+        <div class="form-container sign-in">
+            <form id="login-form">
+                <h1>Iniciar sesión</h1>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.tiktok.com/@luminar.2023" target="_blank" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.instagram.com/luminar.2023/" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+                </div>
+                <span>Utiliza tu correo electrónico y contraseña</span>
+                <input type="email" id="login-email" placeholder="Email" required>
+
+                <!-- Password field with toggle icon -->
+                <div class="password-wrapper">
                     <input type="password" id="login-password" placeholder="Password" required minlength="6">
-                    <a href="/forget-password">¿Has olvidado tu contraseña?</a>
-                    <button type="button" id="login">Iniciar sesión</button>
-                </form>
-            </div>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('login-password')">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
 
-            <!-- Contenedor de Cambio -->
-            <div class="toggle-container">
-                <div class="toggle">
-                    <div class="toggle-panel toggle-left">
-                        <h1>¡Bienvenido de nuevo!</h1>
-                        <p>Inicia sesión con tus datos para acceder a tu cuenta</p>
-                        <button class="hidden" id="signIn">Iniciar sesión</button>
-                    </div>
-                    <div class="toggle-panel toggle-right">
-                        <h1>¡Hola!</h1>
-                        <p>Regístrate para acceder a todos nuestros servicios</p>
-                        <button class="hidden" id="signUp">Registrarse</button>
-                    </div>
+                <a href="/forget-password">¿Has olvidado tu contraseña?</a>
+                <button type="button" id="login">Iniciar sesión</button>
+            </form>
+        </div>
+
+        <!-- Contenedor de Cambio -->
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>¡Bienvenido de nuevo!</h1>
+                    <p>Inicia sesión con tus datos para acceder a tu cuenta</p>
+                    <button class="hidden" id="signIn">Iniciar sesión</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>¡Hola!</h1>
+                    <p>Regístrate para acceder a todos nuestros servicios</p>
+                    <button class="hidden" id="signUp">Registrarse</button>
                 </div>
             </div>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script src="/js/auth.js"></script>
-            </body>
-    </html>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        // Toggle password visibility function
+        function togglePasswordVisibility(inputId) {
+            const passwordField = document.getElementById(inputId);
+            const icon = passwordField.nextElementSibling.querySelector('i');
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>

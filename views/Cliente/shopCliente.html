@@ -189,7 +189,7 @@
                         const productHTML = `
                             <div class="product__item">
                                 <div class="product__banner">
-                                    <a href="#" class="product__images">
+                                    <a href="/detailsCliente" class="product__images">
                                         <img src="${product.imagenes}" alt="${product.nombre_producto}" class="product__img default">
                                     </a>
                                     ${product.estado === 'agotado' ? '<div class="product__badge light-red">Agotado</div>' : ''}
@@ -296,56 +296,58 @@
             }
         }
 
-        //agregar a carrito 
-        function AddToCart(productId) {
-            event.preventDefault();
+        let productosEnCarrito = new Set(); 
+        // Agregar a carrito
+function AddToCart(productId) {
+    event.preventDefault();
 
-            // Obtener elementos relevantes
-            const quantity = document.getElementById(`quantity-${productId}`).value;
-            const clientId = localStorage.getItem("cliente_id");
-            const productStatus = document.querySelector(`[data-product-id="${productId}"]`)
-                                .closest(".product__item")
-                                .querySelector(".product__badge");
+    const quantity = document.getElementById(`quantity-${productId}`).value;
+    const clientId = localStorage.getItem("cliente_id");
 
-            // Verificar si el producto está agotado
-            if (productStatus && productStatus.textContent.trim() === "Agotado") {
-                alert("Este producto está agotado");
-                return;
-            }
+    // Comprobar si el producto ya está en el carrito
+    if (productosEnCarrito.has(productId)) {
+        alert("El producto ya está en el carrito");
+        return;
+    }
 
-            // Configurar los datos para enviar al servidor
-            const cartData = {
-                cliente_id: clientId,
-                producto_id: productId,
-                cantidad: quantity,
-                fecha_agregado: new Date().toISOString()
-            };
+    const cartData = {
+        cliente_id: clientId,
+        producto_id: productId,
+        cantidad: quantity,
+        fecha_agregado: new Date().toISOString()
+    };
 
-            // Realizar solicitud POST al servidor
-            fetch("/api/cart/cart", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(cartData)
-            })
-            .then(response => {
-                if (response.ok) {
-                    contador(clientId);
-                    return response.json();
-                } else {
-                    return response.json().then(error => {
-                        throw new Error(error.message);
-                    });
-                }
-            })
-            .then(result => {
-                alert("Producto agregado al carrito con éxito");
-            })
-            .catch(error => {
-                alert(`Error al agregar el producto: ${error.message}`);
+    // Realizar solicitud POST al servidor para agregar al carrito
+    fetch("/api/cart/cart", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(cartData)
+    })
+    .then(response => {
+        if (response.ok) {
+            contador(clientId);  // Actualizar el contador del carrito
+            productosEnCarrito.add(productId); // Marcar como agregado
+            return response.json();
+        } else {
+            return response.json().then(error => {
+                throw new Error(error.message);
             });
         }
+    })
+    .then(result => {
+        alert("Producto agregado al carrito con éxito");
+    })
+    .catch(error => {
+        if (error.message === "El producto ya está en el carrito") {
+            alert(`${error.message}`);
+        } else {
+            alert(`Error al agregar el producto al carrito: ${error.message}`);
+        }
+    });
+}
+
 
         //agregar a List deceos 
         function AddToList(productId) {

@@ -4,181 +4,438 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="/assets/css/details.css">
     <title>Detalles del Producto - LUMINAR</title>
 </head>
 <body>
     <!--== HEADER ==-->
-    <header class="header">
-        <div class="header__top">
-            <div class="header__container container">
-                <div class="header__contact">
-                    <span>luminaropa@gmail.com</span>
-                    <span>+57 3134717406</span>
-                </div>
+   <header class="header">
+    <div class="header__top">
+        <div class="header__container container">
+            <div class="header__contact">
+                <span>luminaropa@gmail.com</span>
+                <span>+57 3134717406</span>
+            </div>
 
-                <p class="header__alert-news">LUMINAR</p>
+            <p class="header__alert-news">LUMINAR</p>
 
-                <a href="/" class="header__top-action">
-                    Cierre de sesión
-                </a>
+            <a href="/" class="header__top-action">
+                Cierre de sesión
+            </a>
+        </div>
+    </div>
+
+    <nav class="nav container">
+        <a href="/indexCliente" class="nav__logo">
+            <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
+        </a>
+
+        <div class="nav__menu" id="nav__menu">
+            <ul class="nav__list">
+                <li class="nav__item">
+                    <a href="/indexCliente" class="nav__link active-link">INICIO</a>
+                </li>
+                <li class="nav__item">
+                    <a href="/shopCliente" class="nav__link">Tienda</a>
+                </li>
+                <li class="nav__item">
+                    <a href="/editarperfilCliente" class="nav__link">Mi cuenta</a>
+                </li>
+                <li class="nav__item">
+                    <a href="/ordersCliente" class="nav__link">Pedidos</a>
+                </li>
+            </ul>
+
+            <div class="header_search">
+                <input type="text" placeholder="Buscar productos..." class="form__input">
             </div>
         </div>
 
-        <nav class="nav container">
-            <a href="/indexCliente" class="nav__logo">
-                <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
+        <div class="header__user-actions">
+            <a href="/whishlistCliente" class="header__action-btn">
+                <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
+                <span class="count"></span>
             </a>
 
-            <div class="nav__menu" id="nav__menu">
-                <ul class="nav__list">
-                    <li class="nav__item">
-                        <a href="/indexCliente" class="nav__link active-link">INICIO</a>
-                    </li>
-                    <li class="nav__item">
-                        <a href="/shopCliente" class="nav__link">Tienda</a>
-                    </li>
-                    <li class="nav__item">
-                        <a href="/editarperfilCliente" class="nav__link">Mi cuenta</a>
-                    </li>
-                    <li class="nav__item">
-                        <a href="/ordersCliente" class="nav__link">Pedidos</a>
-                    </li>
-                </ul>
-
-                <div class="header_search">
-                    <input type="text" placeholder="Buscar productos..." class="form__input">
-                    <button class="search__btn">
-                        <i class="fi fi-rr-search"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="header__user-actions">
-                <a href="/whishlistCliente" class="header__action-btn">
-                    <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
-                    <span class="count">3</span>
-                </a>
-
-                <a href="/cartCliente" class="header__action-btn">
-                    <img src="assets/img/icon-cart.svg" alt="Carrito">
-                    <span class="count">3</span>
-                </a>
-            </div>
-        </nav>
-    </header>
+            <a href="/cartCliente" class="header__action-btn">
+                <img src="assets/img/icon-cart.svg" alt="Carrito">
+                <span class="count"></span>
+            </a>
+        </div>
+    </nav>
+</header>
 
     <!--== PRODUCT DETAILS ==-->
     <section class="product-details container section--lg">
+        <div class="breadcrumb">
+            <a href="/index">Inicio</a> / 
+            <a href="/shop">Tienda</a> / 
+            <span class="product-category">Categoría</span> / 
+            <span class="product-title">Nombre del Producto</span>
+        </div>
+
         <div class="product-info grid">
-            <div class="product-image">
-                <!-- Main Product Image -->
-                <img src="/assets/img/product-main.jpg" alt="Colorful Pattern Shirt" />
-                <!-- Thumbnails -->
-                <div class="thumbnail-images">
-                    <img src="/assets/img/product-thumb1.jpg" alt="">
-                    <img src="/assets/img/product-thumb2.jpg" alt="">
-                    <img src="/assets/img/product-thumb3.jpg" alt="">
+            <!-- Galería de Imágenes -->
+            <div class="product-gallery">
+                <div class="main-image">
+                    <img id="mainImage" src="/assets/img/product-main.jpg" alt="Producto Principal" />
+                    <div class="zoom-lens"></div>
+                </div>
+                <div class="thumbnail-images" id="thumbnailContainer">
+                    <!-- Las miniaturas se cargarán dinámicamente -->
                 </div>
             </div>
 
-            <!-- Product Information -->
+            <!-- Información del Producto -->
             <div class="product-info-content">
-                <h1 class="product-title">Colorful Pattern Shirt</h1>
-                <p class="product-category">Clothing</p>
+                <div class="product-header">
+                    <h1 class="product-title"></h1>
+                    <p class="product-category"></p>
+                    
+                    <!-- Rating y Reviews -->
+                    <div class="product-rating">
+                        <div class="stars">
+                            <i class="fi fi-rr-star"></i>
+                            <i class="fi fi-rr-star"></i>
+                            <i class="fi fi-rr-star"></i>
+                            <i class="fi fi-rr-star"></i>
+                            <i class="fi fi-rr-star"></i>
+                        </div>
+                        <span class="rating-count">(0 reseñas)</span>
+                    </div>
 
-                <!-- Rating -->
-                <div class="product-rating">
-                    ★★★★★<span>(25 reviews)</span>
+                    <!-- Precio -->
+                    <div class="product-price">
+                        <span class="new-price"></span>
+                        <span class="old-price"></span>
+                        <span class="discount-badge"></span>
+                    </div>
                 </div>
 
-                <!-- Price -->
-                <div class="product-price">
-                    <span class="new-price">$238.85</span> 
-                    <span class="old-price">$245.80</span>
-                </div>
-
-                <!-- Description -->
+                <!-- Descripción -->
                 <div class="product-description">
-                    <h3>Description</h3>
-                    <p>This colorful pattern shirt features a vibrant design perfect for casual outings. Made with high-quality, breathable fabric for all-day comfort.</p>
+                    <h3>Descripción</h3>
+                    <p></p>
                 </div>
 
-                <!-- Options -->
+                <!-- Opciones del Producto -->
                 <div class="product-options">
-                    <!-- Size -->
+                    <!-- Talla -->
                     <div class="size-option">
-                        <h3>Size</h3>
-                        <select name="talla" id="talla">
-                            <option value="S">S</option>
-                            <option value="M">M</option>
-                            <option value="L">L</option>
-                            <option value="XL">XL</option>
-                        </select>
+                        <h3>Talla</h3>
+                        <div class="size-buttons" id="sizeButtons">
+                            <!-- Los botones de talla se cargarán dinámicamente -->
+                        </div>
                     </div>
 
                     <!-- Color -->
                     <div class="color-option">
                         <h3>Color</h3>
-                        <!-- Color Swatches -->
-                        <button style='background-color: blue;'></button>
-                        <button style='background-color: red;'></button>
-                        <button style='background-color: green;'></button>
+                        <div class="color-buttons" id="colorButtons">
+                            <!-- Los botones de color se cargarán dinámicamente -->
+                        </div>
                     </div>
 
-                    <!-- Quantity and Cart Button -->
-                    <div class='product-actions'>
-                        <!-- Quantity Selector -->
-                        <input type='number' value='1' min='1' max='10' />
-                        <!-- Add to Cart Button -->
-                        <button>Add to Cart</button>
+                    <!-- Cantidad y Botones de Acción -->
+                    <div class="product-actions">
+                        <div class="quantity-selector">
+                            <button class="quantity-btn minus" aria-label="Reducir cantidad">-</button>
+                            <input type="number" value="1" min="1" id="quantity" aria-label="Cantidad">
+                            <button class="quantity-btn plus" aria-label="Aumentar cantidad">+</button>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="add-to-cart-btn" id="addToCart">
+                                <i class="fi fi-rr-shopping-cart"></i>
+                                Agregar al Carrito
+                            </button>
+                            <button class="wishlist-btn" id="addToWishlist">
+                                <i class="fi fi-rr-heart"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Stock Info -->
-                    In stock: 50 items
-                </div> 
-            </div> 
-        </div> 
+                    <!-- Información de Stock -->
+                    <div class="stock-info">
+                        <i class="fi fi-rr-box-check"></i>
+                        <span class="stock-status"></span>
+                        <span class="stock-quantity"></span>
+                    </div>
+
+                    <!-- Información Adicional -->
+                    <div class="additional-info">
+                        <div class="info-item">
+                            <i class="fi fi-rr-truck-side"></i>
+                            <span>Envío gratis en pedidos superiores a $100</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fi fi-rr-shield-check"></i>
+                            <span>Garantía de devolución de 30 días</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fi fi-rr-credit-card"></i>
+                            <span>Pago seguro garantizado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs de Información Adicional -->
+        <div class="product-tabs">
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="description">Descripción</button>
+                <button class="tab-btn" data-tab="specifications">Especificaciones</button>
+                <button class="tab-btn" data-tab="reviews">Reseñas</button>
+            </div>
+            <div class="tabs-content">
+                <div class="tab-panel active" id="description">
+                    <!-- Contenido de descripción -->
+                </div>
+                <div class="tab-panel" id="specifications">
+                    <!-- Contenido de especificaciones -->
+                </div>
+                <div class="tab-panel" id="reviews">
+                    <!-- Contenido de reseñas -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Productos Relacionados -->
+        <div class="related-products">
+            <h2>Productos Relacionados</h2>
+            <div class="products-grid" id="relatedProducts">
+                <!-- Los productos relacionados se cargarán dinámicamente -->
+            </div>
+        </div>
     </section>
 
     <!--=== FOOTER ===-->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer__content">
-                <div class="footer__links">
-                    <h4 class="footer__title">Enlaces Útiles</h4>
-                    <ul class="footer__list">
-                        <li><a href="/shopCliente">Tienda</a></li>
-                        <li><a href="/editarperfilCliente">Mi Cuenta</a></li>
-                        <li><a href="/whishlistCliente">Lista de Deseos</a></li>
-                        <li><a href="/ordersCliente">Pedidos</a></li>
-                        <li><a href="/cartCliente">Carrito</a></li>
-                        <li><a href="/privacy-policy" target="_blank">Políticas de Privacidad</a></li>
-                    </ul>
-                </div>
-    
-                <div class="footer__contact">
-                    <h4 class="footer__title">Contáctanos</h4>
-                    <p>Teléfono: +57 3134717406</p>
-                    <p>Email: luminaropa@gmail.com</p>
-                    <p>Dirección: Neos Centro, Calle 12 B, 9-40</p>
-                </div>
-    
-                <div class="footer__social">
-                    <h4 class="footer__title">Síguenos</h4>
-                    <ul class="footer__social-list">
-                        <li><a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank"><i class="fi fi-rr-facebook"></i> Facebook</a></li>
-                        <li><a href="https://www.tiktok.com/@luminar.2023" target="_blank"><i class="fi fi-rr-tiktok"></i> TikTok</a></li>
-                        <li><a href="https://www.instagram.com/luminar.2023/" target="_blank"><i class="fi fi-rr-instagram"></i> Instagram</a></li>
-                    </ul>
-                </div>
+<footer class="footer">
+    <div class="container">
+        <div class="footer__content">
+            <div class="footer__links">
+                <h4 class="footer__title">Enlaces Útiles</h4>
+                <ul class="footer__list">
+                    <li><a href="/shopCliente">Tienda</a></li>
+                    <li><a href="/editarperfilCliente">Mi Cuenta</a></li>
+                    <li><a href="/whishlistCliente">Lista de Deseos</a></li>
+                    <li><a href="/ordersCliente">Pedidos</a></li>
+                    <li><a href="/cartCliente">Carrito</a></li>
+                    <li><a href="privacy-policy" target="_blank">Políticas de Privacidad</a></li>
+                </ul>
             </div>
-    
-            <div class="footer__bottom">
-                <p>&copy; 2024 Luminar. Todos los derechos reservados.</p>
+
+            <div class="footer__contact">
+                <h4 class="footer__title">Contáctanos</h4>
+                <p>Teléfono: +57 3134717406</p>
+                <p>Email: luminaropa@gmail.com</p>
+                <p>Dirección: Neos Centro, Calle 12 B, 9-40</p>
+            </div>
+
+            <div class="footer__social">
+                <h4 class="footer__title">Síguenos</h4>
+                <ul class="footer__social-list">
+                    <li><a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank"><i class="fi fi-rr-facebook"></i> Facebook</a></li>
+                    <li><a href="https://www.tiktok.com/@luminar.2023" target="_blank"><i class="fi fi-rr-tiktok"></i> TikTok</a></li>
+                    <li><a href="https://www.instagram.com/luminar.2023/" target="_blank"><i class="fi fi-rr-instagram"></i> Instagram</a></li>
+                </ul>
             </div>
         </div>
-    </footer>
 
+        <div class="footer__bottom">
+            <p>&copy; 2024 Luminar. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id'); // Obtener el ID del producto desde la URL
+    const quantityInput = document.getElementById('quantity');
+    const stockInfo = document.querySelector('.stock-info');
+    let selectedSize = null;
+    let selectedColor = null;
+
+    // Función para cargar detalles del producto
+    async function loadProductDetails() {
+        try {
+            const response = await fetch(`/api/product/${productId}`);
+            const product = await response.json();
+
+            document.querySelector('.product-title').textContent = product.nombre_producto;
+            document.querySelector('.product-category').textContent = product.Categoria?.nombre_categoria || 'Sin categoría';
+            document.querySelector('.new-price').textContent = `$${product.precio}`;
+            document.querySelector('.old-price').textContent = product.precio_original ? `$${product.precio_original}` : '';
+            document.querySelector('.discount-badge').textContent = product.descuento ? `-${product.descuento}%` : '';
+            document.querySelector('.product-description p').textContent = product.descripcion;
+
+            stockInfo.querySelector('.stock-status').textContent = product.stock > 0 ? 'En stock' : 'Agotado';
+            stockInfo.querySelector('.stock-quantity').textContent = `${product.stock} disponibles`;
+
+            loadImages(product.imagenes);
+            loadSizes(product.tallas);
+            loadColors(product.colores);
+            loadRelatedProducts(product.categoria_id);
+
+        } catch (error) {
+            console.error('Error al cargar detalles del producto:', error);
+        }
+    }
+
+    // Cargar imágenes en galería
+    function loadImages(images) {
+        const mainImage = document.getElementById('mainImage');
+        const thumbnailContainer = document.getElementById('thumbnailContainer');
+        
+        mainImage.src = images[0] || '/assets/img/product-main.jpg';
+        thumbnailContainer.innerHTML = '';
+        
+        images.forEach(imageUrl => {
+            const thumbnail = document.createElement('img');
+            thumbnail.src = imageUrl;
+            thumbnail.classList.add('thumbnail');
+            thumbnail.addEventListener('click', () => mainImage.src = imageUrl);
+            thumbnailContainer.appendChild(thumbnail);
+        });
+    }
+
+    // Cargar tallas disponibles
+    function loadSizes(sizes) {
+        const sizeButtons = document.getElementById('sizeButtons');
+        sizeButtons.innerHTML = '';
+        
+        sizes.forEach(size => {
+            const sizeBtn = document.createElement('button');
+            sizeBtn.classList.add('size-btn');
+            sizeBtn.textContent = size;
+            sizeBtn.addEventListener('click', () => {
+                document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('selected'));
+                sizeBtn.classList.add('selected');
+                selectedSize = size;
+            });
+            sizeButtons.appendChild(sizeBtn);
+        });
+    }
+
+    // Cargar colores disponibles
+    function loadColors(colors) {
+        const colorButtons = document.getElementById('colorButtons');
+        colorButtons.innerHTML = '';
+        
+        colors.forEach(color => {
+            const colorBtn = document.createElement('button');
+            colorBtn.classList.add('color-btn');
+            colorBtn.style.backgroundColor = color;
+            colorBtn.addEventListener('click', () => {
+                document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('selected'));
+                colorBtn.classList.add('selected');
+                selectedColor = color;
+            });
+            colorButtons.appendChild(colorBtn);
+        });
+    }
+
+    // Cargar productos relacionados
+    async function loadRelatedProducts(categoryId) {
+        try {
+            const response = await fetch(`/api/relatedProducts/${categoryId}`);
+            const relatedProducts = await response.json();
+            const relatedProductsContainer = document.getElementById('relatedProducts');
+            
+            relatedProductsContainer.innerHTML = relatedProducts.map(product => `
+                <div class="related-product">
+                    <a href="/productDetails.html?id=${product.producto_id}">
+                        <img src="${product.imagenes[0] || '/assets/img/product-main.jpg'}" alt="${product.nombre_producto}">
+                        <p>${product.nombre_producto}</p>
+                        <span>$${product.precio}</span>
+                    </a>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Error al cargar productos relacionados:', error);
+        }
+    }
+
+    // Manejar cantidad de productos
+    document.querySelector('.quantity-btn.minus').addEventListener('click', () => {
+        quantityInput.value = Math.max(1, parseInt(quantityInput.value) - 1);
+    });
+    document.querySelector('.quantity-btn.plus').addEventListener('click', () => {
+        quantityInput.value = parseInt(quantityInput.value) + 1;
+    });
+
+    // Añadir al carrito
+    document.getElementById('addToCart').addEventListener('click', async () => {
+        if (!selectedSize || !selectedColor) {
+            Swal.fire('Por favor selecciona una talla y un color');
+            return;
+        }
+
+        const quantity = parseInt(quantityInput.value);
+        try {
+            const response = await fetch('/api/cart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    cliente_id: localStorage.getItem('cliente_id'),
+                    producto_id: productId,
+                    cantidad: quantity,
+                    talla: selectedSize,
+                    color: selectedColor,
+                    fecha_agregado: new Date().toISOString()
+                })
+            });
+            if (response.ok) {
+                Swal.fire('Producto añadido al carrito');
+            } else {
+                Swal.fire('Error al añadir al carrito');
+            }
+        } catch (error) {
+            console.error('Error al añadir al carrito:', error);
+        }
+    });
+
+    // Añadir a la lista de deseos
+    document.getElementById('addToWishlist').addEventListener('click', async () => {
+        try {
+            const response = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    cliente_id: localStorage.getItem('cliente_id'),
+                    producto_id: productId,
+                    fecha_agregado: new Date().toISOString()
+                })
+            });
+            if (response.ok) {
+                Swal.fire('Producto añadido a la lista de deseos');
+            } else {
+                Swal.fire('Error al añadir a la lista de deseos');
+            }
+        } catch (error) {
+            console.error('Error al añadir a la lista de deseos:', error);
+        }
+    });
+
+    // Cambiar entre pestañas
+    document.querySelectorAll('.tab-btn').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+
+            tab.classList.add('active');
+            document.getElementById(tab.getAttribute('data-tab')).classList.add('active');
+        });
+    });
+
+    // Cargar detalles del producto al iniciar
+    loadProductDetails();
+});
+
+    </script>
 </body>
 </html>

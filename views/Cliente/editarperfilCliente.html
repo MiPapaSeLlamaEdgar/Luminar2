@@ -24,98 +24,113 @@
     <!--link rel="stylesheet" href="/css/dashboard.css"-->
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
     <style>
-        :root {
-            --primary-color: #D6266F;
-            --secondary-color: #4A2828;
-        /*    --background-color: #f8f9fa;*/
-            --card-color: #ffffff;
-            --text-color: #333333;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .container {
-            display: flex;
-            min-height: 2vh;
-        }
-
-        /* Sidebar (mantener consistente con el dashboard) */
-        .sidebar {
-            width: 280px;
-            background-color: var(--card-color);
+        /* Profile section styling */
+        .profile-section {
+            max-width: 1000px;
+            width: 100%;
+            margin: 30px auto;
             padding: 20px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            background-color: var(--card-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            padding: 30px;
-            background-color: var(--background-color);
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
         }
 
-        /* Modifica estas clases en la sección de estilos */
-.profile-section {
-    max-width: 1000px; /* Aumentado de 800px a 1000px */
-    margin: 0 auto;
-    padding: 0 20px;
-}
+        .profile-image-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+        }
 
-.profile-header {
-    background-color: var(--card-color);
-    padding: 40px; /* Aumentado de 30px a 40px */
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    margin-bottom: 30px;
-    text-align: center;
-}
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 100%;
+        }
 
-.profile-form {
-    background-color: var(--card-color);
-    padding: 40px; /* Aumentado de 30px a 40px */
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
+        .change-photo-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: #e75480;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s;
+        }
 
-.form-row {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px; /* Aumentado de 20px a 30px */
-}
+        .change-photo-btn:hover {
+            background-color: #bf1b5d;
+        }
 
-/* Ajustar el espacio entre elementos */
-.form-group {
-    margin-bottom: 25px; /* Aumentado de 20px a 25px */
-}
+        .profile-form h3 {
+            color: #e75480;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
 
-/* Ajustar el responsive */
-@media (max-width: 1024px) {
-    .profile-section {
-        max-width: 90%;
-    }
-}
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
 
-@media (max-width: 768px) {
-    .profile-section {
-        max-width: 100%;
-        padding: 0 15px;
-    }
-    
-    .profile-header,
-    .profile-form {
-        padding: 20px;
-    }
-    
-    .form-row {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-}
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e9afc1;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: white;
+            transition: border-color 0.3s ease;
+            color: var(--text-color);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #e75480;
+            background-color: white;
+            box-shadow: 0 0 5px rgba(255, 105, 180, 0.5);
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 70%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888;
+            font-size: 18px;
+        }
+
+        .toggle-password:hover {
+            color: #e75480;
+        }
 
         .action-buttons {
             display: flex;
@@ -125,21 +140,22 @@
         }
 
         .save-btn, .cancel-btn {
-            padding: 12px 30px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 25px;
+            border-radius: 5px;
             cursor: pointer;
             font-weight: 500;
-            transition: all 0.3s;
+            transition: background-color 0.3s ease, transform 0.1s ease;
         }
 
-         .save-btn {
-            background-color: var(--primary-color);
+        .save-btn {
+            background-color: #e75480;
             color: white;
-         }
+        }
 
         .save-btn:hover {
             background-color: #bf1b5d;
+            transform: translateY(-2px);
         }
 
         .cancel-btn {
@@ -149,26 +165,18 @@
 
         .cancel-btn:hover {
             background-color: #5a6268;
+            transform: translateY(-2px);
         }
 
         @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                height: auto;
-            }
-            
             .form-row {
                 grid-template-columns: 1fr;
             }
-            
+
             .action-buttons {
                 flex-direction: column;
             }
-            
+
             .save-btn, .cancel-btn {
                 width: 100%;
             }
@@ -176,7 +184,6 @@
     </style>
 </head>
 <body>
-
 
    <!--== HEADER ==-->
    <header class="header">
@@ -218,9 +225,9 @@
 
             <div class="header_search">
                 <input type="text" placeholder="Buscar productos..." class="form__input">
-               <!--  <button class="search__btn">
-                    <i class="fi fi-rr-search"></i>
-                </button> -->
+           <!--  <button class="search__btn">
+                <i class="fi fi-rr-search"></i>
+            </button> -->
             </div>
         </div>
 
@@ -238,36 +245,17 @@
     </nav>
 </header>
 
-
-
-
     <div class="container">
-        <!-- Sidebar -->
-        <!-- <nav class="sidebar">
-            <div class="sidebar-header">
-                <h2>Panel Vendedor</h2>
-            </div>
-            <ul class="nav-links">
-                <li><a href="/vendedor/dashboard-vendedor">Inicio</a></li>
-                <li><a href="/vendedor/ventas">Ventas</a></li>
-                <li><a href="/vendedor/clientes" class="active">Clientes</a></li>
-                <li><a href="/vendedor/inventario">Inventario</a></li>
-                <li><a href="/vendedor/reportes">Reportes</a></li>
-            </ul>
-        </nav>-->
-
-        <!-- Main Content -->
         <main class="main-content">
             <div class="profile-section">
                 <div class="profile-header">
                     <div class="profile-image-container">
                         <form id="uploadForm" method="post" enctype="multipart/form-data">
-                            <img src="" alt="Foto de perfil" class="profile-image" id="profileImagePreview">
+                            <img src="assets/img/default-profile.png" alt="Foto de perfil" class="profile-image" id="profileImagePreview">
                             <input type="file" id="photoInput" name="profilePhoto" accept="image/*" style="display: none;" onchange="previewImage(event)">
                             <button type="button" class="change-photo-btn" title="Cambiar foto" onclick="document.getElementById('photoInput').click()">
-                                <i class="fi fi-sr-camera" style="font-size: 1.5em;"></i>
+                                <i class="fi fi-rr-camera"></i>
                             </button>
-                            <!--button type="submit" class="save-photo-btn">Guardar</button-->
                         </form>
                     </div>
                     <h2>Editar Perfil</h2>
@@ -305,19 +293,27 @@
                         <div class="form-group">
                             <label>Contraseña Actual</label>
                             <input type="password" id="contrasena_actual" name="contrasena_actual">
+                            <span class="toggle-password" onclick="togglePasswordVisibility('contrasena_actual')">
+                                <i class="fi fi-rr-eye"></i>
+                            </span>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Nueva Contraseña</label>
                                 <input type="password" id="nueva_contrasena" name="nueva_contrasena">
+                                <span class="toggle-password" onclick="togglePasswordVisibility('nueva_contrasena')">
+                                    <i class="fi fi-rr-eye"></i>
+                                </span>
                             </div>
                             <div class="form-group">
                                 <label>Confirmar Nueva Contraseña</label>
                                 <input type="password" id="confirmar_contrasena">
+                                <span class="toggle-password" onclick="togglePasswordVisibility('confirmar_contrasena')">
+                                    <i class="fi fi-rr-eye"></i>
+                                </span>
                             </div>
                         </div>
                     </div>
-                
                 
                     <div class="action-buttons">
                         <button type="button" class="cancel-btn" onclick="window.history.back()">Cancelar</button>
