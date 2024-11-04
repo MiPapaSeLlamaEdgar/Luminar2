@@ -19,7 +19,7 @@ module.exports = (models) => {
                 message: 'Error al obtener items del carrito',
                 error: error.message
             });
-        }
+        } 
     });
 
     // Obtener items del carrito por cliente
@@ -41,9 +41,21 @@ module.exports = (models) => {
     });
 
     // Agregar item al carrito
-    router.post('/', async (req, res) => {
+    router.post('/cart', async (req, res) => { 
+        console.error("entra en guardar ");
+        console.error("datos ", req.body);
         try {
-            const cartItem = await Cart.create(req.body);
+            const { cliente_id, producto_id, cantidad, fecha_agregado } = req.body;
+
+            // Crea un nuevo registro en la tabla Cart
+            const cartItem = await Cart.create({
+                cliente_id,
+                producto_id,
+                cantidad,
+                fecha_agregado,
+                fecha_modificacion: new Date()
+            });
+
             res.status(201).json(cartItem);
         } catch (error) {
             res.status(500).json({
@@ -84,6 +96,18 @@ module.exports = (models) => {
                 message: 'Error al eliminar item del carrito',
                 error: error.message
             });
+        }
+    });
+
+    // Obtener conteo de items en el carrito por cliente
+    router.get('/count/:clienteId', async (req, res) => {
+        try {
+            const cartCount = await Cart.count({
+                where: { cliente_id: req.params.clienteId }
+            });
+            res.json({ count: cartCount });
+        } catch (error) {
+            res.status(500).json({ message: 'Error al obtener conteo de items del carrito', error: error.message });
         }
     });
 
