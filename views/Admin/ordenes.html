@@ -224,41 +224,56 @@
         });
 
         async function cargarOrdenes() {
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) throw new Error('Error al obtener órdenes');
-                const ordenes = await response.json();
+    try {
+        // Verificar la URL de la API
+        console.log('Fetching data from:', apiUrl);
+        
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error('Error al obtener órdenes');
+        
+        const ordenes = await response.json();
 
-                const ordenesBody = document.getElementById('ordenesBody');
-                ordenesBody.innerHTML = '';
-                ordenes.forEach(orden => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${orden.orden_id}</td>
-                        <td>${orden.cliente_id}</td>
-                        <td>${orden.usuario_id || ''}</td>
-                        <td>${orden.codigo_orden}</td>
-                        <td>${orden.fecha_orden ? new Date(orden.fecha_orden).toLocaleDateString() : ''}</td>
-                        <td>${orden.fecha_entrega_estimada ? new Date(orden.fecha_entrega_estimada).toLocaleDateString() : ''}</td>
-                        <td>${orden.fecha_entrega_real ? new Date(orden.fecha_entrega_real).toLocaleDateString() : ''}</td>
-                        <td>$${orden.subtotal.toFixed(2)}</td>
-                        <td>$${orden.impuestos.toFixed(2)}</td>
-                        <td>$${orden.descuento.toFixed(2)}</td>
-                        <td>$${orden.total.toFixed(2)}</td>
-                        <td><span class="status ${orden.estado.replace(/ /g, '-').toLowerCase()}">${orden.estado}</span></td>
-                        <td>${orden.direccion_envio}</td>
-                        <td>${orden.notas}</td>
-                        <td class="action-buttons">
-                            <button onclick='mostrarModal(${JSON.stringify(orden)})' class="editar-btn"><i class="fas fa-edit"></i> Editar</button>
-                            <button onclick='eliminarOrden(${orden.orden_id})' class="delete-btn"><i class="fas fa-trash-alt"></i> Eliminar</button>
-                        </td>
-                    `;
-                    ordenesBody.appendChild(row);
-                });
-            } catch (error) {
-                alert('Error al cargar órdenes');
-            }
+        // Verificar los datos recibidos
+        console.log('Datos recibidos:', ordenes);
+
+        const ordenesBody = document.getElementById('ordenesBody');
+        
+        // Confirmar que el contenedor exista
+        if (!ordenesBody) {
+            throw new Error('Elemento con id "ordenesBody" no encontrado en el DOM');
         }
+
+        ordenesBody.innerHTML = '';
+        ordenes.forEach(orden => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${orden.orden_id}</td>
+                <td>${orden.cliente_id}</td>
+                <td>${orden.usuario_id || ''}</td>
+                <td>${orden.codigo_orden}</td>
+                <td>${orden.fecha_orden ? new Date(orden.fecha_orden).toLocaleDateString() : ''}</td>
+                <td>${orden.fecha_entrega_estimada ? new Date(orden.fecha_entrega_estimada).toLocaleDateString() : ''}</td>
+                <td>${orden.fecha_entrega_real ? new Date(orden.fecha_entrega_real).toLocaleDateString() : ''}</td>
+                <td>$${orden.subtotal?.toFixed(2) || '0.00'}</td>
+                <td>$${orden.impuestos?.toFixed(2) || '0.00'}</td>
+                <td>$${orden.descuento?.toFixed(2) || '0.00'}</td>
+                <td>$${orden.total?.toFixed(2) || '0.00'}</td>
+                <td><span class="status ${orden.estado.replace(/ /g, '-').toLowerCase()}">${orden.estado}</span></td>
+                <td>${orden.direccion_envio || ''}</td>
+                <td>${orden.notas || ''}</td>
+                <td class="action-buttons">
+                    <button onclick='mostrarModal(${JSON.stringify(orden)})' class="editar-btn"><i class="fas fa-edit"></i> Editar</button>
+                    <button onclick='eliminarOrden(${orden.orden_id})' class="delete-btn"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                </td>
+            `;
+            ordenesBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al cargar órdenes');
+    }
+}
+
 
         async function eliminarOrden(ordenId) {
             const confirmacion = confirm('¿Estás seguro de que deseas eliminar esta orden?');

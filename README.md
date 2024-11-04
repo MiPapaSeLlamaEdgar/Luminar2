@@ -3,8 +3,6 @@
 **Elaborado Por:**
 - Eric Sebastián Gonzales
 - Paula Andrea Ortiz
-- Andres Mora
-
 
 **Información General:**
 - 2902093
@@ -42,7 +40,7 @@ Sigue los pasos a continuación para configurar el proyecto localmente:
    cd luminar-gestion-ventas-inventarios
 
 ### Dependencias
-- "npm install express sequelize mysql2 dotenv cors helmet express-session body-parser cookie-parser express-rate-limit express-validator compression bcryptjs jsonwebtoken multer sharp uuid moment morgan winston debug sweetalert2 nodemailer connect-flash hbs && npm install --save-dev nodemon react-router-dom"
+- "npm install express sequelize mysql2 dotenv cors helmet express-session body-parser cookie-parser express-rate-limit express-validator compression bcryptjs jsonwebtoken multer sharp uuid moment morgan winston debug sweetalert2 nodemailer connect-flash && npm install --save-dev nodemon react-router-dom"
 
 **Si quieres usar nodemon para facilitar el desarrollo, instala también:**
 - "npm install --save-dev nodemon"
