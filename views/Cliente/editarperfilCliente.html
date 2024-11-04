@@ -325,103 +325,68 @@
     </div>
 
     <script>
-       
         // Recuperar el usuario_id del localStorage
         var usuarioId = localStorage.getItem('usuario_id');
-
+        
         document.addEventListener('DOMContentLoaded', function() {
     
             // Cargar datos del usuario
             async function cargarDatosUsuario() {
                 try {
-                    
                     if (!usuarioId) {
                         alert('No se ha encontrado el ID del usuario en el localStorage.');
                         return;
                     }
-
-                    // Hacer las consultas
-                    const response = await fetch(`/api/user/${usuarioId}`);
-                    console.log("datos",response);
-                    if (!response.ok) {
-                        throw new Error('Error al obtener datos del usuario');
-                    }
-                    const usuario = await response.json();
-                    //-------------------
-
-                    const ahora = new Date();
     
-                    // Configurar las opciones para la zona horaria de Colombia
-                    const opciones = {
-                        timeZone: 'America/Bogota', 
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                        hour12: false 
-                    };
-
-                    // Obtener la fecha en formato local para Colombia
-                    const fechaLocal = ahora.toLocaleString('es-ES', opciones);
-
+                    // Realizar la solicitud para obtener datos del usuario
+                    const response = await fetch(`/api/user/${usuarioId}`);
+                    if (!response.ok) throw new Error('Error al obtener datos del usuario');
+                    
+                    const usuario = await response.json();
+    
                     // Llenar el formulario con los datos
                     document.getElementById('nombre').value = usuario.nombre;
                     document.getElementById('apellido').value = usuario.apellido;
                     document.getElementById('correo_electronico').value = usuario.correo_electronico;
-                    document.getElementById('fecha_registro').value = formatDate(fechaLocal);
-                    document.getElementById('ultimo_acceso').value = formatDate(fechaLocal); 
-                    
-                    // Mostrar imagen de perfil actual
-                    if (usuario.imagen_perfil) {
-                        document.querySelector('.profile-image').src = usuario.imagen_perfil;
-                    } else {
-                        // Si no hay imagen, puedes asignar una imagen por defecto
-                        //document.querySelector('.profile-image').src = 'public/images/bg-01.jpg';
-                        //alert("imagen no encontrada")
-                    }
+                    document.getElementById('fecha_registro').value = formatDate(new Date(usuario.fecha_registro));
+                    document.getElementById('ultimo_acceso').value = formatDate(new Date(usuario.ultimo_acceso));
+    
+                    // Mostrar imagen de perfil actual o predeterminada
+                    const profileImage = document.querySelector('.profile-image');
+                    profileImage.src = usuario.imagen_perfil || 'assets/img/default-profile.png';
+    
                 } catch (error) {
                     console.error('Error al cargar datos:', error);
                 }
             }
-
+    
             // Manejar envío del formulario
             const form = document.getElementById('profileForm');
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                
+    
                 // Validar contraseñas
-                const nuevaContrasena = document.getElementById('nueva_contrasena').value;
-                const confirmarContrasena = document.getElementById('confirmar_contrasena').value;
-                
-                if (nuevaContrasena && nuevaContrasena !== confirmarContrasena) {
-                    alert('Las contraseñas no coinciden');
+                if (!validarContrasenas()) return;
+    
+                const contrasenaActual = document.getElementById('contrasena_actual').value;
+                const nuevaContrasena = document.getElementById('nueva_contrasena').value || null;
+    
+                // Verificar la contraseña actual en el servidor antes de aplicar cambios
+                const esContrasenaValida = await verificarContrasenaActual(contrasenaActual);
+                if (!esContrasenaValida) {
+                    alert('La contraseña actual ingresada es incorrecta');
                     return;
                 }
-
-                const fechaRegistro = adjustDateBySubtractingHours(document.getElementById('fecha_registro').value, 10);
-                const ultimoAcceso = adjustDateBySubtractingHours(document.getElementById('ultimo_acceso').value, 10);
-
-                 // Crear objeto con los datos del formulario
+    
+                // Crear el objeto de datos para actualizar el perfil
                 const usuarioData = {
                     nombre: document.getElementById('nombre').value,
                     apellido: document.getElementById('apellido').value,
                     correo_electronico: document.getElementById('correo_electronico').value,
-                    contrasena_actual: document.getElementById('contrasena_actual').value,
-                    fecha_registro: fechaRegistro,
-                    ultimo_acceso: ultimoAcceso,
-                    nueva_contrasena: nuevaContrasena || null
+                    nueva_contrasena: nuevaContrasena
                 };
-            
-                // Recuperar el usuario_id del localStorage
-                if (!usuarioId) {
-                    alert('No se ha encontrado el ID del usuario en el localStorage.');
-                    return;
-                }
-
+    
                 try {
-                    // Hacer la solicitud PUT para actualizar los datos del usuario
                     const response = await fetch(`/api/user/${usuarioId}`, {
                         method: 'POST',
                         headers: {
@@ -429,16 +394,13 @@
                         },
                         body: JSON.stringify(usuarioData)
                     });
-
-                    if (!response.ok) {
-                        throw new Error('Error al actualizar el perfil');
-                    }
-
-                    // Llamar a la función de envío de imagen
+    
+                    if (!response.ok) throw new Error('Error al actualizar el perfil');
+    
+                    // Subir la imagen de perfil si fue cambiada
                     await subirImagenPerfil(usuarioId);
-        
+    
                     const updatedUser = await response.json();
-                    // ---------------------------
                     console.log('Perfil actualizado:', updatedUser);
                     alert('Perfil actualizado exitosamente');
                 } catch (error) {
@@ -446,32 +408,130 @@
                     alert('Error al actualizar el perfil');
                 }
             });
-
-            function formatDate(dateString) {
-                const dateParts = dateString.split(',')[0].trim().split('/');
-                const timeParts = dateString.split(',')[1].trim().split(':');
-
-                const year = dateParts[2]; 
-                const month = dateParts[1];
-                const day = dateParts[0];
-                const hours = timeParts[0].padStart(2, '0'); 
-                const minutes = timeParts[1].padStart(2, '0'); 
-                const seconds = timeParts[2].padStart(2, '0'); 
-
-                return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    
+            // Función para verificar la contraseña actual en el servidor
+            async function verificarContrasenaActual(contrasenaActual) {
+                try {
+                    const response = await fetch(`/api/user/verify-password`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ usuarioId, contrasenaActual })
+                    });
+    
+                    if (!response.ok) {
+                        throw new Error('Error al verificar la contraseña actual');
+                    }
+    
+                    const result = await response.json();
+                    return result.esValida; // Devuelve true si la contraseña es válida, false si no
+                } catch (error) {
+                    console.error('Error al verificar la contraseña actual:', error);
+                    alert('No se pudo verificar la contraseña actual');
+                    return false;
+                }
             }
-
-            function adjustDateBySubtractingHours(dateString, hours) {
-                const date = new Date(dateString);
-                // Restar las horas
-                date.setHours(date.getHours() - hours);
-                return date.toISOString().slice(0, 19).replace('T', ' '); // Formato YYYY-MM-DD HH:mm:ss
+    
+            // Función para validar las contraseñas
+            function validarContrasenas() {
+                const contrasenaActual = document.getElementById('contrasena_actual').value;
+                const nuevaContrasena = document.getElementById('nueva_contrasena').value;
+                const confirmarContrasena = document.getElementById('confirmar_contrasena').value;
+    
+                if (nuevaContrasena && nuevaContrasena !== confirmarContrasena) {
+                    alert('Las contraseñas nuevas no coinciden');
+                    return false;
+                }
+    
+                if (nuevaContrasena && nuevaContrasena.length < 8) {
+                    alert('La nueva contraseña debe tener al menos 8 caracteres');
+                    return false;
+                }
+    
+                if (nuevaContrasena && !contrasenaActual) {
+                    alert('Debes ingresar tu contraseña actual para realizar el cambio');
+                    return false;
+                }
+    
+                return true;
             }
-
-            // Cargar datos iniciales
+    
+            // Formato de fecha para mostrar en el formulario
+            function formatDate(date) {
+                const opciones = {
+                    timeZone: 'America/Bogota',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                };
+                return new Date(date).toLocaleString('es-ES', opciones).replace(',', '');
+            }
+    
+            // Función para previsualizar la imagen
+            function previewImage(event) {
+                const input = event.target;
+                const reader = new FileReader();
+    
+                reader.onload = function() {
+                    const preview = document.getElementById('profileImagePreview');
+                    preview.src = reader.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+    
+            // Función para subir la imagen de perfil
+            async function subirImagenPerfil(usuarioId) {
+                const form = document.getElementById('uploadForm');
+                const formData = new FormData(form);
+    
+                if (!usuarioId) {
+                    alert('No se ha encontrado el ID del usuario en el localStorage.');
+                    return;
+                }
+    
+                const uploadUrl = `/api/user/upload-photo/${usuarioId}`;
+    
+                try {
+                    const response = await fetch(uploadUrl, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (!response.ok) throw new Error('Error al subir la imagen');
+                    const result = await response.text();
+                    alert(result);
+                } catch (error) {
+                    console.error('Error al subir la imagen:', error);
+                    alert('Error al procesar la solicitud.');
+                }
+            }
+    
+            // Alternar visibilidad de las contraseñas
+            function togglePasswordVisibility(fieldId) {
+                const passwordField = document.getElementById(fieldId);
+                const icon = passwordField.nextElementSibling.querySelector('i');
+    
+                if (passwordField.type === 'password') {
+                    passwordField.type = 'text';
+                    icon.className = 'fi fi-rr-eye-crossed';
+                } else {
+                    passwordField.type = 'password';
+                    icon.className = 'fi fi-rr-eye';
+                }
+            }
+    
+            // Cargar datos iniciales del usuario
             cargarDatosUsuario();
         });
     </script>
+    
+    
+        
     <!---almacenar la imagen -->
     <script>
         function previewImage(event) {
@@ -514,6 +574,19 @@
             }
         };
 
+        //mostrar la contraseña
+        function togglePasswordVisibility(fieldId) {
+        const passwordField = document.getElementById(fieldId);
+        const icon = passwordField.nextElementSibling.querySelector('i');
+
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            icon.className = 'fi fi-rr-eye-crossed'; // Cambia a icono de ocultar
+        } else {
+            passwordField.type = 'password';
+            icon.className = 'fi fi-rr-eye'; // Cambia a icono de mostrar
+        }
+    }
         </script>
 </body>
 </html>
