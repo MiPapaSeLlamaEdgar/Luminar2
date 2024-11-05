@@ -74,7 +74,7 @@ const viewRoutes = {
     // Rutas para Cliente
     '/indexCliente': 'views/Cliente/indexCliente.html',
     '/cartCliente': 'views/Cliente/cartCliente.html',
-    '/detailsCliente': 'views/Cliente/detailsCliente.html',
+    //'/detailsCliente/:producto_id': 'views/Cliente/detailsCliente.html',
     '/editarperfilCliente': 'views/Cliente/editarperfilCliente.html',
     '/ordersCliente': 'views/Cliente/ordersCliente.html',
     '/shopCliente': 'views/Cliente/shopCliente.html',
@@ -158,6 +158,10 @@ Object.entries(viewRoutes).forEach(([route, file]) => {
     app.get(route, (req, res) => {
         res.sendFile(path.join(__dirname, file));
     });
+});
+
+app.get('/detailsCliente/:producto_id', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views/Cliente/detailsCliente.html'));
 });
 
 // Manejo de errores 404 y registro de la ruta no encontrada
