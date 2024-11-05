@@ -106,21 +106,7 @@
                         
                         <div class="form-group">
                             <label for="categoriaId">Categoría:</label>
-                            <select id="categoriaId" required>
-                                <!-- Opciones de categorías actualizadas -->
-                                <option value="">Seleccione una categoría</option>
-                                <option value="1">Blazer</option>
-                                <option value="2">Abrigos</option>
-                                <option value="3">Faldas</option>
-                                <option value="4">Pantalones</option>
-                                <option value="5">Chaquetas</option>
-                                <option value="6">Gabanes</option>
-                                <option value="7">Tops</option>
-                                <option value="8">Leggings</option>
-                                <option value="9">Corset</option>
-                                <option value="10">Blusas</option>
-                                <option value="11">Chalecos</option>
-                            </select>
+                            <select id="categoriaId" required></select>
                         </div>
                         
                         <div class="form-group">
@@ -205,6 +191,7 @@
 
     <script>
         const apiUrl = '/api/product/';
+        const apiCategoriasUrl = '/api/category';
         
         function mostrarModal(producto = null) {
             const modal = document.getElementById('productoModal');
@@ -359,6 +346,27 @@
         });
 
         cargarProductos();
+        cargarCategorias();
+
+        //selector catalogos 
+        async function cargarCategorias() {
+            try {
+                const response = await fetch(apiCategoriasUrl);
+                if (!response.ok) throw new Error('Error al obtener categorías');
+                const categorias = await response.json();
+
+                const categoriaSelect = document.getElementById('categoriaId');
+                categoriaSelect.innerHTML = '<option value="">Seleccione una categoría</option>';
+                categorias.forEach(categoria => {
+                    const option = document.createElement('option');
+                    option.value = categoria.categoria_id;
+                    option.textContent = categoria.nombre_categoria;
+                    categoriaSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error al cargar categorías:', error);
+            }
+        }
     </script>
 
 </body>

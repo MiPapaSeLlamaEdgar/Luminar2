@@ -42,7 +42,7 @@ module.exports = (models) => {
         try {
             const product = await Product.findByPk(req.params.id, {
                 include: {
-                    model: Categoria,
+                    model: Category,
                     as: 'Categoria',
                     attributes: ['nombre_categoria']
                 }

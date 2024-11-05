@@ -189,14 +189,18 @@
                         const productHTML = `
                             <div class="product__item">
                                 <div class="product__banner">
-                                    <a href="/detailsCliente" class="product__images">
+                                    <a href="/detailsCliente/${product.producto_id}" class="product__images">
                                         <img src="${product.imagenes}" alt="${product.nombre_producto}" class="product__img default">
                                     </a>
                                     ${product.estado === 'agotado' ? '<div class="product__badge light-red">Agotado</div>' : ''}
                                 </div>
                                 <div class="product__content">
                                     <span class="product__category">${product.Categoria ? product.Categoria.nombre_categoria : 'Sin categoría'}</span>
-                                    <h3 class="product__title">${product.nombre_producto}</h3>
+                                    <h3 class="product__title">
+                                        <a href="/detailsCliente/${product.producto_id}" style="text-decoration: none; color: inherit;">
+                                            ${product.nombre_producto}
+                                        </a>
+                                    </h3>
                                     <div class="product__price flex">
                                         <span class="new__price">$${product.precio}</span>
                                     </div>
@@ -297,57 +301,57 @@
         }
 
         let productosEnCarrito = new Set(); 
+        
         // Agregar a carrito
-function AddToCart(productId) {
-    event.preventDefault();
+        function AddToCart(productId) {
+            event.preventDefault();
 
-    const quantity = document.getElementById(`quantity-${productId}`).value;
-    const clientId = localStorage.getItem("cliente_id");
+            const quantity = document.getElementById(`quantity-${productId}`).value;
+            const clientId = localStorage.getItem("cliente_id");
 
-    // Comprobar si el producto ya está en el carrito
-    if (productosEnCarrito.has(productId)) {
-        alert("El producto ya está en el carrito");
-        return;
-    }
+            // Comprobar si el producto ya está en el carrito
+            if (productosEnCarrito.has(productId)) {
+                alert("El producto ya está en el carrito");
+                return;
+            }
 
-    const cartData = {
-        cliente_id: clientId,
-        producto_id: productId,
-        cantidad: quantity,
-        fecha_agregado: new Date().toISOString()
-    };
+            const cartData = {
+                cliente_id: clientId,
+                producto_id: productId,
+                cantidad: quantity,
+                fecha_agregado: new Date().toISOString()
+            };
 
-    // Realizar solicitud POST al servidor para agregar al carrito
-    fetch("/api/cart/cart", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(cartData)
-    })
-    .then(response => {
-        if (response.ok) {
-            contador(clientId);  // Actualizar el contador del carrito
-            productosEnCarrito.add(productId); // Marcar como agregado
-            return response.json();
-        } else {
-            return response.json().then(error => {
-                throw new Error(error.message);
+            // Realizar solicitud POST al servidor para agregar al carrito
+            fetch("/api/cart/cart", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(cartData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    contador(clientId);  // Actualizar el contador del carrito
+                    productosEnCarrito.add(productId); // Marcar como agregado
+                    return response.json();
+                } else {
+                    return response.json().then(error => {
+                        throw new Error(error.message);
+                    });
+                }
+            })
+            .then(result => {
+                alert("Producto agregado al carrito con éxito");
+            })
+            .catch(error => {
+                if (error.message === "El producto ya está en el carrito") {
+                    alert(`${error.message}`);
+                } else {
+                    alert(`Error al agregar el producto al carrito: ${error.message}`);
+                }
             });
         }
-    })
-    .then(result => {
-        alert("Producto agregado al carrito con éxito");
-    })
-    .catch(error => {
-        if (error.message === "El producto ya está en el carrito") {
-            alert(`${error.message}`);
-        } else {
-            alert(`Error al agregar el producto al carrito: ${error.message}`);
-        }
-    });
-}
-
 
         //agregar a List deceos 
         function AddToList(productId) {
@@ -393,7 +397,6 @@ function AddToCart(productId) {
                 }
             });
         }
-   
    
    </script>
 </body>
