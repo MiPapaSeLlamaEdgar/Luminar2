@@ -43,7 +43,7 @@ module.exports = (models) => {
             if (!isValidPassword) {
                 return res.status(401).json({ message: 'Correo electrónico o contraseña incorrectos' });
             }
-
+ 
             const token = jwt.sign(
                 { usuario_id: user.usuario_id, rol_id: user.rol_id },
                 process.env.JWT_SECRET || 'tu_clave_secreta',
@@ -162,8 +162,19 @@ module.exports = (models) => {
                     });
                 }
             }
-    
-            
+
+            // Verificar si se desea cambiar la contraseña
+            if (req.body.Antigua_contrasena && req.body.nueva_contrasena) {
+                const isValidPassword = await bcrypt.compare(req.body.Antigua_contrasena, user.contrasena);
+                if (!isValidPassword) {
+                    console.error('Error isValidPassword:', isValidPassword);
+                    return res.status(401).json({ message: 'Error al verificar la contraseña actual' });
+                }
+
+                // Si la contraseña es válida, la encriptamos
+                user.contrasena = await bcrypt.hash(req.body.nueva_contrasena, 10);
+            }
+ 
             // Preparar los datos para la actualización
             const updateData = {
                 nombre: req.body.nombre,
@@ -171,13 +182,9 @@ module.exports = (models) => {
                 correo_electronico: req.body.correo_electronico,
                 fecha_registro: req.body.fecha_registro,
                 ultimo_acceso: req.body.ultimo_acceso,
+                ...(req.body.nueva_contrasena && { contrasena: user.contrasena }) 
             };
 
-            // Si se está actualizando la contraseña, encriptarla
-            if (req.body.nueva_contrasena) {
-                updateData.contrasena = await bcrypt.hash(req.body.nueva_contrasena, 10);
-            }
-    
             await user.update(updateData);
             
             const updatedUser = await User.findByPk(req.params.id, {
@@ -190,8 +197,9 @@ module.exports = (models) => {
     
             res.json(updatedUser);
         } catch (error) {
+            console.error('Error específico:', error); 
             res.status(500).json({
-                message: 'Error al actualizar usuario',
+                message: 'Error al actualizar usuario....',
                 error: error.message
             });
         }
