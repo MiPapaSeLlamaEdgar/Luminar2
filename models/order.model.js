@@ -1,6 +1,5 @@
-// models/order.model.js
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('Order', {
+    const Order = sequelize.define('Order', {
         orden_id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -73,4 +72,27 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'Ordenes',
         timestamps: false
     });
+
+    // Define associations
+    Order.associate = (models) => {
+        // One-to-Many relationship with OrderDetail
+        Order.hasMany(models.OrderDetail, {
+            foreignKey: 'orden_id',
+            as: 'Detalles' // Alias used to include this relationship
+        });
+
+        // Association with Cliente model if needed
+        Order.belongsTo(models.Cliente, {
+            foreignKey: 'cliente_id',
+            as: 'Cliente'
+        });
+
+        // Association with Usuario model if needed
+        Order.belongsTo(models.Usuario, {
+            foreignKey: 'usuario_id',
+            as: 'Usuario'
+        });
+    };
+
+    return Order;
 };

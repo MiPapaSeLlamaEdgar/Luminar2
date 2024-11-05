@@ -3,16 +3,28 @@ const express = require('express');
 const router = express.Router();
 
 module.exports = (models) => {
-    const { OrderDetail } = models;
+    const { OrderDetail, Order, Product } = models;
 
     // Obtener todos los detalles de órdenes
     router.get('/', async (req, res) => {
         try {
             const orderDetails = await OrderDetail.findAll({
-                include: ['Order']
+                include: [
+                    {
+                        model: Order,
+                        as: 'Orden', // Ensure this alias matches the defined alias in the model associations
+                        attributes: ['orden_id', 'fecha_orden', 'estado']
+                    },
+                    {
+                        model: Product,
+                        as: 'Producto', // Ensure this alias matches the defined alias in the model associations
+                        attributes: ['nombre_producto', 'precio']
+                    }
+                ]
             });
             res.json(orderDetails);
         } catch (error) {
+            console.error('Error al obtener detalles de órdenes:', error);
             res.status(500).json({
                 message: 'Error al obtener detalles de órdenes',
                 error: error.message
@@ -25,10 +37,20 @@ module.exports = (models) => {
         try {
             const orderDetails = await OrderDetail.findAll({
                 where: { orden_id: req.params.ordenId },
-                include: ['Order']
+                include: [
+                    {
+                        model: Product,
+                        as: 'Producto',
+                        attributes: ['nombre_producto', 'precio']
+                    }
+                ]
             });
+            if (orderDetails.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron detalles para esta orden' });
+            }
             res.json(orderDetails);
         } catch (error) {
+            console.error('Error al obtener detalles de la orden:', error);
             res.status(500).json({
                 message: 'Error al obtener detalles de la orden',
                 error: error.message
@@ -40,13 +62,25 @@ module.exports = (models) => {
     router.get('/:id', async (req, res) => {
         try {
             const orderDetail = await OrderDetail.findByPk(req.params.id, {
-                include: ['Order']
+                include: [
+                    {
+                        model: Order,
+                        as: 'Orden',
+                        attributes: ['orden_id', 'fecha_orden', 'estado']
+                    },
+                    {
+                        model: Product,
+                        as: 'Producto',
+                        attributes: ['nombre_producto', 'precio']
+                    }
+                ]
             });
             if (!orderDetail) {
                 return res.status(404).json({ message: 'Detalle de orden no encontrado' });
             }
             res.json(orderDetail);
         } catch (error) {
+            console.error('Error al obtener detalle de orden:', error);
             res.status(500).json({
                 message: 'Error al obtener detalle de orden',
                 error: error.message
@@ -57,9 +91,24 @@ module.exports = (models) => {
     // Crear nuevo detalle de orden
     router.post('/', async (req, res) => {
         try {
-            const orderDetail = await OrderDetail.create(req.body);
+            const { orden_id, producto_id, cantidad, precio_unitario } = req.body;
+
+            // Validations
+            if (!orden_id || !producto_id || !cantidad || !precio_unitario) {
+                return res.status(400).json({ message: 'Todos los campos son requeridos' });
+            }
+
+            const orderDetail = await OrderDetail.create({
+                orden_id,
+                producto_id,
+                cantidad,
+                precio_unitario,
+                total: cantidad * precio_unitario
+            });
+
             res.status(201).json(orderDetail);
         } catch (error) {
+            console.error('Error al crear detalle de orden:', error);
             res.status(500).json({
                 message: 'Error al crear detalle de orden',
                 error: error.message
@@ -70,13 +119,24 @@ module.exports = (models) => {
     // Actualizar detalle de orden
     router.put('/:id', async (req, res) => {
         try {
+            const { cantidad, precio_unitario } = req.body;
             const orderDetail = await OrderDetail.findByPk(req.params.id);
+
             if (!orderDetail) {
                 return res.status(404).json({ message: 'Detalle de orden no encontrado' });
             }
-            await orderDetail.update(req.body);
+
+            // Update only if fields are provided
+            if (cantidad !== undefined) orderDetail.cantidad = cantidad;
+            if (precio_unitario !== undefined) orderDetail.precio_unitario = precio_unitario;
+
+            // Recalculate total
+            orderDetail.total = orderDetail.cantidad * orderDetail.precio_unitario;
+            await orderDetail.save();
+
             res.json(orderDetail);
         } catch (error) {
+            console.error('Error al actualizar detalle de orden:', error);
             res.status(500).json({
                 message: 'Error al actualizar detalle de orden',
                 error: error.message
@@ -88,12 +148,15 @@ module.exports = (models) => {
     router.delete('/:id', async (req, res) => {
         try {
             const orderDetail = await OrderDetail.findByPk(req.params.id);
+
             if (!orderDetail) {
                 return res.status(404).json({ message: 'Detalle de orden no encontrado' });
             }
+
             await orderDetail.destroy();
             res.json({ message: 'Detalle de orden eliminado correctamente' });
         } catch (error) {
+            console.error('Error al eliminar detalle de orden:', error);
             res.status(500).json({
                 message: 'Error al eliminar detalle de orden',
                 error: error.message

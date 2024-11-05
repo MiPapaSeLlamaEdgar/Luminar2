@@ -14,6 +14,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
+        talla: {
+            type: DataTypes.STRING(50),  // New field for size
+            allowNull: true
+        },
+        color: {
+            type: DataTypes.STRING(50),  // New field for color
+            allowNull: true
+        },
         fecha_agregado: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW
@@ -28,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
         indexes: [
             {
                 unique: true,
-                fields: ['cliente_id', 'producto_id']
+                fields: ['cliente_id', 'producto_id', 'talla', 'color']
             }
         ]
     });

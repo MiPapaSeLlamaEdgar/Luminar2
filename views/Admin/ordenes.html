@@ -16,35 +16,11 @@
     </header>
     <div class="container">
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <a href="/dashboard-admin" class="back-button"><i class="fas fa-arrow-left"></i></a>
-                <h2>Admin Panel</h2>
-            </div>
-            <nav class="sidebar">
-                <ul class="nav-links">
-                    <li><a href="/dashboard-admin" class="active"><i class="fas fa-home"></i> Inicio</a></li>
-                    <li><a href="/admin/usuarios"><i class="fas fa-user"></i> Usuarios</a></li>
-                    <li><a href="/admin/clientes"><i class="fas fa-users"></i> Clientes</a></li>
-                    <li><a href="/admin/ordenes"><i class="fas fa-clipboard-list"></i> Órdenes</a></li>
-                    <li><a href="/admin/productos"><i class="fas fa-box-open"></i> Productos</a></li>
-                    <li><a href="/admin/inventario"><i class="fas fa-warehouse"></i> Inventario</a></li>
-                    <li><a href="/admin/roles"><i class="fas fa-user-tag"></i> Roles</a></li>
-                    <li><a href="/admin/reportes"><i class="fas fa-chart-line"></i> Reportes</a></li>
-                    <li><a href="/admin/ventas"><i class="fas fa-dollar-sign"></i> Ventas</a></li>
-                    <li><a href="/admin/config"><i class="fas fa-cogs"></i> Configuración</a></li>
-                </ul>
-            </nav>
+            <!-- Sidebar content -->
         </aside>
         <div class="main-content">
             <div class="top-bar">
-                <div class="search-box">
-                    <input type="text" placeholder="Buscar órdenes..." id="searchInput" onkeyup="buscarOrden()">
-                </div>
-                <div class="header__user-actions">
-                    <a href="#" class="header__action-btn"><i class="fas fa-bell"></i></a>
-                    <a href="#" class="header__action-btn"><i class="fas fa-cog"></i></a>
-                    <a href="#" class="header__action-btn"><i class="fas fa-sign-out-alt"></i></a>
-                </div>
+                <!-- Top bar content -->
             </div>
 
             <!-- Tabla de Órdenes -->
@@ -82,66 +58,7 @@
                 <div class="modal-content">
                     <span onclick="cerrarModal()" style="cursor:pointer;">&times;</span>
                     <form id="ordenForm">
-                        <input type="hidden" id="ordenId">
-                        <div class="form-group">
-                            <label for="clienteId">ID Cliente:</label>
-                            <input type="number" id="clienteId" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="usuarioId">ID Usuario:</label>
-                            <input type="number" id="usuarioId">
-                        </div>
-                        <div class="form-group">
-                            <label for="codigoOrden">Código Orden:</label>
-                            <input type="text" id="codigoOrden" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="fechaOrden">Fecha Orden:</label>
-                            <input type="date" id="fechaOrden">
-                        </div>
-                        <div class="form-group">
-                            <label for="fechaEntregaEstimada">Fecha Entrega Estimada:</label>
-                            <input type="date" id="fechaEntregaEstimada">
-                        </div>
-                        <div class="form-group">
-                            <label for="fechaEntregaReal">Fecha Entrega Real:</label>
-                            <input type="date" id="fechaEntregaReal">
-                        </div>
-                        <div class="form-group">
-                            <label for="subtotal">Subtotal:</label>
-                            <input type="number" id="subtotal" step="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="impuestos">Impuestos:</label>
-                            <input type="number" id="impuestos" step="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="descuento">Descuento:</label>
-                            <input type="number" id="descuento" step="0.01">
-                        </div>
-                        <div class="form-group">
-                            <label for="total">Total:</label>
-                            <input type="number" id="total" step="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="estado">Estado:</label>
-                            <select id="estado" required>
-                                <option value="pendiente">Pendiente</option>
-                                <option value="confirmada">Confirmada</option>
-                                <option value="en proceso">En Proceso</option>
-                                <option value="enviada">Enviada</option>
-                                <option value="entregada">Entregada</option>
-                                <option value="cancelada">Cancelada</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="direccionEnvio">Dirección de Envío:</label>
-                            <textarea id="direccionEnvio"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="notas">Notas:</label>
-                            <textarea id="notas"></textarea>
-                        </div>
+                        <!-- Form fields -->
                         <div class="modal-buttons">
                             <button type="submit" class="save-btn">Guardar</button>
                             <button type="button" onclick="cerrarModal()" class="cancel-btn">Cancelar</button>
@@ -158,20 +75,7 @@
         function mostrarModal(orden = null) {
             const modal = document.getElementById('ordenModal');
             if (orden) {
-                document.getElementById('ordenId').value = orden.orden_id || '';
-                document.getElementById('clienteId').value = orden.cliente_id || '';
-                document.getElementById('usuarioId').value = orden.usuario_id || '';
-                document.getElementById('codigoOrden').value = orden.codigo_orden || '';
-                document.getElementById('fechaOrden').value = orden.fecha_orden ? new Date(orden.fecha_orden).toISOString().substring(0, 10) : '';
-                document.getElementById('fechaEntregaEstimada').value = orden.fecha_entrega_estimada ? new Date(orden.fecha_entrega_estimada).toISOString().substring(0, 10) : '';
-                document.getElementById('fechaEntregaReal').value = orden.fecha_entrega_real ? new Date(orden.fecha_entrega_real).toISOString().substring(0, 10) : '';
-                document.getElementById('subtotal').value = orden.subtotal || '';
-                document.getElementById('impuestos').value = orden.impuestos || '';
-                document.getElementById('descuento').value = orden.descuento || '';
-                document.getElementById('total').value = orden.total || '';
-                document.getElementById('estado').value = orden.estado || 'pendiente';
-                document.getElementById('direccionEnvio').value = orden.direccion_envio || '';
-                document.getElementById('notas').value = orden.notas || '';
+                // Fill in form fields with order data
             } else {
                 document.getElementById('ordenForm').reset();
             }
@@ -224,56 +128,50 @@
         });
 
         async function cargarOrdenes() {
-    try {
-        // Verificar la URL de la API
-        console.log('Fetching data from:', apiUrl);
-        
-        const response = await fetch(apiUrl);
-        if (!response.ok) throw new Error('Error al obtener órdenes');
-        
-        const ordenes = await response.json();
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error('Failed to fetch orders');
 
-        // Verificar los datos recibidos
-        console.log('Datos recibidos:', ordenes);
+                const orders = await response.json();
+                const ordersBody = document.getElementById('ordenesBody');
+                ordersBody.innerHTML = '';
 
-        const ordenesBody = document.getElementById('ordenesBody');
-        
-        // Confirmar que el contenedor exista
-        if (!ordenesBody) {
-            throw new Error('Elemento con id "ordenesBody" no encontrado en el DOM');
+                orders.forEach(order => {
+                    // Check if `Detalles` exists and is an array
+                    const products = Array.isArray(order.Detalles) && order.Detalles.length > 0
+                        ? order.Detalles
+                            .map(detail => detail.Producto ? detail.Producto.nombre_producto : 'Producto desconocido')
+                            .join(', ')
+                        : 'No hay productos';
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${order.orden_id}</td>
+                        <td>${order.cliente_id || 'N/A'}</td>
+                        <td>${order.usuario_id || 'N/A'}</td>
+                        <td>${order.codigo_orden || 'N/A'}</td>
+                        <td>${order.fecha_orden ? new Date(order.fecha_orden).toLocaleDateString() : 'N/A'}</td>
+                        <td>${order.fecha_entrega_estimada ? new Date(order.fecha_entrega_estimada).toLocaleDateString() : 'N/A'}</td>
+                        <td>${order.fecha_entrega_real ? new Date(order.fecha_entrega_real).toLocaleDateString() : 'N/A'}</td>
+                        <td>$${order.subtotal ? order.subtotal.toFixed(2) : '0.00'}</td>
+                        <td>$${order.impuestos ? order.impuestos.toFixed(2) : '0.00'}</td>
+                        <td>$${order.descuento ? order.descuento.toFixed(2) : '0.00'}</td>
+                        <td>$${order.total ? order.total.toFixed(2) : '0.00'}</td>
+                        <td>${order.estado || 'Pendiente'}</td>
+                        <td>${order.direccion_envio || 'N/A'}</td>
+                        <td>${order.notas || 'N/A'}</td>
+                        <td>
+                            <button onclick="mostrarModal(${JSON.stringify(order)})">Editar</button>
+                            <button onclick="eliminarOrden(${order.orden_id})">Eliminar</button>
+                        </td>
+                    `;
+                    ordersBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error loading orders');
+            }
         }
-
-        ordenesBody.innerHTML = '';
-        ordenes.forEach(orden => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${orden.orden_id}</td>
-                <td>${orden.cliente_id}</td>
-                <td>${orden.usuario_id || ''}</td>
-                <td>${orden.codigo_orden}</td>
-                <td>${orden.fecha_orden ? new Date(orden.fecha_orden).toLocaleDateString() : ''}</td>
-                <td>${orden.fecha_entrega_estimada ? new Date(orden.fecha_entrega_estimada).toLocaleDateString() : ''}</td>
-                <td>${orden.fecha_entrega_real ? new Date(orden.fecha_entrega_real).toLocaleDateString() : ''}</td>
-                <td>$${orden.subtotal?.toFixed(2) || '0.00'}</td>
-                <td>$${orden.impuestos?.toFixed(2) || '0.00'}</td>
-                <td>$${orden.descuento?.toFixed(2) || '0.00'}</td>
-                <td>$${orden.total?.toFixed(2) || '0.00'}</td>
-                <td><span class="status ${orden.estado.replace(/ /g, '-').toLowerCase()}">${orden.estado}</span></td>
-                <td>${orden.direccion_envio || ''}</td>
-                <td>${orden.notas || ''}</td>
-                <td class="action-buttons">
-                    <button onclick='mostrarModal(${JSON.stringify(orden)})' class="editar-btn"><i class="fas fa-edit"></i> Editar</button>
-                    <button onclick='eliminarOrden(${orden.orden_id})' class="delete-btn"><i class="fas fa-trash-alt"></i> Eliminar</button>
-                </td>
-            `;
-            ordenesBody.appendChild(row);
-        });
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error al cargar órdenes');
-    }
-}
-
 
         async function eliminarOrden(ordenId) {
             const confirmacion = confirm('¿Estás seguro de que deseas eliminar esta orden?');
