@@ -45,7 +45,7 @@ module.exports = (models) => {
         console.error("entra en guardar ");
         console.error("datos ", req.body);
         try {
-            const { cliente_id, producto_id, cantidad, fecha_agregado } = req.body;
+            const { cliente_id, producto_id, cantidad, talla, color, fecha_agregado } = req.body;
 
             // Crea un nuevo registro en la tabla Cart
             const cartItem = await Cart.create({
@@ -53,6 +53,8 @@ module.exports = (models) => {
                 producto_id,
                 cantidad,
                 fecha_agregado,
+                talla,
+                color,
                 fecha_modificacion: new Date()
             });
 
@@ -86,7 +88,6 @@ module.exports = (models) => {
         }
     });
 
-
     // Eliminar item del carrito
     router.delete('/:id', async (req, res) => {
         console.error("id que entra ", req.params.id);
@@ -116,6 +117,45 @@ module.exports = (models) => {
             res.status(500).json({ message: 'Error al obtener conteo de items del carrito', error: error.message });
         }
     });
+
+    // Actualizar talla de item
+    router.put('/:id/talla', async (req, res) => {
+        try {
+            const cartItem = await Cart.findByPk(req.params.id);
+            if (!cartItem) {
+                return res.status(404).json({ message: 'Item no encontrado' });
+            }
+            
+            await cartItem.update({ talla: req.body.talla });
+            res.json(cartItem);
+        } catch (error) {
+            console.error('Error en el controlador:', error.message);
+            res.status(500).json({
+                message: 'Error al actualizar talla del carrito',
+                error: error.message
+            });
+        }
+    });
+
+    // Actualizar color de item
+    router.put('/:id/color', async (req, res) => {
+        try {
+            const cartItem = await Cart.findByPk(req.params.id);
+            if (!cartItem) {
+                return res.status(404).json({ message: 'Item no encontrado' });
+            }
+            
+            await cartItem.update({ color: req.body.color });
+            res.json(cartItem);
+        } catch (error) {
+            console.error('Error en el controlador:', error.message);
+            res.status(500).json({
+                message: 'Error al actualizar color del carrito',
+                error: error.message
+            });
+        }
+    });
+
 
     return router;
 };
