@@ -547,16 +547,27 @@
             const quantity = quantityInput ? quantityInput.value : 1;
             const clientId = localStorage.getItem("cliente_id");
 
+            // Obtener el valor de la talla seleccionada
+            const sizeSelect = document.querySelector('#sizeButtons');
+            const selectedSize = sizeSelect ? sizeSelect.value : null;
+
+            // Obtener el valor del color seleccionado
+            const colorSelect = document.querySelector('#colorButtons');
+            const selectedColor = colorSelect ? colorSelect.value : null;
+
             // Comprobar si el producto ya está en el carrito
             if (productosEnCarrito.has(productId)) {
                 alert("El producto ya está en el carrito");
                 return;
             }
 
+            // Crear el objeto cartData con los datos necesarios
             const cartData = {
                 cliente_id: clientId,
                 producto_id: productId,
                 cantidad: quantity,
+                talla: selectedSize,  
+                color: selectedColor, 
                 fecha_agregado: new Date().toISOString()
             };
 

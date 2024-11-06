@@ -174,13 +174,17 @@
                     <td>${item.Producto.nombre_producto}</td>
                     <td>$${price.toFixed(2)}</td>
                     <td>
-                        <select class="product__select" data-id="${item.carrito_id}" data-option="size" onchange="updateCartItemOptions(${item.carrito_id})">
-                            ${item.Producto.talla ? item.Producto.talla.split(',').map(size => `<option value="${size.trim()}">${size.trim()}</option>`).join('') : '<option>No disponible</option>'}
+                       <select class="product__select" data-id="${item.carrito_id}" data-option="size" onchange="updateCartSize(${item.carrito_id}, this.value)">
+                            ${item.Producto.talla ? item.Producto.talla.split(',').map(size => `
+                                <option value="${size.trim()}" ${size.trim() === item.talla ? 'selected' : ''}>${size.trim()}</option>
+                            `).join('') : '<option>No disponible</option>'}
                         </select>
                     </td>
                     <td>
-                        <select class="product__select" data-id="${item.carrito_id}" data-option="color" onchange="updateCartItemOptions(${item.carrito_id})">
-                            ${item.Producto.color ? item.Producto.color.split(',').map(color => `<option value="${color.trim()}" style="background-color: ${color.trim()};">${color.trim()}</option>`).join('') : '<option>No disponible</option>'}
+                        <select class="product__select" data-id="${item.carrito_id}" data-option="color" onchange="updateCartColor(${item.carrito_id}, this.value)">
+                            ${item.Producto.color ? item.Producto.color.split(',').map(color => `
+                                <option value="${color.trim()}" style="background-color: ${color.trim()};" ${color.trim() === item.color ? 'selected' : ''}>${color.trim()}</option>
+                            `).join('') : '<option>No disponible</option>'}
                         </select>
                     </td>
                     <td><input type="number" class="cart__quantity" value="${item.cantidad}" min="1" data-carrito-id="${item.carrito_id}"></td>
@@ -281,6 +285,39 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadCartItems();
         });
+    
+        async function updateCartSize(cartId, newSize) {
+            try {
+                const response = await fetch(`/api/cart/${cartId}/talla`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ talla: newSize })
+                });
+                if (!response.ok) throw new Error('Error al actualizar talla');
+                await loadCartItems(); // Recargar los items del carrito para reflejar cambios
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'No se pudo actualizar la talla', 'error');
+            }
+        }
+
+        async function updateCartColor(cartId, newColor) {
+            try {
+                const response = await fetch(`/api/cart/${cartId}/color`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ color: newColor })
+                });
+                if (!response.ok) throw new Error('Error al actualizar color');
+                await loadCartItems(); // Recargar los items del carrito para reflejar cambios
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'No se pudo actualizar el color', 'error');
+            }
+        }
+
+
+    
     </script>
 </body>
 </html>
