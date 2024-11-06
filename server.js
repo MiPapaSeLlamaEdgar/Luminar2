@@ -5,21 +5,16 @@ const { Sequelize } = require('sequelize');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const hbs = require('hbs');
 require('dotenv').config();
 
 const app = express();
-
-// Configuración del motor de plantillas Handlebars
-app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, 'views'));
-hbs.registerPartials(path.join(__dirname, 'views/partials'));
 
 // Middlewares
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     secret: process.env.SESSION_SECRET || 'secret_key',
@@ -27,7 +22,7 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 }
 }));
- 
+
 // Configuración de la base de datos
 const sequelize = new Sequelize('luminar', 'root', '1234', {
     host: 'localhost',
@@ -64,23 +59,17 @@ const apiRoutes = {
     'orderDetail': '/api/orderDetail',
     'wishlist': '/api/wishlist',
     'orderTracking': '/api/orderTracking'
-
 };
 
 const viewRoutes = {
     '/': 'views/login-register.html',
     '/index': 'views/index.html',
-    
-    // Rutas para Cliente
     '/indexCliente': 'views/Cliente/indexCliente.html',
     '/cartCliente': 'views/Cliente/cartCliente.html',
-    //'/detailsCliente/:producto_id': 'views/Cliente/detailsCliente.html',
     '/editarperfilCliente': 'views/Cliente/editarperfilCliente.html',
     '/ordersCliente': 'views/Cliente/ordersCliente.html',
     '/shopCliente': 'views/Cliente/shopCliente.html',
     '/whishlistCliente': 'views/Cliente/wishlistCliente.html',
-    
-    // Rutas para Vendedor
     '/vendedor/clientes': 'views/Vendedor/clientes.html',
     '/vendedor/dashboard-vendedor': 'views/Vendedor/dashboard-vendedor.html',
     '/vendedor/editar-perfil': 'views/Vendedor/editar-perfil.html',
@@ -90,8 +79,6 @@ const viewRoutes = {
     '/vendedor/nueva-venta': 'views/Vendedor/nueva-venta.html',
     '/vendedor/nuevo-cliente': 'views/Vendedor/nuevo-cliente.html',
     '/vendedor/nuevo-producto': 'views/Vendedor/nuevo-producto.html',
-    
-    // Rutas para Admin
     '/dashboard-admin': 'views/Admin/dashboard-admin.html',
     '/admin/roles': 'views/Admin/roles.html',
     '/admin/clientes': 'views/Admin/clientes.html',
@@ -105,15 +92,12 @@ const viewRoutes = {
     '/admin/reportes': 'views/Admin/reportes.html',
     '/admin/usuarios': 'views/Admin/usuarios.html',
     '/admin/ventas': 'views/Admin/ventas.html',
-
-    // Rutas adicionales
     '/privacy-policy': 'views/privacy-policy.html',
     '/indexPortal': 'views/indexPortal.html',
     '/shopPortal': 'views/shopPortal.html',
-    '/details': 'views/details.html',
+    '/details': 'views/details.html'
 };
 
-// Función para cargar rutas de manera segura
 function loadRoute(routeName) {
     const routeFile = `./routes/${routeName}.routes.js`;
     try {
@@ -131,29 +115,6 @@ Object.entries(apiRoutes).forEach(([routeName, routePath]) => {
     app.use(routePath, router);
 });
 
-// Rutas específicas con lógica usando Handlebars
-app.get('/admin/roles', async (req, res) => {
-    try {
-        const roles = await req.models.Role.findAll({ order: [['rol_id', 'ASC']] });
-        res.render('roles', { roles });
-    } catch (error) {
-        console.error('Error al obtener roles:', error);
-        res.status(500).send('Error al obtener roles');
-    }
-});
-
-app.get('/vendedor/clientes', async (req, res) => {
-    try {
-        const clientes = await req.models.User.findAll({
-            attributes: ['usuario_id', 'nombre', 'correo_electronico', 'fecha_registro', 'estado']
-        });
-        res.render('clientes', { clientes });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error al obtener usuarios');
-    }
-});
-
 Object.entries(viewRoutes).forEach(([route, file]) => {
     app.get(route, (req, res) => {
         res.sendFile(path.join(__dirname, file));
@@ -164,32 +125,27 @@ app.get('/detailsCliente/:producto_id', (req, res) => {
     res.sendFile(path.join(__dirname, 'views/Cliente/detailsCliente.html'));
 });
 
-// Manejo de errores 404 y registro de la ruta no encontrada
-app.use((req, res, next) => {
-    const error = new Error('Not found');
-    error.status = 404;
-    console.log(`Ruta no encontrada: ${req.method} ${req.url}`);
-    next(error);
+// Error handling for 404s
+app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
 });
 
-// Manejo de errores global
-app.use((err, req, res, next) => {
+// Global error handler
+app.use((err, req, res) => {
     console.error(err.stack);
     res.status(err.status || 500).json({
         error: {
             message: err.message,
-            status: err.status,
-            stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+            status: err.status || 500,
+            ...(process.env.NODE_ENV === 'development' ? { stack: err.stack } : {})
         }
     });
 });
 
-// Función para inicializar el servidor
 async function initializeServer() {
     try {
         await sequelize.authenticate();
         console.log('Conexión a la base de datos establecida.');
-
         await sequelize.sync({ alter: true });
         console.log('Modelos sincronizados.');
 
@@ -203,16 +159,6 @@ async function initializeServer() {
         process.exit(1);
     }
 }
-
-// Manejo de errores no capturados
-process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-});
-
-process.on('uncaughtException', (error) => {
-    console.error('Uncaught Exception:', error);
-    process.exit(1);
-});
 
 initializeServer();
 

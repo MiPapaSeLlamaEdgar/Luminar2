@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Perfil | Luminar</title>
+    <title>Editar Perfil | Luminar - Administrador</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
+    <link rel="stylesheet" href="/css/dashboard-admin.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    
 </head>
 <body>
     <div class="container">
@@ -35,176 +34,272 @@
             </nav>
         </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="profile-section">
-                <div class="profile-header">
-                    <div class="profile-image-container">
-                        <img src="/images/foto.png" alt="Foto de perfil" class="profile-image">
-                        <button class="change-photo-btn" title="Cambiar foto">
-                            <i class="fi fi-sr-camera" style="font-size: 1.5em;"></i>
-                        </button>
+        <div class="container">
+            <main class="main-content">
+                <div class="profile-section">
+                    <div class="profile-header">
+                        <div class="profile-image-container">
+                            <form id="uploadForm" method="post" enctype="multipart/form-data">
+                                <img src="assets/img/default-profile.png" alt="Foto de perfil" class="profile-image" id="profileImagePreview">
+                                <input type="file" id="photoInput" name="profilePhoto" accept="image/*" style="display: none;" onchange="previewImage(event)">
+                                <button type="button" class="change-photo-btn" title="Cambiar foto" onclick="document.getElementById('photoInput').click()">
+                                    <i class="fi fi-rr-camera"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <h2>Editar Perfil Administrador</h2>
                     </div>
-                    <h2>Editar Perfil</h2>
-                </div>
-
-                <form class="profile-form" id="profileForm">
-                    <div class="form-section">
-                        <h3>Información Personal</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Nombre</label>
-                                <input type="text" id="nombre" name="nombre" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Apellido</label>
-                                <input type="text" id="apellido" name="apellido" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Correo Electrónico</label>
-                            <input type="email" id="correo_electronico" name="correo_electronico" required>
-                        </div> 
-                        <div class="form-group">
-                            <label>Último Acceso</label>
-                            <input type="text" id="ultimo_acceso" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label>Fecha de Registro</label>
-                            <input type="text" id="fecha_registro" disabled>
-                        </div>
-                    </div>
-                
-                    <div class="form-section">
-                        <h3>Cambiar Contraseña</h3>
-                        <div class="form-group">
-                            <label>Contraseña Actual</label>
-                            <input type="password" id="contrasena_actual" name="contrasena_actual">
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Nueva Contraseña</label>
-                                <input type="password" id="nueva_contrasena" name="nueva_contrasena">
-                            </div>
-                            <div class="form-group">
-                                <label>Confirmar Nueva Contraseña</label>
-                                <input type="password" id="confirmar_contrasena">
-                            </div>
-                        </div>
-                    </div>
-                
-                
-                    <div class="action-buttons">
-                        <button type="button" class="cancel-btn" onclick="window.history.back()">Cancelar</button>
-                        <button type="submit" class="save-btn">Guardar Cambios</button>
-                    </div>
-                </form>
-            </div>
-        </main>
-    </div>
-
-    <script>
-        document.getElementById('profileForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Validar contraseñas
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            if (newPassword && newPassword !== confirmPassword) {
-                alert('Las contraseñas no coinciden');
-                return;
-            }
-            
-            // Aquí iría la lógica para guardar los cambios
-            alert('Cambios guardados exitosamente');
-        });
-
-        // Cambiar foto de perfil
-        document.querySelector('.change-photo-btn').addEventListener('click', function() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.onchange = function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        document.querySelector('.profile-image').src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            };
-            input.click();
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('profileForm');
     
-    // Cargar datos del usuario
-    async function cargarDatosUsuario() {
-        try {
-            const query = `
-                SELECT 
-                    u.*,
-                    r.nombre_rol
-                FROM Usuarios u
-                JOIN Roles r ON u.rol_id = r.rol_id
-                WHERE u.usuario_id = ?
-            `;
+                    <form class="profile-form" id="profileForm">
+                        <div class="form-section">
+                            <h3>Información Personal</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Nombre</label>
+                                    <input type="text" id="nombre" name="nombre" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Apellido</label>
+                                    <input type="text" id="apellido" name="apellido" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Correo Electrónico</label>
+                                <input type="email" id="correo_electronico" name="correo_electronico" required>
+                            </div> 
+                            <div class="form-group">
+                                <label>Último Acceso</label>
+                                <input type="text" id="ultimo_acceso" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha de Registro</label>
+                                <input type="text" id="fecha_registro" disabled>
+                            </div>
+                        </div>
+                    
+                        <div class="form-section">
+                            <h3>Cambiar Contraseña</h3>
+                            <div class="form-group">
+                                <label>Contraseña Actual</label>
+                                <input type="password" id="contrasena_actual" name="contrasena_actual">
+                                <span class="toggle-password" onclick="togglePasswordVisibility('contrasena_actual')">
+                                    <i class="fi fi-rr-eye"></i>
+                                </span>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Nueva Contraseña</label>
+                                    <input type="password" id="nueva_contrasena" name="nueva_contrasena">
+                                    <span class="toggle-password" onclick="togglePasswordVisibility('nueva_contrasena')">
+                                        <i class="fi fi-rr-eye"></i>
+                                    </span>
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirmar Nueva Contraseña</label>
+                                    <input type="password" id="confirmar_contrasena">
+                                    <span class="toggle-password" onclick="togglePasswordVisibility('confirmar_contrasena')">
+                                        <i class="fi fi-rr-eye"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <div class="action-buttons">
+                            <button type="button" class="cancel-btn" onclick="window.history.back()">Cancelar</button>
+                            <button type="submit" class="save-btn">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+    
+        <script>
+            var usuarioId = localStorage.getItem('usuario_id');
             
-            // Aquí iría tu lógica para obtener los datos del usuario
-            const usuario = {
-                nombre: 'Andres',
-                apellido: 'Mora',
-                correo_electronico: 'andres@luminar.com',
-                ultimo_acceso: '2024-03-20 15:30:00',
-                fecha_registro: '2024-01-01 09:00:00',
-                imagen_perfil: '/images/foto.png'
-            };
-
-            // Llenar el formulario con los datos
-            document.getElementById('nombre').value = usuario.nombre;
-            document.getElementById('apellido').value = usuario.apellido;
-            document.getElementById('correo_electronico').value = usuario.correo_electronico;
-            document.getElementById('ultimo_acceso').value = new Date(usuario.ultimo_acceso).toLocaleString();
-            document.getElementById('fecha_registro').value = new Date(usuario.fecha_registro).toLocaleString();
-            
-            // Mostrar imagen de perfil actual
-            document.querySelector('.profile-image').src = usuario.imagen_perfil;
-        } catch (error) {
-            console.error('Error al cargar datos:', error);
-        }
-    }
-
-    // Manejar envío del formulario
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
+            document.addEventListener('DOMContentLoaded', function() {
         
-        // Validar contraseñas
-        const nuevaContrasena = document.getElementById('nueva_contrasena').value;
-        const confirmarContrasena = document.getElementById('confirmar_contrasena').value;
+                async function cargarDatosUsuario() {
+                    try {
+                        if (!usuarioId) {
+                            alert('No se ha encontrado el ID del usuario en el localStorage.');
+                            return;
+                        }
         
-        if (nuevaContrasena && nuevaContrasena !== confirmarContrasena) {
-            alert('Las contraseñas no coinciden');
-            return;
-        }
-
-        // Crear FormData para manejar la imagen
-        const formData = new FormData(this);
+                        const response = await fetch(`/api/admin/${usuarioId}`);
+                        if (!response.ok) throw new Error('Error al obtener datos del usuario');
+                        
+                        const usuario = await response.json();
         
-        try {
-            // Aquí iría tu lógica para actualizar los datos del usuario
-            console.log('Datos a actualizar:', Object.fromEntries(formData));
-            alert('Perfil actualizado exitosamente');
-        } catch (error) {
-            console.error('Error al actualizar perfil:', error);
-            alert('Error al actualizar el perfil');
-        }
-    });
-
-    // Cargar datos iniciales
-    cargarDatosUsuario();
-});
-    </script>
-</body>
+                        document.getElementById('nombre').value = usuario.nombre;
+                        document.getElementById('apellido').value = usuario.apellido;
+                        document.getElementById('correo_electronico').value = usuario.correo_electronico;
+                        document.getElementById('fecha_registro').value = formatDate(new Date(usuario.fecha_registro));
+                        document.getElementById('ultimo_acceso').value = formatDate(new Date(usuario.ultimo_acceso));
+        
+                        const profileImage = document.querySelector('.profile-image');
+                        profileImage.src = usuario.imagen_perfil || 'assets/img/default-profile.png';
+        
+                    } catch (error) {
+                        console.error('Error al cargar datos:', error);
+                    }
+                }
+        
+                const form = document.getElementById('profileForm');
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+        
+                    if (!validarContrasenas()) return;
+        
+                    const contrasenaActual = document.getElementById('contrasena_actual').value;
+                    const nuevaContrasena = document.getElementById('nueva_contrasena').value || null;
+        
+                    const esContrasenaValida = await verificarContrasenaActual(contrasenaActual);
+                    if (!esContrasenaValida) {
+                        alert('La contraseña actual ingresada es incorrecta');
+                        return;
+                    }
+        
+                    const usuarioData = {
+                        nombre: document.getElementById('nombre').value,
+                        apellido: document.getElementById('apellido').value,
+                        correo_electronico: document.getElementById('correo_electronico').value,
+                        nueva_contrasena: nuevaContrasena
+                    };
+        
+                    try {
+                        const response = await fetch(`/api/admin/${usuarioId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(usuarioData)
+                        });
+        
+                        if (!response.ok) throw new Error('Error al actualizar el perfil');
+        
+                        await subirImagenPerfil(usuarioId);
+        
+                        const updatedUser = await response.json();
+                        console.log('Perfil actualizado:', updatedUser);
+                        alert('Perfil actualizado exitosamente');
+                    } catch (error) {
+                        console.error('Error al actualizar perfil:', error);
+                        alert('Error al actualizar el perfil');
+                    }
+                });
+        
+                async function verificarContrasenaActual(contrasenaActual) {
+                    try {
+                        const response = await fetch(`/api/admin/verify-password`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ usuarioId, contrasenaActual })
+                        });
+        
+                        if (!response.ok) {
+                            throw new Error('Error al verificar la contraseña actual');
+                        }
+        
+                        const result = await response.json();
+                        return result.esValida;
+                    } catch (error) {
+                        console.error('Error al verificar la contraseña actual:', error);
+                        alert('No se pudo verificar la contraseña actual');
+                        return false;
+                    }
+                }
+        
+                function validarContrasenas() {
+                    const contrasenaActual = document.getElementById('contrasena_actual').value;
+                    const nuevaContrasena = document.getElementById('nueva_contrasena').value;
+                    const confirmarContrasena = document.getElementById('confirmar_contrasena').value;
+        
+                    if (nuevaContrasena && nuevaContrasena !== confirmarContrasena) {
+                        alert('Las contraseñas nuevas no coinciden');
+                        return false;
+                    }
+        
+                    if (nuevaContrasena && nuevaContrasena.length < 8) {
+                        alert('La nueva contraseña debe tener al menos 8 caracteres');
+                        return false;
+                    }
+        
+                    if (nuevaContrasena && !contrasenaActual) {
+                        alert('Debes ingresar tu contraseña actual para realizar el cambio');
+                        return false;
+                    }
+        
+                    return true;
+                }
+        
+                function formatDate(date) {
+                    const opciones = {
+                        timeZone: 'America/Bogota',
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                    };
+                    return new Date(date).toLocaleString('es-ES', opciones).replace(',', '');
+                }
+        
+                function previewImage(event) {
+                    const input = event.target;
+                    const reader = new FileReader();
+        
+                    reader.onload = function() {
+                        const preview = document.getElementById('profileImagePreview');
+                        preview.src = reader.result;
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+        
+                async function subirImagenPerfil(usuarioId) {
+                    const form = document.getElementById('uploadForm');
+                    const formData = new FormData(form);
+        
+                    if (!usuarioId) {
+                        alert('No se ha encontrado el ID del usuario en el localStorage.');
+                        return;
+                    }
+        
+                    const uploadUrl = `/api/admin/upload-photo/${usuarioId}`;
+        
+                    try {
+                        const response = await fetch(uploadUrl, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        if (!response.ok) throw new Error('Error al subir la imagen');
+                        const result = await response.text();
+                        alert(result);
+                    } catch (error) {
+                        console.error('Error al subir la imagen:', error);
+                        alert('Error al procesar la solicitud.');
+                    }
+                }
+        
+                function togglePasswordVisibility(fieldId) {
+                    const passwordField = document.getElementById(fieldId);
+                    const icon = passwordField.nextElementSibling.querySelector('i');
+        
+                    if (passwordField.type === 'password') {
+                        passwordField.type = 'text';
+                        icon.className = 'fi fi-rr-eye-crossed';
+                    } else {
+                        passwordField.type = 'password';
+                        icon.className = 'fi fi-rr-eye';
+                    }
+                }
+        
+                cargarDatosUsuario();
+            });
+        </script>
+    </body>
 </html>

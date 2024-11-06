@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 module.exports = (models) => {
-    const { Order, OrderDetail, Client, User, Product } = models;
+    const { Order, OrderDetail, Client, User, Product, Cart } = models;
 
     // Obtener todas las órdenes
     router.get('/', async (req, res) => {
@@ -14,8 +14,9 @@ module.exports = (models) => {
                     { model: User, as: 'Usuario', attributes: ['nombre', 'apellido'] },
                     { 
                         model: OrderDetail,
+                        as: 'Detalles',  // Ensure that this alias matches the alias defined in the association
                         attributes: ['producto_id', 'cantidad'],
-                        include: [{ model: Product, attributes: ['nombre_producto', 'precio'] }]
+                        include: [{ model: Product, as: 'Producto', attributes: ['nombre_producto', 'precio'] }]
                     }
                 ]
             });
@@ -35,7 +36,8 @@ module.exports = (models) => {
                     { model: User, as: 'Usuario', attributes: ['nombre', 'apellido', 'correo_electronico'] },
                     {
                         model: OrderDetail,
-                        include: [{ model: Product, attributes: ['nombre_producto', 'precio'] }]
+                        as: 'Detalles', // Ensure this alias matches the alias in the association
+                        include: [{ model: Product, as: 'Producto', attributes: ['nombre_producto', 'precio'] }]
                     }
                 ]
             });
@@ -57,12 +59,11 @@ module.exports = (models) => {
 
             // Agregar los detalles de la orden
             if (detalles && detalles.length > 0) {
-                for (const detalle of detalles) {
-                    await OrderDetail.create({
-                        ...detalle,
-                        orden_id: newOrder.orden_id
-                    });
-                }
+                const detallesData = detalles.map(detalle => ({
+                    ...detalle,
+                    orden_id: newOrder.orden_id
+                }));
+                await OrderDetail.bulkCreate(detallesData); // Bulk create for efficiency
             }
 
             res.status(201).json(newOrder);
@@ -86,12 +87,11 @@ module.exports = (models) => {
             // Actualizar detalles de la orden si se proporcionan
             if (detalles && detalles.length > 0) {
                 await OrderDetail.destroy({ where: { orden_id: order.orden_id } }); // Eliminar detalles anteriores
-                for (const detalle of detalles) {
-                    await OrderDetail.create({
-                        ...detalle,
-                        orden_id: order.orden_id
-                    });
-                }
+                const detallesData = detalles.map(detalle => ({
+                    ...detalle,
+                    orden_id: order.orden_id
+                }));
+                await OrderDetail.bulkCreate(detallesData); // Bulk create new details
             }
 
             res.json(order);
@@ -115,5 +115,29 @@ module.exports = (models) => {
         }
     });
 
+    // Obtener conteo total de items en el carrito por cliente
+    router.get('/cart/count', async (req, res) => {
+        try {
+            const clienteId = req.query.clienteId; // Assume clienteId is passed as a query parameter
+
+            if (!clienteId) {
+                return res.status(400).json({ message: 'Cliente ID es requerido' });
+            }
+
+            // Sumar la columna `cantidad` para obtener el total de items en el carrito del cliente
+            const cartCount = await Cart.sum('cantidad', {
+                where: { cliente_id: clienteId }
+            });
+
+            res.json({ count: cartCount || 0 }); // Return 0 if no items found
+        } catch (error) {
+            console.error('Error al obtener conteo de items del carrito:', error);
+            res.status(500).json({
+                message: 'Error al obtener conteo de items del carrito',
+                error: error.message
+            });
+        }
+    });
+    
     return router;
 };

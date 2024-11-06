@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="css/style.css">
     <title>Mis Pedidos - LUMINAR</title>
@@ -20,9 +20,7 @@
                     <span>luminaropa@gmail.com</span>
                     <span>+57 3134717406</span>
                 </div>
-
                 <p class="header__alert-news">LUMINAR</p>
-
                 <a href="/" class="header__top-action">
                     Cierre de sesión
                 </a>
@@ -36,25 +34,14 @@
 
             <div class="nav__menu" id="nav__menu">
                 <ul class="nav__list">
-                    <li class="nav__item">
-                        <a href="/indexCliente" class="nav__link active-link">INICIO</a>
-                    </li>
-                    <li class="nav__item">
-                        <a href="/shopCliente" class="nav__link">Tienda</a>
-                    </li>
-                    <li class="nav__item">
-                        <a href="/editarperfilCliente" class="nav__link">Mi cuenta</a>
-                    </li>
-                    <li class="nav__item">
-                        <a href="/ordersCliente" class="nav__link">Pedidos</a>
-                    </li>
+                    <li class="nav__item"><a href="/indexCliente" class="nav__link active-link">INICIO</a></li>
+                    <li class="nav__item"><a href="/shopCliente" class="nav__link">Tienda</a></li>
+                    <li class="nav__item"><a href="/editarperfilCliente" class="nav__link">Mi cuenta</a></li>
+                    <li class="nav__item"><a href="/ordersCliente" class="nav__link">Pedidos</a></li>
                 </ul>
 
                 <div class="header_search">
                     <input type="text" placeholder="Buscar productos..." class="form__input">
-               <!--  <button class="search__btn">
-                    <i class="fi fi-rr-search"></i>
-                </button> -->
                 </div>
             </div>
 
@@ -63,7 +50,6 @@
                     <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
                     <span class="count">3</span>
                 </a>
-
                 <a href="/cartCliente" class="header__action-btn">
                     <img src="assets/img/icon-cart.svg" alt="Carrito">
                     <span class="count">3</span>
@@ -79,45 +65,45 @@
 
             <!-- Table for Orders -->
             <div class="card card-body border-0 shadow table-wrapper table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover" id="ordersTable">
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Producto</th>						
+                            <th>Producto(s)</th>
                             <th>Fecha de Pedido</th>
                             <th>Total</th>
                             <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Example Order Item -->
-                        <tr>
-                            <td><a href="#" class="fw-bold">123456</a></td>
-                            <td><span class="fw-normal">Camisa Colorida</span></td>                        
-                            <td><span class="fw-normal">1 Mayo 2024</span></td>
-                            <td><span class="fw-bold">$50.00</span></td>
-                            <td><span class="fw-bold text-success">Entregado</span></td>
-                            <td>
-                                <div class="btn-group">
-                                    <button class='btn btn-link text-dark' aria-label='View Details'>
-                                        Ver Detalles
-                                    </button>
-                                    |
-                                    <button class='btn btn-link text-dark' aria-label='Reorder'>
-                                        Reordenar
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <!-- Repeat similar structure for other orders -->
+                    <tbody id="ordersBody">
+                        <!-- Orders will be dynamically loaded here -->
                     </tbody>
                 </table>
             </div>
-
         </div>
     </main>
+
+    <!-- Order Details Modal -->
+    <div id="orderDetailsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeOrderDetailsModal()">&times;</span>
+            <h3>Detalles del Pedido</h3>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="orderDetailsBody">
+                    <!-- Order details will be dynamically loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <!--=== FOOTER ===-->
     <footer class="footer">
@@ -134,14 +120,14 @@
                         <li><a href="privacy-policy" target="_blank">Políticas de Privacidad</a></li>
                     </ul>
                 </div>
-    
+
                 <div class="footer__contact">
                     <h4 class="footer__title">Contáctanos</h4>
                     <p>Teléfono: +57 3134717406</p>
                     <p>Email: luminaropa@gmail.com</p>
                     <p>Direccion: Neos Centro, Calle 12 B, 9-40</p>
                 </div>
-    
+
                 <div class="footer__social">
                     <h4 class="footer__title">Síguenos</h4>
                     <ul class="footer__social-list">
@@ -151,7 +137,7 @@
                     </ul>
                 </div>
             </div>
-    
+
             <div class="footer__bottom">
                 <p>&copy; 2024 Luminar. Todos los derechos reservados.</p>
             </div>
@@ -159,132 +145,151 @@
     </footer>
 
     <!-- SWIPER JS -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-<!-- SWEETALERT2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- SWEETALERT2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- MAIN JS -->
-<script src="./assets/js/main.js"></script>
+    <!-- MAIN JS -->
+    <script src="./assets/js/main.js"></script>
 
-<!-- Orders Functionality Script -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Función para mostrar notificaciones
-    const showNotification = (message, type = 'success') => {
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        });
-
-        Toast.fire({
-            icon: type,
-            title: message
-        });
-    };
-
-    // Función para actualizar contadores
-    const updateCounters = async () => {
-        try {
-            // Actualizar contador de wishlist
-            const wishlistResponse = await fetch('/api/wishlist/count');
-            const wishlistData = await wishlistResponse.json();
+    <!-- Orders Functionality Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const apiUrl = '/api/order';
+            const apiOrderDetailsUrl = '/api/orderDetails';  // Assuming this is the base URL for order details
             
-            // Actualizar contador de carrito
-            const cartResponse = await fetch('/api/cart/count');
-            const cartData = await cartResponse.json();
-            
-            // Actualizar los contadores en el DOM
-            document.querySelectorAll('.header__action-btn .count').forEach(counter => {
-                if (counter.closest('a[href="/whishlist"]')) {
-                    counter.textContent = wishlistData.count;
-                } else if (counter.closest('a[href="/cart"]')) {
-                    counter.textContent = cartData.count;
+            // Show notification function
+            const showNotification = (message, type = 'success') => {
+                Swal.fire({
+                    toast: true,
+                    icon: type,
+                    title: message,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+            };
+    
+            // Update wishlist and cart counters
+            const updateCounters = async () => {
+                try {
+                    const clienteId = localStorage.getItem('cliente_id');
+                    if (!clienteId) {
+                        console.warn('Cliente ID not found in local storage');
+                        return;
+                    }
+    
+                    const wishlistResponse = await fetch(`/api/wishlist/count?clienteId=${clienteId}`);
+                    const cartResponse = await fetch(`/api/order/cart/count?clienteId=${clienteId}`);
+                    
+                    if (wishlistResponse.ok && cartResponse.ok) {
+                        const wishlistData = await wishlistResponse.json();
+                        const cartData = await cartResponse.json();
+    
+                        document.querySelector('.header__action-btn[href="/whishlistCliente"] .count').textContent = wishlistData.count || 0;
+                        document.querySelector('.header__action-btn[href="/cartCliente"] .count').textContent = cartData.count || 0;
+                    } else {
+                        console.error('Error fetching wishlist or cart counts');
+                    }
+                } catch (error) {
+                    console.error('Error updating counters:', error);
                 }
-            });
-        } catch (error) {
-            console.error('Error al actualizar contadores:', error);
-        }
-    };
-
-    // Función para ver detalles del pedido
-    const viewOrderDetails = async (orderId) => {
-        try {
-            const response = await fetch(`/api/orders/${orderId}`);
-            const data = await response.json();
-            
-            Swal.fire({
-                title: `Detalles del Pedido #${orderId}`,
-                html: `
-                    <div class="order-details">
-                        <p><strong>Fecha:</strong> ${data.fecha_pedido}</p>
-                        <p><strong>Estado:</strong> ${data.estado}</p>
-                        <p><strong>Total:</strong> $${data.total}</p>
-                        <hr>
-                        <h4>Productos:</h4>
-                        ${data.productos.map(prod => `
-                            <div class="product-item">
-                                <p>${prod.nombre_producto} x ${prod.cantidad}</p>
-                                <p>$${prod.precio}</p>
-                            </div>
-                        `).join('')}
-                    </div>
-                `,
-                confirmButtonText: 'Cerrar',
-                width: '600px'
-            });
-        } catch (error) {
-            console.error('Error:', error);
-            showNotification('Error al cargar los detalles del pedido', 'error');
-        }
-    };
-
-    // Función para reordenar
-    const reorder = async (orderId) => {
-        try {
-            const response = await fetch(`/api/orders/reorder/${orderId}`, {
-                method: 'POST'
-            });
-            const data = await response.json();
-            
-            if (data.success) {
-                showNotification('Productos añadidos al carrito correctamente');
-                updateCounters();
-            } else {
-                throw new Error(data.message);
+            };
+    
+            // Load orders with details
+            async function cargarOrdenes() {
+                try {
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) throw new Error('Failed to fetch orders');
+    
+                    const orders = await response.json();
+                    const ordersBody = document.getElementById('ordersBody');
+                    ordersBody.innerHTML = '';
+    
+                    orders.forEach(order => {
+                        const row = document.createElement('tr');
+                        const products = order.OrderDetails.map(detail => detail.Product.nombre_producto).join(', ');
+                        row.innerHTML = `
+                            <td><a href="#" class="fw-bold">${order.orden_id}</a></td>
+                            <td><span class="fw-normal">${products}</span></td>
+                            <td><span class="fw-normal">${new Date(order.fecha_orden).toLocaleDateString()}</span></td>
+                            <td><span class="fw-bold">$${order.total.toFixed(2)}</span></td>
+                            <td><span class="fw-bold text-${order.estado === 'entregado' ? 'success' : 'warning'}">${order.estado}</span></td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-link text-dark" onclick="viewOrderDetails(${order.orden_id})">Ver Detalles</button>
+                                    |
+                                    <button class="btn btn-link text-dark" onclick="reorder(${order.orden_id})">Reordenar</button>
+                                </div>
+                            </td>
+                        `;
+                        ordersBody.appendChild(row);
+                    });
+                } catch (error) {
+                    console.error('Error:', error);
+                    showNotification('Error loading orders', 'error');
+                }
             }
-        } catch (error) {
-            console.error('Error:', error);
-            showNotification('Error al reordenar los productos', 'error');
-        }
-    };
-
-    // Agregar event listeners a los botones de la tabla
-    document.querySelectorAll('button[aria-label="View Details"]').forEach(button => {
-        button.addEventListener('click', function() {
-            const orderId = this.closest('tr').querySelector('a').textContent;
-            viewOrderDetails(orderId);
+    
+            // View order details function
+            window.viewOrderDetails = async (orderId) => {
+                try {
+                    const response = await fetch(`${apiOrderDetailsUrl}/orden/${orderId}`);
+                    if (!response.ok) throw new Error('Failed to fetch order details');
+                    
+                    const orderDetails = await response.json();
+                    const orderDetailsBody = document.getElementById('orderDetailsBody');
+                    orderDetailsBody.innerHTML = '';
+    
+                    orderDetails.forEach(detail => {
+                        const detailRow = document.createElement('tr');
+                        detailRow.innerHTML = `
+                            <td>${detail.Producto.nombre_producto}</td>
+                            <td>${detail.cantidad}</td>
+                            <td>$${detail.Producto.precio.toFixed(2)}</td>
+                            <td>$${(detail.cantidad * detail.Producto.precio).toFixed(2)}</td>
+                        `;
+                        orderDetailsBody.appendChild(detailRow);
+                    });
+    
+                    document.getElementById('orderDetailsModal').style.display = 'block';
+                } catch (error) {
+                    console.error('Error loading order details:', error);
+                    showNotification('Error loading order details', 'error');
+                }
+            };
+    
+            // Close modal function
+            window.closeOrderDetailsModal = () => {
+                document.getElementById('orderDetailsModal').style.display = 'none';
+            };
+    
+            // Reorder function
+            window.reorder = async (orderId) => {
+                try {
+                    const response = await fetch(`/api/order/${orderId}/reorder`, { method: 'POST' });
+                    const data = await response.json();
+    
+                    if (response.ok && data.success) {
+                        showNotification('Productos añadidos al carrito correctamente');
+                        updateCounters();
+                    } else {
+                        throw new Error(data.message || 'Error reordering products');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showNotification('Error al reordenar los productos', 'error');
+                }
+            };
+    
+            // Initialize counters and load orders
+            updateCounters();
+            cargarOrdenes();
         });
-    });
-
-    document.querySelectorAll('button[aria-label="Reorder"]').forEach(button => {
-        button.addEventListener('click', function() {
-            const orderId = this.closest('tr').querySelector('a').textContent;
-            reorder(orderId);
-        });
-    });
-
-    // Inicializar contadores
-    updateCounters();
-});
-</script>
+    </script>
+    
 </body>
 
 </html>

@@ -1,3 +1,4 @@
+// models/cart.model.js
 module.exports = (sequelize, DataTypes) => {
     const Cart = sequelize.define('Cart', {
         carrito_id: {
@@ -13,6 +14,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
+        talla: {
+            type: DataTypes.STRING(50),  // New field for size
+            allowNull: true
+        },
+        color: {
+            type: DataTypes.STRING(50),  // New field for color
+            allowNull: true
+        },
         cantidad: {
             type: DataTypes.INTEGER,
             allowNull: false
@@ -21,17 +30,26 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW
         },
-        fecha_modificacion: DataTypes.DATE
+        fecha_modificacion: {
+            type: DataTypes.DATE,
+            defaultValue: null
+        }
     }, {
         tableName: 'Carrito',
-        timestamps: false
+        timestamps: false,
+        indexes: [
+            {
+                unique: true,
+                fields: ['cliente_id', 'producto_id', 'talla', 'color']
+            }
+        ]
     });
 
-    // Definir la asociación con el modelo `Product` usando el alias `Producto`
+    // Define association with the `Product` model using the alias `Producto`
     Cart.associate = models => {
         Cart.belongsTo(models.Product, {
             foreignKey: 'producto_id',
-            as: 'Producto'  // Alias correcto para el include en las rutas
+            as: 'Producto'  // Alias for including in routes
         });
     };
 

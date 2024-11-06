@@ -1,7 +1,5 @@
-// models/orderDetail.model.js
-
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('OrderDetail', {
+    const OrderDetail = sequelize.define('OrderDetail', {
         detalle_id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -14,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'Ordenes',
                 key: 'orden_id'
             },
-            onDelete: 'CASCADE',  // Si se elimina la orden, también se eliminan los detalles
+            onDelete: 'CASCADE',  // Deletes associated order details if order is deleted
             onUpdate: 'CASCADE'
         },
         producto_id: {
@@ -24,19 +22,58 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'Productos',
                 key: 'producto_id'
             },
-            onDelete: 'CASCADE',  // Si se elimina el producto, se eliminan los detalles asociados
+            onDelete: 'CASCADE',  // Deletes associated details if product is deleted
             onUpdate: 'CASCADE'
         },
         cantidad: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
+            validate: {
+                min: 1  // Minimum quantity should be 1
+            }
         },
         precio_unitario: {
             type: DataTypes.DECIMAL(10, 2),
-            allowNull: false
+            allowNull: false,
+            validate: {
+                min: 0.0  // Price should not be negative
+            }
+        },
+        total: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: false,
+            defaultValue: 0.0,
+            validate: {
+                min: 0.0
+            }
         }
     }, {
-        tableName: 'Order_Details', // Nombre de la tabla en la base de datos
-        timestamps: false
+        tableName: 'Order_Details', // Database table name
+        timestamps: false,
+        hooks: {
+            beforeCreate(orderDetail) {
+                orderDetail.total = orderDetail.cantidad * orderDetail.precio_unitario;
+            },
+            beforeUpdate(orderDetail) {
+                orderDetail.total = orderDetail.cantidad * orderDetail.precio_unitario;
+            }
+        }
     });
+
+    // Define associations
+    OrderDetail.associate = (models) => {
+        // Association with Order model
+        OrderDetail.belongsTo(models.Order, {
+            foreignKey: 'orden_id',
+            as: 'Orden' // Alias used when including this association in queries
+        });
+
+        // Association with Product model
+        OrderDetail.belongsTo(models.Producto, {
+            foreignKey: 'producto_id',
+            as: 'Producto' // Alias used when including this association in queries
+        });
+    };
+
+    return OrderDetail;
 };
