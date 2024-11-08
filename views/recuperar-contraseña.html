@@ -1,0 +1,65 @@
+<!-- recuperacion.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña</title>
+</head>
+<body>
+    <h2>Recuperar Contraseña</h2>
+    <form id="recoveryForm">
+        <input type="hidden" id="email" name="email">
+        <input type="hidden" id="recoveryCode" name="code">
+
+        <label for="recoveryCodeInput">Código de Recuperación</label>
+        <input type="text" id="recoveryCodeInput" name="code" required>
+
+        <label for="newPasswordInput">Nueva Contraseña</label>
+        <input type="password" id="newPasswordInput" name="newPassword" required>
+
+        <button type="submit">Cambiar Contraseña</button>
+    </form>
+
+    <script>
+        // Obtener parámetros de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const email = urlParams.get('email');
+        const code = urlParams.get('code');
+
+        // Rellenar los campos ocultos con los datos de la URL
+        document.getElementById('email').value = email;
+        document.getElementById('recoveryCode').value = code;
+
+        // Manejo del formulario
+        document.getElementById('recoveryForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const newPassword = document.getElementById('newPasswordInput').value;
+            const recoveryCodeInput = document.getElementById('recoveryCodeInput').value;
+
+            // Enviar solicitud de verificación y cambio de contraseña al backend
+            fetch('/api/user/verificar-codigo/code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    code: recoveryCodeInput,
+                    newPassword: newPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);  // Mostrar el mensaje de respuesta
+                if (data.message === 'Contraseña cambiada exitosamente') {
+                    window.location.href = '/';  // Redirigir al login
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cambiar la contraseña');
+            });
+        });
+    </script>
+</body>
+</html>

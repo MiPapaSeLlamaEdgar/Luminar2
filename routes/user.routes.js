@@ -4,9 +4,61 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
+const nodemailer = require('nodemailer');
 
 module.exports = (models) => {
     const { User, Role } = models;
+
+    // Configuración de nodemailer para el envío de correos
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'luminar.correo@gmail.com', 
+            // aseder a https://myaccount.google.com/ > Seguridad > Iniciar sesión en Google y activa la verificación en dos pasos.
+            //Luego, en la misma sección, genera una contraseña de aplicación.
+            pass: 'poner clase de aplicacion ' 
+            
+        }
+    });
+
+    router.post('/Codigo/Verificar', async (req, res) => {
+        console.log("entra en servidor 1");
+        const { correo_electronico } = req.body;
+    
+        try {
+            const user = await User.findOne({ where: { correo_electronico } });
+    
+            if (!user) {
+                console.log("entra en servidor 2");
+                return res.status(404).json({ message: 'Correo no 12 encontrado' });
+            }
+    
+            console.log("entra en servidor 3");
+            const recoveryCode = Math.floor(100000 + Math.random() * 900000).toString();
+            recoveryData[correo_electronico] = recoveryCode;
+    
+            const recoveryLink = `http://localhost:5000/recuperar-contraseña?email=${correo_electronico}&code=${recoveryCode}`;
+    
+            transporter.sendMail({
+                from: 'luminar.correo@gmail.com',
+                to: correo_electronico,
+                subject: 'Código de recuperación de contraseña',
+                text: `Haz clic en el siguiente enlace para recuperar tu contraseña:\n\n${recoveryLink}\n\nTu código de recuperación es: ${recoveryCode}`
+            }, (error, info) => {
+                if (error) {
+                    console.error('Error al enviar el correo:', error);
+                    return res.status(500).json({ message: 'Error al enviar el correo' });
+                }
+                res.status(200).json({ message: 'Código enviado al correo' });
+            });
+        } catch (error) {
+            console.error('Error en el servidor:', error);
+            res.status(500).json({ message: 'Error en el servidor' });
+        }
+    });
+
+    // Variable temporal para almacenar el código de recuperación y el correo
+    let recoveryData = {};
 
     // Configuración de multer para guardar los archivos subidos
     const storage = multer.diskStorage({
@@ -131,7 +183,7 @@ module.exports = (models) => {
             });
 
             if (!user) {
-                return res.status(404).json({ message: 'Usuario no encontrado' });
+                return res.status(404).json({ message: 'Usuario no 15 encontrado' });
             }
 
             res.json(user);
@@ -147,7 +199,7 @@ module.exports = (models) => {
             const user = await User.findByPk(req.params.id);
             
             if (!user) {
-                return res.status(404).json({ message: 'Usuario no encontrado' });
+                return res.status(404).json({ message: 'Usuario no 2 encontrado' });
             }
     
             // Verificar si se está actualizando el correo
@@ -211,7 +263,7 @@ module.exports = (models) => {
             const user = await User.findByPk(req.params.id);
 
             if (!user) {
-                return res.status(404).json({ message: 'Usuario no encontrado' });
+                return res.status(404).json({ message: 'Usuario no 3 encontrado' });
             }
 
             await user.destroy();
@@ -232,7 +284,7 @@ module.exports = (models) => {
             const user = await User.findByPk(req.params.id);
                 
             if (!user) {
-                return res.status(404).json({ message: 'Usuario no encontrado' });
+                return res.status(404).json({ message: 'Usuario no 4 encontrado' });
             }
         
             // Procesar la imagen subida
@@ -249,6 +301,75 @@ module.exports = (models) => {
 
     // Configura la carpeta pública para que sea accesible
     router.use('/images', express.static(path.join(__dirname, '../public/images')));
+
+  
+    
+    
+        // Lógica de recuperación de contraseña aquí
+       /* User.findOne({ where: { correo_electronico } })
+            .then(user => {
+                if (!user) {
+                    console.log("entra en servidor 2");
+                    return res.status(404).json({ message: 'Correo no encontrado' });
+                }
+    
+                console.log("entra en servidor 3");
+                const recoveryCode = Math.floor(100000 + Math.random() * 900000).toString();
+                recoveryData[correo_electronico] = recoveryCode;
+    
+                const recoveryLink = `http://localhost:5000/recuperar-contraseña?email=${correo_electronico}&code=${recoveryCode}`;
+    
+                transporter.sendMail({
+                    from: 'luminar.correo@gmail.com',
+                    to: correo_electronico,
+                    subject: 'Código de recuperación de contraseña',
+                    text: `Haz clic en el siguiente enlace para recuperar tu contraseña:\n\n${recoveryLink}\n\nTu código de recuperación es: ${recoveryCode}`
+                }, (error, info) => {
+                    if (error) {
+                        console.error('Error al enviar el correo:', error);
+                        return res.status(500).json({ message: 'Error al enviar el correo' });
+                    }
+                    res.status(200).json({ message: 'Código enviado al correo' });
+                });
+            })
+            .catch(error => {
+                console.error('Error al buscar el usuario:', error);
+                res.status(500).json({ message: 'Error interno del servidor' });
+            });*/
+    
+    
+    // Ruta para verificar el código y cambiar la contraseña
+    router.post('/verificar-codigo/code', async (req, res) => {
+        const { email, code, newPassword } = req.body;
+    
+        // Verifica si el código ingresado es correcto
+        if (recoveryData[email] !== code) {
+            return res.status(400).json({ message: 'Código incorrecto' });
+        }
+    
+        // Si el código es correcto, encripta la nueva contraseña
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+        // Actualiza la contraseña del usuario
+        User.findOne({ where: { email } })
+            .then(user => {
+                if (!user) {
+                    return res.status(404).json({ message: 'Usuario no 1 encontrado' });
+                }
+    
+                user.password = hashedPassword;
+                return user.save(); // Guarda la nueva contraseña en la base de datos
+            })
+            .then(() => {
+                // Limpia el código temporal después de cambiar la contraseña
+                delete recoveryData[email];
+                res.status(200).json({ message: 'Contraseña cambiada exitosamente' });
+            })
+            .catch(error => {
+                console.error('Error al actualizar la contraseña:', error);
+                res.status(500).json({ message: 'Error al actualizar la contraseña' });
+            });
+    });
 
     return router;
 };
