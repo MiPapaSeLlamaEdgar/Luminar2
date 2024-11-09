@@ -1,22 +1,104 @@
-<!-- recuperacion.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperar Contraseña</title>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Estilo para el título */
+        h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Contenedor del formulario */
+        form#recoveryForm {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* Estilo de las etiquetas */
+        form#recoveryForm label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        /* Estilo de los campos de entrada */
+        form#recoveryForm input[type="text"],
+        form#recoveryForm input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        /* Efecto hover y enfoque en los campos de entrada */
+        form#recoveryForm input[type="text"]:focus,
+        form#recoveryForm input[type="password"]:focus {
+            border-color: #4a90e2;
+            outline: none;
+            box-shadow: 0 0 5px rgba(74, 144, 226, 0.4);
+        }
+
+        /* Estilo del botón */
+        form#recoveryForm button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Efecto hover en el botón */
+        form#recoveryForm button[type="submit"]:hover {
+            background-color: #357ab7;
+        }
+
+        /* Añadir un pequeño efecto de sombra */
+        form#recoveryForm button[type="submit"]:active {
+            box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
 </head>
 <body>
     <h2>Recuperar Contraseña</h2>
     <form id="recoveryForm">
-        <input type="hidden" id="email" name="email">
-        <input type="hidden" id="recoveryCode" name="code">
+        <label for="email" style="display: none;">Correo Electrónico</label>
+        <input type="text" id="email" name="email" style="display: none;" readonly autocomplete="username">
 
         <label for="recoveryCodeInput">Código de Recuperación</label>
-        <input type="text" id="recoveryCodeInput" name="code" required>
+        <input type="text" id="recoveryCodeInput" name="code" required autocomplete="off">
 
         <label for="newPasswordInput">Nueva Contraseña</label>
-        <input type="password" id="newPasswordInput" name="newPassword" required>
+        <input type="password" id="newPasswordInput" name="newPassword" required autocomplete="new-password">
 
         <button type="submit">Cambiar Contraseña</button>
     </form>
@@ -29,7 +111,7 @@
 
         // Rellenar los campos ocultos con los datos de la URL
         document.getElementById('email').value = email;
-        document.getElementById('recoveryCode').value = code;
+        document.getElementById('recoveryCodeInput').value = code;
 
         // Manejo del formulario
         document.getElementById('recoveryForm').addEventListener('submit', function(event) {
@@ -43,7 +125,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    email: email,
+                    correo_electronico: email,
                     code: recoveryCodeInput,
                     newPassword: newPassword
                 })

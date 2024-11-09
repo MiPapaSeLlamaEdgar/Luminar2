@@ -97,7 +97,7 @@ const viewRoutes = {
     '/shopPortal': 'views/shopPortal.html',
     '/details': 'views/details.html',
     '/forget-password': 'views/forget-password.html',
-    '/recuperar-contraseña': 'views/recuperar-contraseña.html'
+    '/recuperar-password': 'views/recuperar-contraseña.html'
 };
 
 function loadRoute(routeName) {
