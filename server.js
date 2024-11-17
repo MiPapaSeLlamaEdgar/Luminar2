@@ -95,7 +95,9 @@ const viewRoutes = {
     '/privacy-policy': 'views/privacy-policy.html',
     '/indexPortal': 'views/indexPortal.html',
     '/shopPortal': 'views/shopPortal.html',
-    '/details': 'views/details.html'
+    '/details': 'views/details.html',
+    '/forget-password': 'views/forget-password.html',
+    '/recuperar-password': 'views/recuperar-contraseña.html'
 };
 
 function loadRoute(routeName) {
