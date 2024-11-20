@@ -131,12 +131,12 @@
                         
                         <div class="form-group">
                             <label for="fecha_creacion">Fecha de Creación:</label>
-                            <input type="datetime-local" id="fecha_creacion">
+                            <input type="datetime-local" id="fecha_creacion" readonly>
                         </div>
                         
                         <div class="form-group">
                             <label for="fecha_modificacion">Fecha de Modificación:</label>
-                            <input type="datetime-local" id="fecha_modificacion">
+                            <input type="datetime-local" id="fecha_modificacion" readonly>
                         </div>
                         
                         <div class="modal-buttons">
@@ -206,7 +206,10 @@
                 document.getElementById('categoriaId').value = producto.categoria_id;
                 document.getElementById('especificaciones').value = producto.especificaciones;
                 document.getElementById('fecha_creacion').value = formatFecha(producto.fecha_creacion);
-                document.getElementById('fecha_modificacion').value = formatFecha(producto.fecha_modificacion);
+                document.getElementById('fecha_modificacion').value = formatFecha(new Date());
+
+                // Deshabilitar la edición de "Fecha de Creación" al editar
+                document.getElementById('fecha_creacion').readOnly = true;
 
                 if (producto.imagenes) {
                     imagenPrevisualizacion.src = producto.imagenes;
@@ -217,6 +220,8 @@
             } else {
                 document.getElementById('productoForm').reset();
                 document.getElementById('productoId').value = '';
+                document.getElementById('fecha_creacion').value = formatFecha(new Date());
+                document.getElementById('fecha_modificacion').value = formatFecha(new Date());
                 imagenPrevisualizacion.style.display = 'none';
             }
             modal.style.display = 'block';
@@ -309,7 +314,7 @@
             formData.append("especificaciones", document.getElementById("especificaciones").value);
             formData.append("estado", document.getElementById("estado").value);
             formData.append("fecha_creacion", document.getElementById("fecha_creacion").value);
-            formData.append("fecha_modificacion", document.getElementById("fecha_modificacion").value);
+            formData.append("fecha_modificacion", formatFecha(new Date()));
 
             const imagenes = document.getElementById("imagenes").files[0];
             if (imagenes) {
@@ -348,7 +353,7 @@
         cargarProductos();
         cargarCategorias();
 
-        //selector catalogos 
+        //selector categorías
         async function cargarCategorias() {
             try {
                 const response = await fetch(apiCategoriasUrl);
@@ -371,3 +376,4 @@
 
 </body>
 </html>
+ 

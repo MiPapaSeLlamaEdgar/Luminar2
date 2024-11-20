@@ -90,6 +90,7 @@ module.exports = (models) => {
 
     // Crear nuevo detalle de orden
     router.post('/', async (req, res) => {
+        const transaction = await models.sequelize.transaction();
         try {
             const { orden_id, producto_id, cantidad, precio_unitario } = req.body;
 
@@ -104,10 +105,12 @@ module.exports = (models) => {
                 cantidad,
                 precio_unitario,
                 total: cantidad * precio_unitario
-            });
+            }, { transaction });
 
+            await transaction.commit();
             res.status(201).json(orderDetail);
         } catch (error) {
+            await transaction.rollback();
             console.error('Error al crear detalle de orden:', error);
             res.status(500).json({
                 message: 'Error al crear detalle de orden',
@@ -118,6 +121,7 @@ module.exports = (models) => {
 
     // Actualizar detalle de orden
     router.put('/:id', async (req, res) => {
+        const transaction = await models.sequelize.transaction();
         try {
             const { cantidad, precio_unitario } = req.body;
             const orderDetail = await OrderDetail.findByPk(req.params.id);
@@ -132,10 +136,12 @@ module.exports = (models) => {
 
             // Recalculate total
             orderDetail.total = orderDetail.cantidad * orderDetail.precio_unitario;
-            await orderDetail.save();
+            await orderDetail.save({ transaction });
 
+            await transaction.commit();
             res.json(orderDetail);
         } catch (error) {
+            await transaction.rollback();
             console.error('Error al actualizar detalle de orden:', error);
             res.status(500).json({
                 message: 'Error al actualizar detalle de orden',
@@ -146,6 +152,7 @@ module.exports = (models) => {
 
     // Eliminar detalle de orden
     router.delete('/:id', async (req, res) => {
+        const transaction = await models.sequelize.transaction();
         try {
             const orderDetail = await OrderDetail.findByPk(req.params.id);
 
@@ -153,9 +160,11 @@ module.exports = (models) => {
                 return res.status(404).json({ message: 'Detalle de orden no encontrado' });
             }
 
-            await orderDetail.destroy();
+            await orderDetail.destroy({ transaction });
+            await transaction.commit();
             res.json({ message: 'Detalle de orden eliminado correctamente' });
         } catch (error) {
+            await transaction.rollback();
             console.error('Error al eliminar detalle de orden:', error);
             res.status(500).json({
                 message: 'Error al eliminar detalle de orden',
