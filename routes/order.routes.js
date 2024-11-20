@@ -51,11 +51,12 @@ module.exports = (models) => {
 
     // Crear nueva orden
     router.post('/', async (req, res) => {
+        const transaction = await models.sequelize.transaction();
         try {
             const { detalles, ...orderData } = req.body;
 
             // Crear la nueva orden
-            const newOrder = await Order.create(orderData);
+            const newOrder = await Order.create(orderData, { transaction });
 
             // Agregar los detalles de la orden
             if (detalles && detalles.length > 0) {
@@ -63,11 +64,13 @@ module.exports = (models) => {
                     ...detalle,
                     orden_id: newOrder.orden_id
                 }));
-                await OrderDetail.bulkCreate(detallesData); // Bulk create for efficiency
+                await OrderDetail.bulkCreate(detallesData, { transaction }); // Bulk create for efficiency
             }
 
+            await transaction.commit();
             res.status(201).json(newOrder);
         } catch (error) {
+            await transaction.rollback();
             console.error('Error al crear orden:', error);
             res.status(500).json({ message: 'Error al crear orden', error: error.message });
         }
@@ -75,6 +78,7 @@ module.exports = (models) => {
 
     // Actualizar orden
     router.put('/:id', async (req, res) => {
+        const transaction = await models.sequelize.transaction();
         try {
             const { detalles, ...orderData } = req.body;
 
@@ -82,20 +86,22 @@ module.exports = (models) => {
             if (!order) return res.status(404).json({ message: 'Orden no encontrada' });
 
             // Actualizar los datos de la orden
-            await order.update(orderData);
+            await order.update(orderData, { transaction });
 
             // Actualizar detalles de la orden si se proporcionan
             if (detalles && detalles.length > 0) {
-                await OrderDetail.destroy({ where: { orden_id: order.orden_id } }); // Eliminar detalles anteriores
+                await OrderDetail.destroy({ where: { orden_id: order.orden_id }, transaction }); // Eliminar detalles anteriores
                 const detallesData = detalles.map(detalle => ({
                     ...detalle,
                     orden_id: order.orden_id
                 }));
-                await OrderDetail.bulkCreate(detallesData); // Bulk create new details
+                await OrderDetail.bulkCreate(detallesData, { transaction }); // Bulk create new details
             }
 
+            await transaction.commit();
             res.json(order);
         } catch (error) {
+            await transaction.rollback();
             console.error('Error al actualizar orden:', error);
             res.status(500).json({ message: 'Error al actualizar orden', error: error.message });
         }
@@ -103,13 +109,16 @@ module.exports = (models) => {
 
     // Eliminar orden
     router.delete('/:id', async (req, res) => {
+        const transaction = await models.sequelize.transaction();
         try {
             const order = await Order.findByPk(req.params.id);
             if (!order) return res.status(404).json({ message: 'Orden no encontrada' });
 
-            await order.destroy();
+            await order.destroy({ transaction });
+            await transaction.commit();
             res.json({ message: 'Orden eliminada correctamente' });
         } catch (error) {
+            await transaction.rollback();
             console.error('Error al eliminar orden:', error);
             res.status(500).json({ message: 'Error al eliminar orden', error: error.message });
         }

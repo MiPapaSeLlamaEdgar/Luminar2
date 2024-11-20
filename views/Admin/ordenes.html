@@ -12,15 +12,41 @@
 </head>
 <body>
     <header>
-        <h1>Dashboard de Órdenes</h1>
+        <div class="header-container">
+            <h1>Dashboard de Órdenes</h1>
+            <div class="header__user-actions">
+                <a href="#" class="header__action-btn"><i class="fas fa-bell"></i></a>
+                <a href="#" class="header__action-btn"><i class="fas fa-cog"></i></a>
+                <a href="#" class="header__action-btn"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
+        </div>
     </header>
     <div class="container">
         <aside class="sidebar">
-            <!-- Sidebar content -->
+            <div class="sidebar-header">
+                <a href="/dashboard-admin" class="back-button"><i class="fas fa-arrow-left"></i></a>
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="sidebar">
+                <ul class="nav-links">
+                    <li><a href="/dashboard-admin" class="active"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="/admin/usuarios"><i class="fas fa-user"></i> Usuarios</a></li>
+                    <li><a href="/admin/clientes"><i class="fas fa-users"></i> Clientes</a></li>
+                    <li><a href="/admin/ordenes"><i class="fas fa-clipboard-list"></i> Órdenes</a></li>
+                    <li><a href="/admin/productos"><i class="fas fa-box-open"></i> Productos</a></li>
+                    <li><a href="/admin/inventario"><i class="fas fa-warehouse"></i> Inventario</a></li>
+                    <li><a href="/admin/roles"><i class="fas fa-user-tag"></i> Roles</a></li>
+                    <li><a href="/admin/reportes"><i class="fas fa-chart-line"></i> Reportes</a></li>
+                    <li><a href="/admin/ventas"><i class="fas fa-dollar-sign"></i> Ventas</a></li>
+                    <li><a href="/admin/config"><i class="fas fa-cogs"></i> Configuración</a></li>
+                </ul>
+            </nav>
         </aside>
         <div class="main-content">
             <div class="top-bar">
-                <!-- Top bar content -->
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar órdenes..." id="searchInput" onkeyup="buscarOrden()">
+                </div>
             </div>
 
             <!-- Tabla de Órdenes -->
@@ -58,6 +84,66 @@
                 <div class="modal-content">
                     <span onclick="cerrarModal()" style="cursor:pointer;">&times;</span>
                     <form id="ordenForm">
+                        <input type="hidden" id="ordenId">
+                        <div>
+                            <label for="clienteId">Cliente ID:</label>
+                            <input type="number" id="clienteId" required>
+                        </div>
+                        <div>
+                            <label for="usuarioId">Usuario ID:</label>
+                            <input type="number" id="usuarioId">
+                        </div>
+                        <div>
+                            <label for="codigoOrden">Código Orden:</label>
+                            <input type="text" id="codigoOrden" required>
+                        </div>
+                        <div>
+                            <label for="fechaOrden">Fecha Orden:</label>
+                            <input type="date" id="fechaOrden" required>
+                        </div>
+                        <div>
+                            <label for="fechaEntregaEstimada">Fecha Entrega Estimada:</label>
+                            <input type="date" id="fechaEntregaEstimada">
+                        </div>
+                        <div>
+                            <label for="fechaEntregaReal">Fecha Entrega Real:</label>
+                            <input type="date" id="fechaEntregaReal">
+                        </div>
+                        <div>
+                            <label for="subtotal">Subtotal:</label>
+                            <input type="number" step="0.01" id="subtotal" required>
+                        </div>
+                        <div>
+                            <label for="impuestos">Impuestos:</label>
+                            <input type="number" step="0.01" id="impuestos" required>
+                        </div>
+                        <div>
+                            <label for="descuento">Descuento:</label>
+                            <input type="number" step="0.01" id="descuento">
+                        </div>
+                        <div>
+                            <label for="total">Total:</label>
+                            <input type="number" step="0.01" id="total" required>
+                        </div>
+                        <div>
+                            <label for="estado">Estado:</label>
+                            <select id="estado" required>
+                                <option value="pendiente">Pendiente</option>
+                                <option value="confirmada">Confirmada</option>
+                                <option value="en proceso">En Proceso</option>
+                                <option value="enviada">Enviada</option>
+                                <option value="entregada">Entregada</option>
+                                <option value="cancelada">Cancelada</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="direccionEnvio">Dirección Envío:</label>
+                            <textarea id="direccionEnvio"></textarea>
+                        </div>
+                        <div>
+                            <label for="notas">Notas:</label>
+                            <textarea id="notas"></textarea>
+                        </div>
                         <!-- Form fields -->
                         <div class="modal-buttons">
                             <button type="submit" class="save-btn">Guardar</button>
@@ -75,9 +161,25 @@
         function mostrarModal(orden = null) {
             const modal = document.getElementById('ordenModal');
             if (orden) {
-                // Fill in form fields with order data
+                // Parsear los datos para llenar el formulario de edición
+                orden = JSON.parse(decodeURIComponent(orden));
+                document.getElementById('ordenId').value = orden.orden_id || '';
+                document.getElementById('clienteId').value = orden.cliente_id || '';
+                document.getElementById('usuarioId').value = orden.usuario_id || '';
+                document.getElementById('codigoOrden').value = orden.codigo_orden || '';
+                document.getElementById('fechaOrden').value = orden.fecha_orden ? new Date(orden.fecha_orden).toISOString().slice(0, 10) : '';
+                document.getElementById('fechaEntregaEstimada').value = orden.fecha_entrega_estimada ? new Date(orden.fecha_entrega_estimada).toISOString().slice(0, 10) : '';
+                document.getElementById('fechaEntregaReal').value = orden.fecha_entrega_real ? new Date(orden.fecha_entrega_real).toISOString().slice(0, 10) : '';
+                document.getElementById('subtotal').value = orden.subtotal || '';
+                document.getElementById('impuestos').value = orden.impuestos || '';
+                document.getElementById('descuento').value = orden.descuento || '';
+                document.getElementById('total').value = orden.total || '';
+                document.getElementById('estado').value = orden.estado || 'pendiente';
+                document.getElementById('direccionEnvio').value = orden.direccion_envio || '';
+                document.getElementById('notas').value = orden.notas || '';
             } else {
                 document.getElementById('ordenForm').reset();
+                document.getElementById('ordenId').value = '';
             }
             modal.style.display = 'block';
         }
@@ -137,13 +239,6 @@
                 ordersBody.innerHTML = '';
 
                 orders.forEach(order => {
-                    // Check if `Detalles` exists and is an array
-                    const products = Array.isArray(order.Detalles) && order.Detalles.length > 0
-                        ? order.Detalles
-                            .map(detail => detail.Producto ? detail.Producto.nombre_producto : 'Producto desconocido')
-                            .join(', ')
-                        : 'No hay productos';
-
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${order.orden_id}</td>
@@ -153,15 +248,15 @@
                         <td>${order.fecha_orden ? new Date(order.fecha_orden).toLocaleDateString() : 'N/A'}</td>
                         <td>${order.fecha_entrega_estimada ? new Date(order.fecha_entrega_estimada).toLocaleDateString() : 'N/A'}</td>
                         <td>${order.fecha_entrega_real ? new Date(order.fecha_entrega_real).toLocaleDateString() : 'N/A'}</td>
-                        <td>$${order.subtotal ? order.subtotal.toFixed(2) : '0.00'}</td>
-                        <td>$${order.impuestos ? order.impuestos.toFixed(2) : '0.00'}</td>
-                        <td>$${order.descuento ? order.descuento.toFixed(2) : '0.00'}</td>
-                        <td>$${order.total ? order.total.toFixed(2) : '0.00'}</td>
+                        <td>$${typeof order.subtotal === 'number' ? order.subtotal.toFixed(2) : '0.00'}</td>
+                        <td>$${typeof order.impuestos === 'number' ? order.impuestos.toFixed(2) : '0.00'}</td>
+                        <td>$${typeof order.descuento === 'number' ? order.descuento.toFixed(2) : '0.00'}</td>
+                        <td>$${typeof order.total === 'number' ? order.total.toFixed(2) : '0.00'}</td>
                         <td>${order.estado || 'Pendiente'}</td>
                         <td>${order.direccion_envio || 'N/A'}</td>
                         <td>${order.notas || 'N/A'}</td>
                         <td>
-                            <button onclick="mostrarModal(${JSON.stringify(order)})">Editar</button>
+                            <button onclick="mostrarModal('${encodeURIComponent(JSON.stringify(order))}')">Editar</button>
                             <button onclick="eliminarOrden(${order.orden_id})">Eliminar</button>
                         </td>
                     `;

@@ -63,6 +63,11 @@
         <div class="container">
             <h2 class="section__title">Mis Pedidos</h2>
 
+            <!-- Loading indicator -->
+            <div id="loading" class="loading" style="display: none;">
+                <p>Cargando pedidos...</p>
+            </div>
+
             <!-- Table for Orders -->
             <div class="card card-body border-0 shadow table-wrapper table-responsive">
                 <table class="table table-hover" id="ordersTable">
@@ -85,7 +90,7 @@
     </main>
 
     <!-- Order Details Modal -->
-    <div id="orderDetailsModal" class="modal" style="display: none;">
+    <div id="orderDetailsModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeOrderDetailsModal()">&times;</span>
             <h3>Detalles del Pedido</h3>
@@ -157,8 +162,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const apiUrl = '/api/order';
-            const apiOrderDetailsUrl = '/api/orderDetails';  // Assuming this is the base URL for order details
-            
+            const apiOrderDetailsUrl = '/api/orderDetails';
+
             // Show notification function
             const showNotification = (message, type = 'success') => {
                 Swal.fire({
@@ -171,7 +176,7 @@
                     timerProgressBar: true,
                 });
             };
-    
+
             // Update wishlist and cart counters
             const updateCounters = async () => {
                 try {
@@ -180,14 +185,16 @@
                         console.warn('Cliente ID not found in local storage');
                         return;
                     }
-    
-                    const wishlistResponse = await fetch(`/api/wishlist/count?clienteId=${clienteId}`);
-                    const cartResponse = await fetch(`/api/order/cart/count?clienteId=${clienteId}`);
-                    
+
+                    const [wishlistResponse, cartResponse] = await Promise.all([
+                        fetch(`/api/wishlist/count?clienteId=${clienteId}`),
+                        fetch(`/api/order/cart/count?clienteId=${clienteId}`)
+                    ]);
+
                     if (wishlistResponse.ok && cartResponse.ok) {
                         const wishlistData = await wishlistResponse.json();
                         const cartData = await cartResponse.json();
-    
+
                         document.querySelector('.header__action-btn[href="/whishlistCliente"] .count').textContent = wishlistData.count || 0;
                         document.querySelector('.header__action-btn[href="/cartCliente"] .count').textContent = cartData.count || 0;
                     } else {
@@ -197,30 +204,36 @@
                     console.error('Error updating counters:', error);
                 }
             };
-    
+
             // Load orders with details
             async function cargarOrdenes() {
                 try {
+                    document.getElementById('loading').style.display = 'block';
                     const response = await fetch(apiUrl);
+                    document.getElementById('loading').style.display = 'none';
+
                     if (!response.ok) throw new Error('Failed to fetch orders');
-    
+
                     const orders = await response.json();
                     const ordersBody = document.getElementById('ordersBody');
                     ordersBody.innerHTML = '';
-    
+
+                    // Procesar órdenes y generar filas para la tabla
                     orders.forEach(order => {
+                        // Verifica si el total está definido y es un número
+                        const total = typeof order.total === 'number' ? order.total.toFixed(2) : '0.00';
+
                         const row = document.createElement('tr');
-                        const products = order.OrderDetails.map(detail => detail.Product.nombre_producto).join(', ');
+                        const products = order.Detalles.map(detail => detail.Producto.nombre_producto).join(', ');
                         row.innerHTML = `
                             <td><a href="#" class="fw-bold">${order.orden_id}</a></td>
                             <td><span class="fw-normal">${products}</span></td>
                             <td><span class="fw-normal">${new Date(order.fecha_orden).toLocaleDateString()}</span></td>
-                            <td><span class="fw-bold">$${order.total.toFixed(2)}</span></td>
-                            <td><span class="fw-bold text-${order.estado === 'entregado' ? 'success' : 'warning'}">${order.estado}</span></td>
+                            <td><span class="fw-bold">$${total}</span></td>
+                            <td><span class="fw-bold text-${order.estado === 'entregada' ? 'success' : 'warning'}">${order.estado}</span></td>
                             <td>
                                 <div class="btn-group">
-                                    <button class="btn btn-link text-dark" onclick="viewOrderDetails(${order.orden_id})">Ver Detalles</button>
-                                    |
+                                    <button class="btn btn-link text-dark" onclick="viewOrderDetails(${order.orden_id})">Ver Detalles</button> |
                                     <button class="btn btn-link text-dark" onclick="reorder(${order.orden_id})">Reordenar</button>
                                 </div>
                             </td>
@@ -232,17 +245,20 @@
                     showNotification('Error loading orders', 'error');
                 }
             }
-    
+
             // View order details function
             window.viewOrderDetails = async (orderId) => {
                 try {
+                    openOrderDetailsModal();
+                    document.getElementById('orderDetailsBody').innerHTML = '<tr><td colspan="4">Cargando...</td></tr>';
+
                     const response = await fetch(`${apiOrderDetailsUrl}/orden/${orderId}`);
                     if (!response.ok) throw new Error('Failed to fetch order details');
-                    
+
                     const orderDetails = await response.json();
                     const orderDetailsBody = document.getElementById('orderDetailsBody');
                     orderDetailsBody.innerHTML = '';
-    
+
                     orderDetails.forEach(detail => {
                         const detailRow = document.createElement('tr');
                         detailRow.innerHTML = `
@@ -253,25 +269,29 @@
                         `;
                         orderDetailsBody.appendChild(detailRow);
                     });
-    
-                    document.getElementById('orderDetailsModal').style.display = 'block';
                 } catch (error) {
                     console.error('Error loading order details:', error);
                     showNotification('Error loading order details', 'error');
+                    closeOrderDetailsModal();
                 }
             };
-    
+
             // Close modal function
             window.closeOrderDetailsModal = () => {
-                document.getElementById('orderDetailsModal').style.display = 'none';
+                document.getElementById('orderDetailsModal').classList.remove('open');
             };
-    
+
+            // Open modal function
+            function openOrderDetailsModal() {
+                document.getElementById('orderDetailsModal').classList.add('open');
+            }
+
             // Reorder function
             window.reorder = async (orderId) => {
                 try {
                     const response = await fetch(`/api/order/${orderId}/reorder`, { method: 'POST' });
                     const data = await response.json();
-    
+
                     if (response.ok && data.success) {
                         showNotification('Productos añadidos al carrito correctamente');
                         updateCounters();
@@ -283,13 +303,12 @@
                     showNotification('Error al reordenar los productos', 'error');
                 }
             };
-    
+
             // Initialize counters and load orders
             updateCounters();
             cargarOrdenes();
         });
     </script>
-    
 </body>
 
 </html>
