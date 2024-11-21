@@ -6,16 +6,17 @@ const rename = require('gulp-rename');
 
 // Tarea para limpiar el directorio de destino
 gulp.task('clean', () => {
-    return gulp.src('dist', { read: false, allowEmpty: true })  // Elimina el directorio 'dist' si existe
+    return gulp.src('dist', { read: false, allowEmpty: true }) // Elimina el directorio 'dist' si existe
         .pipe(clean());
 });
 
 // Tarea para compilar Sass a CSS
 gulp.task('styles', () => {
-    return gulp.src('src/styles/**/*.scss')  // Selecciona todos los archivos .scss
-        .pipe(sass().on('error', sass.logError))  // Compila los archivos .scss a CSS
-        .pipe(concat('styles.css'))  // Combina todos los archivos CSS en uno solo
-        .pipe(gulp.dest('dist/css'));  // Guarda el archivo combinado en 'dist/css'
+    return gulp.src('src/styles/**/*.scss') // Selecciona todos los archivos .scss
+        .pipe(sass().on('error', sass.logError)) // Compila los archivos .scss a CSS
+        .pipe(concat('styles.css')) // Combina todos los archivos CSS en uno solo
+        .pipe(rename({ suffix: '.min' })) // Renombra el archivo combinado a 'styles.min.css'
+        .pipe(gulp.dest('dist/css')); // Guarda el archivo renombrado en 'dist/css'
 });
 
 // Tarea de compilación principal
