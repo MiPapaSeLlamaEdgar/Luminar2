@@ -26,7 +26,6 @@
     "express-rate-limit": "^7.4.1",
     "express-session": "^1.18.1",
     "express-validator": "^7.2.0",
-    "gulp": "^5.0.0",
     "hbs": "^4.2.0",
     "helmet": "^8.0.0",
     "helmet-csp": "^4.0.0",
@@ -50,6 +49,7 @@
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
+    "gulp": "^5.0.0",
     "nodemon": "^3.1.7",
     "react-router-dom": "^6.27.0"
   }
