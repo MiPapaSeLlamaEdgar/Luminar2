@@ -6,7 +6,7 @@ const config = {
   DB_HOST: process.env.DB_HOST || 'mysql.railway.internal',
   DB_USER: process.env.DB_USER || 'root',
   DB_PASSWORD: process.env.DB_PASSWORD || 'gSJNclRyjCkRjaPtWHyFKbZyOAfsmtkw',
-  DB_NAME: process.env.DB_NAME || 'Luminar',
+  DB_NAME: process.env.DB_NAME || 'railway',
   DB_PORT: process.env.DB_PORT || 3306,
   JWT_SECRET: process.env.JWT_SECRET || 'supersecretkey',
   EMAIL_USER: process.env.EMAIL_USER || 'luminar.correo@gmail.com',
