@@ -6,6 +6,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 require('dotenv').config();
+const config = require('./config');
 
 const app = express();
 
@@ -17,23 +18,27 @@ app.use(express.json());
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'secret_key',
+    secret: config.JWT_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 }
+    cookie: {
+      secure: config.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000,
+    },
 }));
 
 // Configuración de la base de datos
-const sequelize = new Sequelize('luminar', 'root', '', {
-    host: 'localhost',
+const sequelize = new Sequelize(config.DB_NAME, config.DB_USER, config.DB_PASSWORD, {
+    host: config.DB_HOST,
+    port: config.DB_PORT,
     dialect: 'mysql',
-    logging: false,
+    logging: config.NODE_ENV === 'development',
     pool: {
-        max: 5,
-        min: 0,
-        acquire: 30000,
-        idle: 10000
-    }
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+    },
 });
 
 // Inicializar modelos
@@ -133,13 +138,15 @@ app.use((req, res) => {
 });
 
 // Global error handler
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
     console.error(err.stack);
+
+    // Configurar respuesta basada en NODE_ENV
     res.status(err.status || 500).json({
         error: {
             message: err.message,
             status: err.status || 500,
-            ...(process.env.NODE_ENV === 'development' ? { stack: err.stack } : {})
+            ...(config.NODE_ENV === 'development' ? { stack: err.stack } : {}) 
         }
     });
 });
@@ -151,10 +158,9 @@ async function initializeServer() {
         await sequelize.sync({ alter: true });
         console.log('Modelos sincronizados.');
 
-        const PORT = process.env.PORT || 5000;
-        app.listen(PORT, () => {
-            console.log(`Servidor corriendo en puerto ${PORT}`);
-            console.log(`Modo: ${process.env.NODE_ENV || 'development'}`);
+        app.listen(config.PORT, () => {
+            console.log(`Servidor corriendo en el puerto ${config.PORT}`);
+            console.log(`Modo: ${config.NODE_ENV}`);
         });
     } catch (error) {
         console.error('Error de inicialización:', error);
