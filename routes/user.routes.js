@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
 const nodemailer = require('nodemailer');
+const config = require('../config');
 
 module.exports = (models) => {
     const { User, Role } = models;
@@ -13,9 +14,9 @@ module.exports = (models) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS 
-        }
+            user: config.EMAIL_USER,
+            pass: config.EMAIL_PASS,
+        },
     });
     let recoveryData = {};
 
