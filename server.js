@@ -30,16 +30,26 @@ app.use(session({
 // Configuración de la base de datos
 const sequelize = new Sequelize(config.DB_NAME, config.DB_USER, config.DB_PASSWORD, {
     host: config.DB_HOST,
-    port: config.DB_PORT,
+    port: config.DB_PORT || 3306, // Usa el puerto 3306 por defecto si no se especifica
     dialect: 'mysql',
-    logging: config.NODE_ENV === 'development',
+    logging: config.NODE_ENV === 'development' ? console.log : false, // Logging solo en desarrollo
     pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000,
+        max: 5, // Número máximo de conexiones en el pool
+        min: 0, // Número mínimo de conexiones en el pool
+        acquire: 30000, // Tiempo máximo en milisegundos que Sequelize intentará conectar antes de lanzar un error
+        idle: 10000, // Tiempo en milisegundos que una conexión puede estar inactiva antes de ser liberada
     },
 });
+
+// Probar la conexión a la base de datos
+(async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Conexión a la base de datos exitosa.');
+    } catch (error) {
+        console.error('Error al conectar con la base de datos:', error);
+    }
+})();
 
 // Inicializar modelos
 const initModels = require('./models/init-models');
