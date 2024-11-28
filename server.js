@@ -27,19 +27,20 @@ app.use(session({
     },
 }));
 
-// Configuración de la base de datos
-const sequelize = new Sequelize(config.DB_NAME, config.DB_USER, config.DB_PASSWORD, {
-    host: config.DB_HOST,
-    port: config.DB_PORT || 3306, // Usa el puerto 3306 por defecto si no se especifica
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT || 3306,
     dialect: 'mysql',
-    logging: config.NODE_ENV === 'development' ? console.log : false, // Logging solo en desarrollo
+    logging: process.env.NODE_ENV === 'development' ? console.log : false,
     pool: {
-        max: 5, // Número máximo de conexiones en el pool
-        min: 0, // Número mínimo de conexiones en el pool
-        acquire: 30000, // Tiempo máximo en milisegundos que Sequelize intentará conectar antes de lanzar un error
-        idle: 10000, // Tiempo en milisegundos que una conexión puede estar inactiva antes de ser liberada
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000,
     },
 });
+
+
 
 // Probar la conexión a la base de datos
 (async () => {
