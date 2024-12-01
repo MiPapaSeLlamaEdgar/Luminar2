@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="/css/login.css">
+    <title>Login - LUMINAR</title>
+</head>
+<body>
+    <h1>Luminar Login</h1>
+
+    <div class="container" id="container">
+        <!-- Registro -->
+        <div class="form-container sign-up">
+            <form id="register-form">
+                <h1>Crea tu cuenta</h1>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>            
+                </div>
+                <span>Utilice su correo electrónico para registrarse</span>
+                <input type="text" id="register-nombre" placeholder="Nombre" required>
+                <input type="text" id="register-apellido" placeholder="Apellido" required>
+                <input type="email" id="register-email" placeholder="Email" required>
+                <input type="password" id="register-password" placeholder="Password" required>
+                <input type="tel" id="register-telefono" placeholder="Teléfono" required>
+                <input type="text" id="register-direccion" placeholder="Dirección" required>
+                <button type="submit" id="register">REGISTRARTE</button>
+            </form>
+        </div>
+
+        <!-- Login -->
+        <div class="form-container sign-in">
+            <form id="login-form">
+                <h1>Iniciar sesión</h1>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                </div>
+                <span>Inicia sesión con tu cuenta</span>
+                <input type="email" id="login-email" placeholder="Email" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <a href="#">¿Has olvidado tu contraseña?</a>
+                <button type="submit" id="login">INICIAR SESIÓN</button>
+            </form>
+        </div>
+
+        <!-- Toggle Container -->
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>¡Bienvenido de nuevo!</h1>
+                    <p>Inicia sesión con tus datos para acceder a tu cuenta</p>
+                    <button class="hidden" id="signIn">INICIAR SESIÓN</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>¡Hola!</h1>
+                    <p>Regístrate para acceder a todos nuestros servicios</p>
+                    <button class="hidden" id="signUp">REGISTRARTE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Configuración de rutas API
+        const API_ROUTES = {
+            register: '/api/users',
+            login: '/api/users/login',
+            lastAccess: '/api/users/:id/last-access'
+        };
+
+        // Configuración de redirecciones
+        const REDIRECT_ROUTES = {
+            1: '/Cliente/dashboard-cliente',
+            2: '/Vendedor/dashboard-vendedor',
+            3: '/Admin/dashboard-admin'
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos DOM
+            const container = document.getElementById('container');
+            const registerBtn = document.getElementById('signUp');
+            const loginBtn = document.getElementById('signIn');
+            const registerForm = document.getElementById('register-form');
+            const loginForm = document.getElementById('login-form');
+
+            // Toggle formularios
+            registerBtn?.addEventListener('click', () => container.classList.add("active"));
+            loginBtn?.addEventListener('click', () => container.classList.remove("active"));
+
+            // Registro
+            registerForm?.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                try {
+                    const formData = {
+                        nombre: document.getElementById('register-nombre').value.trim(),
+                        apellido: document.getElementById('register-apellido').value.trim(),
+                        correo_electronico: document.getElementById('register-email').value.trim(),
+                        contrasena: document.getElementById('register-password').value.trim(),
+                        telefono: document.getElementById('register-telefono').value.trim(),
+                        direccion: document.getElementById('register-direccion').value.trim(),
+                        rol_id: 1,
+                        estado: 'activo'
+                    };
+
+                    // Validaciones
+                    if (Object.values(formData).some(value => !value)) {
+                        throw new Error('Por favor, complete todos los campos');
+                    }
+
+                    const response = await fetch(API_ROUTES.register, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.message);
+                    }
+
+                    const data = await response.json();
+
+                    // Guardar datos
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('usuario_id', data.usuario_id);
+                    localStorage.setItem('rol_id', data.rol_id);
+                    localStorage.setItem('nombre', data.nombre);
+
+                    await Swal.fire({
+                        icon: 'success',
+                        title: '¡Registro exitoso!',
+                        text: `Bienvenido, ${data.nombre}!`,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+
+                    // Redireccionar
+                    const redirectUrl = REDIRECT_ROUTES[data.rol_id];
+                    if (!redirectUrl) throw new Error('Rol no válido');
+                    window.location.href = redirectUrl;
+
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message
+                    });
+                }
+            });
+
+            // Login
+            loginForm?.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                try {
+                    const formData = {
+                        correo_electronico: document.getElementById('login-email').value.trim(),
+                        contrasena: document.getElementById('login-password').value.trim()
+                    };
+
+                    if (!formData.correo_electronico || !formData.contrasena) {
+                        throw new Error('Por favor, complete todos los campos');
+                    }
+
+                    const response = await fetch(API_ROUTES.login, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.message);
+                    }
+
+                    const data = await response.json();
+
+                    // Guardar datos
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('usuario_id', data.usuario_id);
+                    localStorage.setItem('rol_id', data.rol_id);
+                    localStorage.setItem('nombre', data.nombre);
+
+                    await Swal.fire({
+                        icon: 'success',
+                        title: '¡Bienvenido!',
+                        text: `Bienvenido de nuevo, ${data.nombre}!`,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+
+                    // Redireccionar
+                    const redirectUrl = REDIRECT_ROUTES[data.rol_id];
+                    if (!redirectUrl) throw new Error('Rol no válido');
+                    window.location.href = redirectUrl;
+
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

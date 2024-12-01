@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Lista de Deseos - LUMINAR</title>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header__top">
+            <div class="header__container container">
+                <div class="header__contact">
+                    <span>luminaropa@gmail.com</span>
+                    <span>+57 3134717406</span>
+                </div>
+                <p class="header__alert-news">LUMINAR</p>
+                <a href="/" class="header__top-action">Cierre de sesión</a>
+            </div>
+        </div>
+
+        <nav class="nav container">
+            <a href="/indexCliente" class="nav__logo">
+                <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
+            </a>
+            <div class="nav__menu" id="nav__menu">
+                <ul class="nav__list">
+                    <li class="nav__item"><a href="/indexCliente" class="nav__link">INICIO</a></li>
+                    <li class="nav__item"><a href="/shopCliente" class="nav__link">Tienda</a></li>
+                    <li class="nav__item"><a href="/editarperfilCliente" class="nav__link">Mi cuenta</a></li>
+                    <li class="nav__item"><a href="/ordersCliente" class="nav__link">Pedidos</a></li>
+                </ul>
+                <div class="header_search">
+                    <input type="text" placeholder="Buscar productos..." class="form__input">
+                </div>
+            </div>
+            <div class="header__user-actions">
+                <a href="/whishlistCliente" class="header__action-btn">
+                    <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
+                    <span class="count">0</span>
+                </a>
+                <a href="/cartCliente" class="header__action-btn">
+                    <img src="assets/img/icon-cart.svg" alt="Carrito">
+                    <span class="count">0</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- WISHLIST SECTION -->
+    <section class="wishlist section">
+        <div class="container">
+            <h2 class="section__title">Mi <span>Lista de Deseos</span></h2>
+            <div id="wishlistItemsBody" class="products__container grid">
+                <div id="loadingMessage" class="loading-message">Cargando productos...</div>
+            </div>
+            <div id="emptyWishlistMessage" style="display:none;" class="empty-message">
+                <p>Tu lista de deseos está vacía.</p>
+                <a href="/shopCliente" class="btn">Ir a la tienda</a>
+            </div>
+        </div>
+    </section>      
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <!-- Footer content goes here -->
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="assets/js/main.js"></script>
+
+    <script>
+    const wishlistContainer = document.getElementById('wishlistItemsBody');
+    const emptyMessage = document.getElementById('emptyWishlistMessage');
+    const clienteId = localStorage.getItem("cliente_id");
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!clienteId) {
+            console.error("Cliente ID no encontrado en localStorage");
+            return;
+        }
+
+        async function loadWishlistItems() {
+            try {
+                const response = await fetch(`/api/wishlist/cliente/${clienteId}`);
+                if (!response.ok) throw new Error(`Error en la respuesta del servidor: ${response.status}`);
+                
+                const items = await response.json();
+
+                if (items.length === 0) {
+                    wishlistContainer.style.display = 'none';
+                    emptyMessage.style.display = 'block';
+                    return;
+                }
+
+                wishlistContainer.style.display = 'grid';
+                emptyMessage.style.display = 'none';
+
+                wishlistContainer.innerHTML = items.map(item => `
+                    <div class="product__item" data-id="${item.wishlist_id}">
+                        <div class="product__banner">
+                            <a href="/product/${item.producto_id}" class="product__images">
+                                <img src="${item.Producto.imagen_url}" alt="${item.Producto.nombre_producto}" class="product__img">
+                            </a>
+                            ${item.Producto.estado === 'agotado' ? '<div class="product__badge light-red">Agotado</div>' : ''}
+                        </div>
+                        <div class="product__content">
+                            <span class="product__category">${item.Producto.categoria}</span>
+                            <a href="/product/${item.producto_id}">
+                                <h3 class="product__title">${item.Producto.nombre_producto}</h3>
+                            </a>
+                            <div class="product__price flex">
+                                <span class="new__price">$${item.Producto.precio}</span>
+                            </div>
+                            <div class="product__options">
+                                <label for="sizeSelect-${item.producto_id}">Talla:</label>
+                                <select id="sizeSelect-${item.producto_id}" class="product__select">
+                                    ${item.Producto.talla ? item.Producto.talla.split(',').map(size => `<option value="${size.trim()}">${size.trim()}</option>`).join('') : '<option>No disponible</option>'}
+                                </select>
+                                <label for="colorSelect-${item.producto_id}">Color:</label>
+                                <select id="colorSelect-${item.producto_id}" class="product__select">
+                                    ${item.Producto.color ? item.Producto.color.split(',').map(color => `<option value="${color.trim()}" style="background-color: ${color.trim()};">${color.trim()}</option>`).join('') : '<option>No disponible</option>'}
+                                </select>
+                            </div>
+                            <div class="product__quantity">
+                                <button type="button" class="quantity__button" onclick="decreaseQuantity(${item.producto_id})">-</button>
+                                <input type="number" id="quantity-${item.producto_id}" class="quantity__input" value="1" min="1">
+                                <button type="button" class="quantity__button" onclick="increaseQuantity(${item.producto_id})">+</button>
+                            </div>
+                            <div class="product__buttons">
+                                <button class="action__btn remove-from-wishlist" onclick="removeFromWishlist(${item.wishlist_id})">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
+                                        <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
+                                    </svg>
+                                </button>
+                                <button class="action__btn add-to-cart" data-product-id="${item.producto_id}" onclick="AddToCart(${item.producto_id}, ${item.wishlist_id})">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
+                                        <path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error al cargar items:', error);
+                showNotification('Error al cargar la lista de deseos', 'error');
+            }
+        }
+/*
+        async function AddToCart(productId) {
+            const clientId = localStorage.getItem("cliente_id");
+            const quantity = document.getElementById(`quantity-${productId}`).value;
+            const selectedSize = document.getElementById(`sizeSelect-${productId}`).value;
+            const selectedColor = document.getElementById(`colorSelect-${productId}`).value;
+
+            const cartData = {
+                cliente_id: clientId,
+                producto_id: productId,
+                cantidad: quantity,
+                talla: selectedSize,
+                color: selectedColor,
+                fecha_agregado: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch("/api/cart/cart", {  // Adjusted to "/api/cart" if "/api/cart/cart" was wrong
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(cartData)
+                });
+
+                if (response.ok) {
+                    contador(clientId);
+                    showNotification("Producto agregado al carrito con éxito", "success");
+                } else {
+                    console.error(`Error ${response.status}: ${response.statusText}`);
+                    showNotification("Error al agregar al carrito", "error");
+                }
+            } catch (error) {
+                console.error('Error al agregar al carrito:', error);
+                showNotification("Error al agregar el producto al carrito", "error");
+            }
+        }
+            */
+
+        const increaseQuantity = (productId) => {
+            const quantityInput = document.getElementById(`quantity-${productId}`);
+            quantityInput.value = parseInt(quantityInput.value) + 1;
+        };
+
+        const decreaseQuantity = (productId) => {
+            const quantityInput = document.getElementById(`quantity-${productId}`);
+            if (quantityInput.value > 1) {
+                quantityInput.value = parseInt(quantityInput.value) - 1;
+            }
+        };
+
+        loadWishlistItems();
+        if (clienteId) contador(clienteId);
+    });
+
+    function removeFromWishlist(wishlistId) {
+            fetch(`/api/wishlist/${wishlistId}`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Error al eliminar de la lista de deseos");
+                return response.json();
+            })
+            .then(data => {
+                document.querySelector(`.product__item[data-id="${wishlistId}"]`).remove();
+                showNotification(data.message);
+
+                if (wishlistContainer.children.length === 0) {
+                    wishlistContainer.style.display = 'none';
+                    emptyMessage.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Error al eliminar el producto', 'error');
+            });
+        }
+
+    let productosEnCarrito = new Set(); 
+
+    function AddToCart(productId, wishlistId) {
+            event.preventDefault();
+
+            const quantity = document.getElementById(`quantity-${productId}`).value;
+            const clientId = localStorage.getItem("cliente_id");
+
+            const sizeSelect = document.getElementById(`sizeSelect-${productId}`);
+            const colorSelect = document.getElementById(`colorSelect-${productId}`);
+            const selectedSize = sizeSelect ? sizeSelect.value : null;
+            const selectedColor = colorSelect ? colorSelect.value : null;
+
+            if (productosEnCarrito.has(productId)) {
+                alert("El producto ya está en el carrito");
+                return;
+            }
+
+            const cartData = {
+                cliente_id: clientId,
+                producto_id: productId,
+                cantidad: quantity,
+                talla: selectedSize,
+                color: selectedColor,
+                fecha_agregado: new Date().toISOString()
+            };
+
+            fetch("/api/cart/cart", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(cartData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    productosEnCarrito.add(productId);
+                    return response.json();
+                } else {
+                    return response.json().then(error => {
+                        throw new Error(error.message);
+                    });
+                }
+            })
+            .then(result => {
+                showNotification("Producto agregado al carrito con éxito", "success");
+                removeFromWishlist(wishlistId); 
+                contador(clientId);
+            })
+            .catch(error => {
+                alert(`Error al agregar el producto al carrito: ${error.message}`);
+            });
+        }
+
+    const contador = async (clientId) => {
+            try {
+                const wishlistResponse = await fetch(`/api/wishlist/count/${clientId}`);
+                const wishlistData = await wishlistResponse.json();
+                document.querySelector(".header__user-actions .header__action-btn[href='/whishlistCliente'] .count").textContent = wishlistData.count;
+
+                const cartResponse = await fetch(`/api/cart/count/${clientId}`);
+                const cartData = await cartResponse.json();
+                document.querySelector(".header__user-actions .header__action-btn[href='/cartCliente'] .count").textContent = cartData.count;
+            } catch (error) {
+                console.error("Error al obtener conteos de lista de deseos y carrito:", error);
+            }
+        };
+
+    const showNotification = (message, type = 'success') => {
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            icon: type,
+            title: message
+        });
+    };
+
+    </script>
+</body>
+</html>

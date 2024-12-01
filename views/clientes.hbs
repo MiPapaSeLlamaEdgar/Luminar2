@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Gestión de Clientes | Luminar</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/dashboard-vendedor.css">
+        <style>
+            :root {
+                --primary-color: #D6266F;
+                --secondary-color: #4A2828;
+                --background-color: #f8f9fa;
+                --card-color: #ffffff;
+                --text-color: #333333;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Poppins', sans-serif;
+            }
+
+            .container {
+                display: flex;
+                min-height: 100vh;
+            }
+
+            /* Sidebar (mantener consistente con el dashboard) */
+            .sidebar {
+                width: 280px;
+                background-color: var(--card-color);
+                padding: 20px;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            }
+
+            /* Main Content */
+            .main-content {
+                flex: 1;
+                padding: 20px;
+                background-color: var(--background-color);
+            }
+
+
+            .nuevo-cliente-btn {
+                background-color: var(--primary-color);
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 25px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+            .nuevo-cliente-btn:hover {
+                background-color: #bf1b5d;
+            }
+
+            /* Search and Filter Section */
+            .filtros-section {
+                background-color: var(--card-color);
+                padding: 20px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                display: flex;
+                gap: 15px;
+                align-items: center;
+            }
+
+            .search-box input,
+            .filtros-section select {
+                padding: 8px 15px;
+                border: 1px solid #ddd;
+                border-radius: 25px;
+                font-size: 14px;
+            }
+
+            /* Clientes Table */
+            .clientes-table {
+                background-color: var(--card-color);
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            th, td {
+                padding: 12px 15px;
+                text-align: left;
+                border-bottom: 1px solid #eee;
+            }
+
+            th {
+                color: var(--text-color);
+                font-weight: 500;
+            }
+
+            .estado-badge {
+                padding: 5px 12px;
+                border-radius: 15px;
+                font-size: 12px;
+            }
+
+            .activo { 
+                background-color: #e8f5e9;
+                color: #2e7d32;
+            }
+
+            .inactivo {
+                background-color: #ffebee;
+                color: #c62828;
+            }
+
+            /* Actions Buttons */
+            .action-buttons {
+                display: flex;
+                gap: 8px;
+            }
+
+            .edit-btn, .delete-btn {
+                padding: 5px 10px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 12px;
+            }
+
+            .edit-btn {
+                background-color: var(--secondary-color);
+                color: white;
+            }
+
+            .delete-btn {
+                background-color: #dc3545;
+                color: white;
+            }
+
+            /* Modal */
+            .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.5);
+            }
+
+            .modal-content {
+                background-color: #fff;
+                border-radius: 8px;
+                padding: 16px;
+                width: 100%;
+                max-width: 75%;
+                margin: auto;
+                top: 50%;
+                max-height: 90%;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                overflow: auto;
+            }
+
+            .modal-header {
+                font-size: 1.5em;
+                margin-bottom: 10px;
+            }
+
+            .form-group {
+                margin-bottom: 1.25em;
+            }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5em;
+            }
+
+            .form-group input,
+            .form-group select {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+
+            .modal-buttons {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .button {
+                padding: 10px 15px;
+                border: none;
+                border-radius: 4px;
+                background-color: #007BFF;
+                color: #FFFFFF;
+                cursor: pointer;
+            }
+
+            .button:hover {
+                background-color: #0056b3;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                color: var(--text-color);
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+
+            .modal-buttons {
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+                margin-top: 20px;
+            }
+
+            @media (max-width: 768px) {
+                .container {
+                    flex-direction: column;
+                }
+                
+                .sidebar {
+                    width: 100%;
+                    height: auto;
+                }
+                
+                .filtros-section {
+                    flex-direction: column;
+                }
+                
+                .action-buttons {
+                    flex-direction: column;
+                }
+            }
+        </style>
+    </head>
+    <body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Panel Vendedor</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/vendedor/dashboard-vendedor">Inicio</a></li>
+                <li><a href="/vendedor/ventas">Ventas</a></li>
+                <li><a href="/vendedor/clientes" class="active">Clientes</a></li>
+                <li><a href="/vendedor/inventario">Inventario</a></li>
+                <li><a href="/vendedor/reportes">Reportes</a></li>
+            </ul>
+            <div class="user-info">
+                <img src="/images/foto.png" alt="Profile" class="profile-img">
+                <span>Andres Mora</span>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header-actions">
+                <h2>Gestión de Clientes</h2>
+                <button class="nuevo-cliente-btn" onclick="abrirModalNuevoCliente()">+ Nuevo Cliente</button>
+            </div>
+
+            <!-- Filtros -->
+            <div class="filtros-section">
+                <input type="text" placeholder="Buscar cliente..." id="searchInput">
+                <select id="estadoFilter">
+                    <option value="">Todos los estados</option>
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                    <option value="suspendido">Suspendido</option>
+                </select>
+            </div>
+
+            <!-- Tabla de Clientes -->
+            <div class="clientes-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Dirección</th>
+                            <th>Ciudad</th>
+                            <th>Código Postal</th>
+                            <th>Última Compra</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientesTableBody"></tbody>
+                </table>
+            </div>
+        </main>
+
+        <!-- Modal Nuevo/Editar Cliente -->
+        <div id="clienteModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h2 id="modalTitle">Nuevo Cliente</h2>
+
+                <!-- Form for adding/editing clients -->
+                <form id="clienteForm" style="display: flex; flex-wrap: wrap; gap: 20px;">
+                    <div class="form-group" style="flex: 1 1 45%; min-width: 200px;">
+                        <label>Nombre</label>
+                        <input type="text" id="nombre" required>
+                    </div>
+                    <div class="form-group" style="flex: 1 1 45%; min-width: 200px;">
+                        <label>Apellido</label>
+                        <input type="text" id="apellido" required>
+                    </div>
+                    <div class="form-group" style="flex: 1 1 45%; min-width: 200px;">
+                        <label>Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group" style="flex: 1 1 45%; min-width: 200px;">
+                        <label>Teléfono</label>
+                        <input type="tel" id="telefono" required pattern="[0-9]{10}">
+                    </div>
+                    <div class="form-group" style="flex: 1 1 45%; min-width: 200px;">
+                        <label>Dirección</label>
+                        <input type="text" id="direccion" required>
+                    </div>
+                    <div class="form-group" style="flex: 1 1 45%; min-width: 200px;">
+                        <label>Ciudad</label>
+                        <input type="text" id="ciudad" required>
+                    </div>
+                    <div class="form-group" style="flex: 1 1 45%; min-width: 200px;">
+                        <label>Código Postal</label>
+                        <input type="text" id="codigoPostal" required pattern="[0-9]{5}">
+                    </div>
+                    <div class="form-group" style="flex: 1 1 45%; min-width: 200px;">
+                        <label>Última Compra</label>
+                        <input type="date" id="ultimaCompra">
+                    </div>
+                    <div class="form-group" style="flex: 1 1 45%; min-width: 200px;">
+                        <label>Estado</label>
+                        <select id="estado" required>
+                            <option value="">Seleccionar estado</option>
+                            <option value="activo">Activo</option>
+                            <option value="inactivo">Inactivo</option>
+                            <option value="suspendido">Suspendido</option>
+                        </select>
+                    </div>
+
+                    <!-- Modal buttons -->
+                    <div class="modal-buttons" style="display: flex; justify-content: space-between; width: 100%;">
+                        <button type="button" id="confirmarBtn" style="padding: 10px 20px;">Confirmar</button>
+                        <button type="button" id="cancelarBtn" style="padding: 10px 20px;">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+    <script>
+class ClienteController {
+    constructor() {
+        // Configuración de rutas API
+        this.API_ROUTES = {
+            getAll: '/api/clients',
+            getOne: (id) => `/api/clients/${id}`,
+            create: '/api/clients',
+            update: (id) => `/api/clients/${id}`,
+            delete: (id) => `/api/clients/${id}`,
+            search: (query) => `/api/clients/search?q=${query}`
+        };
+
+        // Inicializar eventos cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => this.initialize());
+    }
+
+    async initialize() {
+        try {
+            await this.cargarClientes();
+            this.initializeEventListeners();
+        } catch (error) {
+            this.handleError(error);
+        }
+    }
+
+    initializeEventListeners() {
+        try {
+            // Elementos DOM
+            const searchInput = document.getElementById('searchInput');
+            const estadoFilter = document.getElementById('estadoFilter');
+            const nuevoClienteBtn = document.querySelector('.nuevo-cliente-btn');
+            const clienteForm = document.getElementById('clienteForm');
+            const confirmarBtn = document.getElementById('confirmarBtn');
+            const cancelarBtn = document.getElementById('cancelarBtn');
+
+            // Verificar que todos los elementos existan
+            if (!searchInput || !estadoFilter || !nuevoClienteBtn || !clienteForm || !confirmarBtn || !cancelarBtn) {
+                throw new Error('Elementos del DOM no encontrados');
+            }
+
+            // Event Listeners
+            searchInput.addEventListener('input', this.debounce(() => this.filtrarClientes(), 300));
+            estadoFilter.addEventListener('change', () => this.filtrarClientes());
+            nuevoClienteBtn.addEventListener('click', () => this.abrirModalNuevoCliente());
+            clienteForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
+            confirmarBtn.addEventListener('click', () => this.handleConfirmClick());
+            cancelarBtn.addEventListener('click', () => this.cerrarModal());
+
+        } catch (error) {
+            console.error('Error al inicializar eventos:', error);
+        }
+    }
+
+    async cargarClientes() {
+        try {
+            const response = await this.fetchWithAuth(this.API_ROUTES.getAll);
+            const clientes = await response.json();
+            this.renderizarClientes(clientes);
+        } catch (error) {
+            this.handleError(error);
+        }
+    }
+
+    renderizarClientes(clientes) {
+        const tbody = document.getElementById('clientesTableBody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = clientes.map(cliente => `
+            <tr>
+                <td>${cliente.id}</td>
+                <td>${cliente.nombre}</td>
+                <td>${cliente.apellido}</td>
+                <td>${cliente.correo_electronico}</td>
+                <td>${cliente.telefono}</td>
+                <td>${cliente.direccion}</td>
+                <td>${cliente.ciudad}</td>
+                <td>${cliente.codigo_postal}</td>
+                <td>${this.formatDate(cliente.ultima_compra)}</td>
+                <td><span class="estado-badge ${cliente.estado}">${cliente.estado}</span></td>
+                <td class="action-buttons">
+                    <button class="edit-btn" onclick="clienteController.abrirModalEditarCliente(${cliente.id})">Editar</button>
+                    <button class="delete-btn" onclick="clienteController.eliminarCliente(${cliente.id})">Eliminar</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    async handleFormSubmit(event) {
+        event?.preventDefault();
+        
+        try {
+            const form = document.getElementById('clienteForm');
+            const formData = new FormData(form);
+            const clienteData = {
+                nombre: formData.get('nombre'),
+                apellido: formData.get('apellido'),
+                correo_electronico: formData.get('email'),
+                telefono: formData.get('telefono'),
+                direccion: formData.get('direccion'),
+                ciudad: formData.get('ciudad'),
+                codigo_postal: formData.get('codigoPostal'),
+                ultima_compra: formData.get('ultimaCompra'),
+                estado: formData.get('estado')
+            };
+
+            await this.validateFormData(clienteData);
+            await this.guardarCliente(clienteData);
+
+        } catch (error) {
+            this.handleError(error);
+        }
+    }
+
+    async guardarCliente(clienteData) {
+        const form = document.getElementById('clienteForm');
+        const id = form.dataset.id;
+        const url = id ? this.API_ROUTES.update(id) : this.API_ROUTES.create;
+        const method = id ? 'PUT' : 'POST';
+
+        try {
+            const response = await this.fetchWithAuth(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(clienteData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al guardar el cliente');
+            }
+
+            await this.handleSuccess('Cliente guardado exitosamente');
+            this.cerrarModal();
+            await this.cargarClientes();
+
+        } catch (error) {
+            this.handleError(error);
+        }
+    }
+
+    async fetchWithAuth(url, options = {}) {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No autorizado');
+        }
+
+        const defaultOptions = {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        };
+
+        const response = await fetch(url, { ...defaultOptions, ...options });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response;
+    }
+
+    // Funciones de utilidad
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func.apply(this, args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    formatDate(dateString) {
+        if (!dateString) return '';
+        return new Date(dateString).toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+    }
+
+    async handleSuccess(message) {
+        await Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: message,
+            timer: 2000,
+            showConfirmButton: false
+        });
+    }
+
+    handleError(error) {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message
+        });
+    }
+}
+
+// Inicializar el controlador
+const clienteController = new ClienteController();
+    </script>
+
+    </html>

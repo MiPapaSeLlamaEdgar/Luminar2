@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="/assets/css/details.css">
+    <title>Detalles del Producto - LUMINAR</title>
+    <base href="/">
+</head>
+<body>
+    <!--== HEADER ==-->
+   <header class="header">
+    <div class="header__top">
+        <div class="header__container container">
+            <div class="header__contact">
+                <span>luminaropa@gmail.com</span>
+                <span>+57 3134717406</span>
+            </div>
+
+            <p class="header__alert-news">LUMINAR</p>
+
+            <a href="/" class="header__top-action">
+                Cierre de sesión
+            </a>
+        </div>
+    </div>
+
+    <nav class="nav container">
+        <a href="/indexCliente" class="nav__logo">
+            <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
+        </a>
+
+        <div class="nav__menu" id="nav__menu">
+            <ul class="nav__list">
+                <li class="nav__item">
+                    <a href="/indexCliente" class="nav__link active-link">INICIO</a>
+                </li>
+                <li class="nav__item">
+                    <a href="/shopCliente" class="nav__link">Tienda</a>
+                </li>
+                <li class="nav__item">
+                    <a href="/editarperfilCliente" class="nav__link">Mi cuenta</a>
+                </li>
+                <li class="nav__item">
+                    <a href="/ordersCliente" class="nav__link">Pedidos</a>
+                </li>
+            </ul>
+
+            <div class="header_search">
+                <input type="text" placeholder="Buscar productos..." class="form__input">
+            </div>
+        </div>
+
+        <div class="header__user-actions">
+            <a href="/whishlistCliente" class="header__action-btn">
+                <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
+                <span class="count">0</span>
+            </a>
+
+            <a href="/cartCliente" class="header__action-btn">
+                <img src="assets/img/icon-cart.svg" alt="Carrito">
+                <span class="count">0</span>
+            </a>
+        </div>
+    </nav>
+</header>
+
+    <!--== PRODUCT DETAILS ==-->
+    <section class="product-details container section--lg">
+        <div class="breadcrumb">
+            <a href="/indexCliente">Inicio</a> / 
+            <a href="/shopCliente">Tienda</a> / 
+            <span class="product-category">Categoría</span> / 
+            <span class="product-title">Nombre del Producto</span>
+        </div>
+
+        <div class="product-info grid">
+            <!-- Galería de Imágenes -->
+            <div class="product-gallery">
+                <div class="main-image">
+                    <img id="mainImage" src="" alt="Producto Principal" />
+                    <div class="zoom-lens"></div>
+                </div>
+                <div class="thumbnail-images" id="thumbnailContainer">
+                    <!-- Las miniaturas se cargarán dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Información del Producto -->
+            <div class="product-info-content">
+                <div class="product-header">
+                    <h1 class="product-title"></h1>
+                    <p class="product-category"></p>
+                    
+                    <!-- Rating y Reviews -->
+                    <div class="product-rating">
+                        <div class="stars">
+                            <i class="fi fi-rr-star"></i>
+                            <i class="fi fi-rr-star"></i>
+                            <i class="fi fi-rr-star"></i>
+                            <i class="fi fi-rr-star"></i>
+                            <i class="fi fi-rr-star"></i>
+                        </div>
+                        <span class="rating-count">(0 reseñas)</span>
+                    </div>
+
+                    <!-- Precio -->
+                    <div class="product-price">
+                        <span class="new-price"></span>
+                        <span class="old-price"></span>
+                        <span class="discount-badge"></span>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="product-description">
+                    <h3>Descripción</h3>
+                    <p></p>
+                </div>
+
+                <!-- Opciones del Producto -->
+                <div class="product-options">
+                    <!-- Talla -->
+                    <div class="size-option">
+                        <h3>Talla</h3>
+                        <select id="sizeButtons">
+                            <!-- Las opciones de talla se cargarán dinámicamente -->
+                        </select>
+                    </div>
+
+                    <!-- Color -->
+                    <div class="color-option">
+                        <h3>Color</h3>
+                        <select id="colorButtons">
+                            <!-- Las opciones de color se cargarán dinámicamente -->
+                        </select>
+                    </div>
+                    <!-- Cantidad y Botones de Acción -->
+                    <div class="product-actions">
+                        <div class="quantity-selector">
+                            <button class="quantity-btn minus" aria-label="Reducir cantidad">-</button>
+                            <input type="number" value="1" min="1" id="quantity" aria-label="Cantidad">
+                            <button class="quantity-btn plus" aria-label="Aumentar cantidad">+</button>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="add-to-cart-btn" id="addToCart">
+                                <i class="fi fi-rr-shopping-cart"></i>
+                                Agregar al Carrito
+                            </button>
+                            <button class="wishlist-btn" id="addToWishlist">
+                                <i class="fi fi-rr-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Información de Stock -->
+                    <div class="stock-info">
+                        <i class="fi fi-rr-box-check"></i>
+                        <span class="stock-status"></span>
+                        <span class="stock-quantity"></span>
+                    </div>
+
+                    <!-- Información Adicional -->
+                    <div class="additional-info">
+                        <div class="info-item">
+                            <i class="fi fi-rr-truck-side"></i>
+                            <span>Envío gratis en pedidos superiores a $100</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fi fi-rr-shield-check"></i>
+                            <span>Garantía de devolución de 30 días</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fi fi-rr-credit-card"></i>
+                            <span>Pago seguro garantizado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs de Información Adicional -->
+        <div class="product-tabs">
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="description">Descripción</button>
+                <button class="tab-btn" data-tab="specifications">Especificaciones</button>
+                <button class="tab-btn" data-tab="reviews">Reseñas</button>
+            </div>
+            <div class="tabs-content">
+                <div class="tab-panel active" id="description">
+                    <!-- Contenido de descripción -->
+                </div>
+                <div class="tab-panel" id="specifications">
+                    <!-- Contenido de especificaciones -->
+                </div>
+                <div class="tab-panel" id="reviews">
+                    <!-- Contenido de reseñas -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Productos Relacionados -->
+        <div class="related-products">
+            <h2>Productos Relacionados</h2>
+            <div class="products-grid" id="relatedProducts">
+                <!-- Los productos relacionados se cargarán dinámicamente -->
+            </div>
+        </div>
+    </section>
+
+    <!--=== FOOTER ===-->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__content">
+            <div class="footer__links">
+                <h4 class="footer__title">Enlaces Útiles</h4>
+                <ul class="footer__list">
+                    <li><a href="/shopCliente">Tienda</a></li>
+                    <li><a href="/editarperfilCliente">Mi Cuenta</a></li>
+                    <li><a href="/whishlistCliente">Lista de Deseos</a></li>
+                    <li><a href="/ordersCliente">Pedidos</a></li>
+                    <li><a href="/cartCliente">Carrito</a></li>
+                    <li><a href="privacy-policy" target="_blank">Políticas de Privacidad</a></li>
+                </ul>
+            </div>
+
+            <div class="footer__contact">
+                <h4 class="footer__title">Contáctanos</h4>
+                <p>Teléfono: +57 3134717406</p>
+                <p>Email: luminaropa@gmail.com</p>
+                <p>Dirección: Neos Centro, Calle 12 B, 9-40</p>
+            </div>
+
+            <div class="footer__social">
+                <h4 class="footer__title">Síguenos</h4>
+                <ul class="footer__social-list">
+                    <li><a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank"><i class="fi fi-rr-facebook"></i> Facebook</a></li>
+                    <li><a href="https://www.tiktok.com/@luminar.2023" target="_blank"><i class="fi fi-rr-tiktok"></i> TikTok</a></li>
+                    <li><a href="https://www.instagram.com/luminar.2023/" target="_blank"><i class="fi fi-rr-instagram"></i> Instagram</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer__bottom">
+            <p>&copy; 2024 Luminar. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Obtiene el último segmento de la URL, que debería ser el `producto_id`
+        const productId = window.location.pathname.split('/').pop();
+        const quantityInput = document.getElementById('quantity');
+        const stockInfo = document.querySelector('.stock-info');
+        let selectedSize = null;
+        let selectedColor = null;
+        // URL del API para obtener el producto
+        const apiUrl = `/api/product/${productId}`;
+        
+        console.log("ID del producto:", productId); 
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Función para cargar detalles del producto
+            async function loadProductDetails() {
+                try {
+                    console.log("URL de la API:", apiUrl);
+                    const response = await fetch(apiUrl);
+                    console.log("repuesta ",response);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Producto no encontrado: ${response.status}`);
+                    }
+
+                    const product = await response.json();
+                
+                    console.log("product ",product);
+
+                    // Rellenar detalles del producto
+                    document.querySelector('.product-title').textContent = product.nombre_producto;
+                    document.querySelector('.product-category').textContent = product.Categoria?.nombre_categoria || 'Sin categoría';
+                    document.querySelector('.new-price').textContent = `$${product.precio}`;
+                    document.querySelector('.old-price').textContent = product.precio_original ? `$${product.precio_original}` : '';
+                    document.querySelector('.discount-badge').textContent = product.descuento ? `-${product.descuento}%` : '';
+                    document.querySelector('.product-description p').textContent = product.descripcion;
+
+                    // Información de stock
+                    const stockStatus = product.cantidad_stock > 0 ? 'En stock' : 'Agotado';
+                    document.querySelector('.stock-status').textContent = stockStatus;
+                    document.querySelector('.stock-quantity').textContent = `${product.cantidad_stock} disponibles`;
+
+                    //Tabs de Información Adicional
+                    document.querySelector('#description').innerHTML = `<p>${product.descripcion}</p>`;
+                    // Crear una tabla para las especificaciones
+                    const specificationsHTML = `
+                                <table>
+                                    <tr>
+                                        <td><strong>Talla:</strong></td>
+                                        <td>${product.talla || 'No disponible'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Color:</strong></td>
+                                        <td>${product.color || 'No disponible'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cantidad en Stock:</strong></td>
+                                        <td>${product.cantidad_stock || 'No disponible'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Estado:</strong></td>
+                                        <td>${product.estado || 'No disponible'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Especificaciones:</strong></td>
+                                        <td>${product.especificaciones || 'No disponible'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Fecha de Creación:</strong></td>
+                                        <td>${product.fecha_creacion || 'No disponible'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Fecha de Modificación:</strong></td>
+                                        <td>${product.fecha_modificacion || 'No disponible'}</td>
+                                    </tr>
+                                </table>
+                            `;
+
+                    document.querySelector('#specifications').innerHTML = specificationsHTML;
+
+                    // Cargar imágenes, tallas, colores y productos relacionados
+                    loadImages(product.imagenes);
+                    loadSizes(product.talla);
+                    loadColors(product.color);
+                    ///loadRelatedProducts(product.categoria_id);
+
+                } catch (error) {
+                    console.error('Error al cargar detalles del producto:', error);
+                }
+            }
+
+            // Cargar imágenes en la galería
+            function loadImages(imagePath) {
+                const mainImage = document.getElementById('mainImage');
+                const thumbnailContainer = document.getElementById('thumbnailContainer');
+
+                if (imagePath) {
+                    mainImage.src = imagePath; // Asigna la ruta de la imagen principal
+
+                    // Aquí podrías agregar miniaturas si necesitas más imágenes
+                    const thumbnail = document.createElement('img');
+                    thumbnail.src = imagePath; // Asigna la misma imagen como miniatura
+                    thumbnail.classList.add('thumbnail');
+                    thumbnail.addEventListener('click', () => mainImage.src = imagePath);
+                    thumbnailContainer.appendChild(thumbnail);
+                } else {
+                    mainImage.src = '/assets/img/product-main.jpg'; // Imagen por defecto
+                }
+            }
+
+            // select tallas de la lista de tallas separadas por comas 
+            function loadSizes(sizes) {
+                console.log("sizes ", sizes);
+
+                // Seleccionar el contenedor del select de tallas
+                const sizeSelect = document.querySelector('#sizeButtons');
+                sizeSelect.innerHTML = '';
+
+                // Convertir la cadena de tallas a un array si es necesario
+                if (typeof sizes === 'string') {
+                    sizes = sizes.split(',').map(size => size.trim());
+                }
+
+                // Verificar si sizes es un array antes de intentar recorrerlo
+                if (Array.isArray(sizes) && sizes.length > 0) {
+                    sizes.forEach(size => {
+                        const option = document.createElement('option');
+                        option.value = size;
+                        option.textContent = size;
+                        sizeSelect.appendChild(option);
+                    });
+                } else {
+                    console.warn('No se encontraron tallas disponibles.');
+                    sizeSelect.innerHTML = '<option disabled selected>No hay tallas disponibles</option>'; // Mensaje alternativo
+                }
+            }
+
+            // select colores de la lista de colores separados por comas 
+            function loadColors(colors) {
+                console.log("colores ", colors);
+
+                // Seleccionar el contenedor del select de colores
+                const colorSelect = document.querySelector('#colorButtons');
+                colorSelect.innerHTML = '';
+
+                // Convertir la cadena de colores a un array si es necesario
+                if (typeof colors === 'string') {
+                    colors = colors.split(',').map(color => color.trim()); // Divide por comas y quita espacios
+                }
+
+                // Verificar si colors es un array antes de intentar recorrerlo
+                if (Array.isArray(colors) && colors.length > 0) {
+                    colors.forEach(color => {
+                        const option = document.createElement('option');
+                        option.value = color;
+                        option.textContent = color;
+                        option.style.backgroundColor = color;
+                        colorSelect.appendChild(option);
+                    });
+                } else {
+                    console.warn('No se encontraron colores disponibles.');
+                    colorSelect.innerHTML = '<option disabled selected>No hay colores disponibles</option>';
+                }
+            }
+
+            // Cargar productos relacionados
+            async function loadRelatedProducts(categoryId) {
+                try {
+                    const response = await fetch(`/api/relatedProducts/${categoryId}`);
+                    const relatedProducts = await response.json();
+                    const relatedProductsContainer = document.getElementById('relatedProducts');
+                    
+                    relatedProductsContainer.innerHTML = relatedProducts.map(product => `
+                        <div class="related-product">
+                            <a href="/productDetails.html?id=${product.producto_id}">
+                                <img src="${product.imagenes[0] || '/assets/img/product-main.jpg'}" alt="${product.nombre_producto}">
+                                <p>${product.nombre_producto}</p>
+                                <span>$${product.precio}</span>
+                            </a>
+                        </div>
+                    `).join('');
+                } catch (error) {
+                    console.error('Error al cargar productos relacionados:', error);
+                }
+            }
+
+            // Manejar cantidad de productos
+            document.querySelector('.quantity-btn.minus').addEventListener('click', () => {
+                quantityInput.value = Math.max(1, parseInt(quantityInput.value) - 1);
+            });
+            document.querySelector('.quantity-btn.plus').addEventListener('click', () => {
+                quantityInput.value = parseInt(quantityInput.value) + 1;
+            });
+
+            // Añadir al carrito
+            /*document.getElementById('addToCart').addEventListener('click', async () => {
+                if (!selectedSize || !selectedColor) {
+                    Swal.fire('Por favor selecciona una talla y un color');
+                    return;
+                }
+
+                const quantity = parseInt(quantityInput.value);
+                try {
+                    const response = await fetch('/api/cart', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            cliente_id: localStorage.getItem('cliente_id'),
+                            producto_id: productId,
+                            cantidad: quantity,
+                            talla: selectedSize,
+                            color: selectedColor,
+                            fecha_agregado: new Date().toISOString()
+                        })
+                    });
+                    if (response.ok) {
+                        Swal.fire('Producto añadido al carrito');
+                    } else {
+                        Swal.fire('Error al añadir al carrito');
+                    }
+                } catch (error) {
+                    console.error('Error al añadir al carrito:', error);
+                }
+            });*/
+
+            // Añadir a la lista de deseos
+            /*document.getElementById('addToWishlist').addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/api/wishlist', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            cliente_id: localStorage.getItem('cliente_id'),
+                            producto_id: productId,
+                            fecha_agregado: new Date().toISOString()
+                        })
+                    });
+                    if (response.ok) {
+                        Swal.fire('Producto añadido a la lista de deseos');
+                    } else {
+                        Swal.fire('Error al añadir a la lista de deseos');
+                    }
+                } catch (error) {
+                    console.error('Error al añadir a la lista de deseos:', error);
+                }
+            });*/
+
+            // Cambiar entre pestañas
+            document.querySelectorAll('.tab-btn').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+
+                    tab.classList.add('active');
+                    document.getElementById(tab.getAttribute('data-tab')).classList.add('active');
+                });
+            });
+
+            // Cargar detalles del producto al iniciar
+            loadProductDetails();
+
+            //traer contadores de carrito y de lista de deceos 
+            const clientId = localStorage.getItem("cliente_id");
+            if (clientId) {
+                contador(clientId);
+            }
+
+        });
+
+        //funcion que llama a los contadores de carrito y de lista de decesos  
+        async function contador(clientId) {
+            try {
+                // Obtener conteo de la lista de deseos
+                const wishlistResponse = await fetch(`/api/wishlist/count/${clientId}`);
+                const wishlistData = await wishlistResponse.json(); // Espera la respuesta JSON
+                document.querySelector(".header__user-actions .header__action-btn[href='/whishlistCliente'] .count").textContent = wishlistData.count;
+
+                // Obtener conteo del carrito
+                const cartResponse = await fetch(`/api/cart/count/${clientId}`);
+                const cartData = await cartResponse.json(); // Espera la respuesta JSON
+                document.querySelector(".header__user-actions .header__action-btn[href='/cartCliente'] .count").textContent = cartData.count;
+            } catch (error) {
+                console.error("Error al obtener conteos de lista de deseos y carrito:", error);
+            }
+        }
+
+        // Inicialización de productosEnCarrito
+        const productosEnCarrito = new Set();
+
+         // Agregar a carrito
+        function AddToCart(event) {
+            event.preventDefault();
+
+            // Obtener la cantidad desde el input
+            const quantityInput = document.getElementById('quantity');
+            const quantity = quantityInput ? quantityInput.value : 1;
+            const clientId = localStorage.getItem("cliente_id");
+
+            // Obtener el valor de la talla seleccionada
+            const sizeSelect = document.querySelector('#sizeButtons');
+            const selectedSize = sizeSelect ? sizeSelect.value : null;
+
+            // Obtener el valor del color seleccionado
+            const colorSelect = document.querySelector('#colorButtons');
+            const selectedColor = colorSelect ? colorSelect.value : null;
+
+            // Comprobar si el producto ya está en el carrito
+            if (productosEnCarrito.has(productId)) {
+                alert("El producto ya está en el carrito");
+                return;
+            }
+
+            // Crear el objeto cartData con los datos necesarios
+            const cartData = {
+                cliente_id: clientId,
+                producto_id: productId,
+                cantidad: quantity,
+                talla: selectedSize,  
+                color: selectedColor, 
+                fecha_agregado: new Date().toISOString()
+            };
+
+            // Realizar solicitud POST al servidor para agregar al carrito
+            fetch("/api/cart/cart", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(cartData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    contador(clientId);
+                    productosEnCarrito.add(productId);
+                    return response.json();
+                } else {
+                    return response.json().then(error => {
+                        throw new Error(error.message);
+                    });
+                }
+            })
+            .then(result => {
+                alert("Producto agregado al carrito con éxito");
+            })
+            .catch(error => {
+                if (error.message === "El producto ya está en el carrito") {
+                    alert(`${error.message}`);
+                } else {
+                    alert(`Error al agregar el producto al carrito: ${error.message}`);
+                }
+            });
+        }
+    
+        //agregar a List deceos 
+        function AddToList(event) {
+            event.preventDefault();
+
+            // Obtener elementos relevantes
+            const clientId = localStorage.getItem("cliente_id");
+          
+            // Configurar los datos para enviar al servidor
+            const cartData = {
+                cliente_id: clientId,
+                producto_id: productId,
+                fecha_agregado: new Date().toISOString()
+            };
+
+            // Realizar solicitud POST al servidor
+            fetch("/api/wishlist/List", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(cartData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    contador(clientId);
+                    return response.json();
+                } else {
+                    return response.json().then(error => {
+                        throw new Error(error.message);
+                    });
+                }
+            })
+            .then(result => {
+                alert("Producto agregado a la lista de deseos con éxito");
+            })
+            .catch(error => {
+                if(error.message == "El producto ya está en la lista de deseos"){
+                    alert(`${error.message}`);
+                }else{
+                    alert(`Error al agregar el producto: ${error.message}`);
+                }
+            });
+        }
+
+        // Agregar el listener al botón "Agregar al Carrito"
+        document.getElementById('addToCart').addEventListener('click', AddToCart);
+        // Agregar el listener al botón "Agregar al lista deceos"
+        document.getElementById('addToWishlist').addEventListener('click', AddToList);
+    </script>
+</body>
+</html>

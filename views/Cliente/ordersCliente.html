@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="css/style.css">
+    <title>Mis Pedidos - LUMINAR</title>
+</head>
+
+<body>
+    <!--== HEADER ==-->
+    <header class="header">
+        <div class="header__top">
+            <div class="header__container container">
+                <div class="header__contact">
+                    <span>luminaropa@gmail.com</span>
+                    <span>+57 3134717406</span>
+                </div>
+                <p class="header__alert-news">LUMINAR</p>
+                <a href="/" class="header__top-action">
+                    Cierre de sesión
+                </a>
+            </div>
+        </div>
+
+        <nav class="nav container">
+            <a href="/indexCliente" class="nav__logo">
+                <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
+            </a>
+
+            <div class="nav__menu" id="nav__menu">
+                <ul class="nav__list">
+                    <li class="nav__item"><a href="/indexCliente" class="nav__link active-link">INICIO</a></li>
+                    <li class="nav__item"><a href="/shopCliente" class="nav__link">Tienda</a></li>
+                    <li class="nav__item"><a href="/editarperfilCliente" class="nav__link">Mi cuenta</a></li>
+                    <li class="nav__item"><a href="/ordersCliente" class="nav__link">Pedidos</a></li>
+                </ul>
+
+                <div class="header_search">
+                    <input type="text" placeholder="Buscar productos..." class="form__input">
+                </div>
+            </div>
+
+            <div class="header__user-actions">
+                <a href="/whishlistCliente" class="header__action-btn">
+                    <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
+                    <span class="count">3</span>
+                </a>
+                <a href="/cartCliente" class="header__action-btn">
+                    <img src="assets/img/icon-cart.svg" alt="Carrito">
+                    <span class="count">3</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!--=== ORDERS ===-->
+    <main class="main section--lg">
+        <div class="container">
+            <h2 class="section__title">Mis Pedidos</h2>
+
+            <!-- Loading indicator -->
+            <div id="loading" class="loading" style="display: none;">
+                <p>Cargando pedidos...</p>
+            </div>
+
+            <!-- Table for Orders -->
+            <div class="card card-body border-0 shadow table-wrapper table-responsive">
+                <table class="table table-hover" id="ordersTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Producto(s)</th>
+                            <th>Fecha de Pedido</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersBody">
+                        <!-- Orders will be dynamically loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!--=== FOOTER ===-->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__links">
+                    <h4 class="footer__title">Enlaces Útiles</h4>
+                    <ul class="footer__list">
+                        <li><a href="/shopCliente">Tienda</a></li>
+                        <li><a href="/editarperfilCliente">Mi Cuenta</a></li>
+                        <li><a href="/whishlistCliente">Lista de Deseos</a></li>
+                        <li><a href="/ordersCliente">Pedidos</a></li>
+                        <li><a href="/cartCliente">Carrito</a></li>
+                        <li><a href="privacy-policy" target="_blank">Políticas de Privacidad</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer__contact">
+                    <h4 class="footer__title">Contáctanos</h4>
+                    <p>Teléfono: +57 3134717406</p>
+                    <p>Email: luminaropa@gmail.com</p>
+                    <p>Direccion: Neos Centro, Calle 12 B, 9-40</p>
+                </div>
+
+                <div class="footer__social">
+                    <h4 class="footer__title">Síguenos</h4>
+                    <ul class="footer__social-list">
+                        <li><a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank"><i class="fi fi-rr-facebook"></i> Facebook</a></li>
+                        <li><a href="https://www.tiktok.com/@luminar.2023" target="_blank"><i class="fi fi-rr-tiktok"></i> TikTok</a></li>
+                        <li><a href="https://www.instagram.com/luminar.2023/" target="_blank"><i class="fi fi-rr-instagram"></i> Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer__bottom">
+                <p>&copy; 2024 Luminar. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SWIPER JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <!-- SWEETALERT2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- MAIN JS -->
+    <script src="./assets/js/main.js"></script>
+
+    <!-- Orders Functionality Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const apiUrl = '/api/order';
+            const apiOrderDetailsUrl = '/api/orderDetails';
+
+            // Show notification function
+            const showNotification = (message, type = 'success') => {
+                Swal.fire({
+                    toast: true,
+                    icon: type,
+                    title: message,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+            };
+
+            // Update wishlist and cart counters
+            const updateCounters = async () => {
+                try {
+                    const clienteId = localStorage.getItem('cliente_id');
+                    if (!clienteId) {
+                        console.warn('Cliente ID not found in local storage');
+                        return;
+                    }
+
+                    const [wishlistResponse, cartResponse] = await Promise.all([
+                        fetch(`/api/wishlist/count?clienteId=${clienteId}`),
+                        fetch(`/api/order/cart/count?clienteId=${clienteId}`)
+                    ]);
+
+                    if (wishlistResponse.ok && cartResponse.ok) {
+                        const wishlistData = await wishlistResponse.json();
+                        const cartData = await cartResponse.json();
+
+                        document.querySelector('.header__action-btn[href="/whishlistCliente"] .count').textContent = wishlistData.count || 0;
+                        document.querySelector('.header__action-btn[href="/cartCliente"] .count').textContent = cartData.count || 0;
+                    } else {
+                        console.error('Error fetching wishlist or cart counts');
+                    }
+                } catch (error) {
+                    console.error('Error updating counters:', error);
+                }
+            };
+
+            // Load orders with details
+            async function cargarOrdenes() {
+                try {
+                    document.getElementById('loading').style.display = 'block';
+                    const response = await fetch(apiUrl);
+                    document.getElementById('loading').style.display = 'none';
+
+                    if (!response.ok) throw new Error('Failed to fetch orders');
+
+                    const orders = await response.json();
+                    const ordersBody = document.getElementById('ordersBody');
+                    ordersBody.innerHTML = '';
+
+                    // Procesar órdenes y generar filas para la tabla
+                    orders.forEach(order => {
+                        // Verifica si el total está definido y es un número
+                        const total = typeof order.total === 'number' ? order.total.toFixed(2) : '0.00';
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><a href="#" class="fw-bold">${order.orden_id}</a></td>
+                            <td><span class="fw-normal">${order.Detalles.map(detail => detail.Producto.nombre_producto).join(', ')}</span></td>
+                            <td><span class="fw-normal">${new Date(order.fecha_orden).toLocaleDateString()}</span></td>
+                            <td><span class="fw-bold">$${total}</span></td>
+                            <td><span class="fw-bold text-${order.estado === 'entregada' ? 'success' : 'warning'}">${order.estado}</span></td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-link text-dark" onclick="toggleOrderDetails(${order.orden_id}, this)">Ver Detalles</button> |
+                                    <button class="btn btn-link text-dark" onclick="reorder(${order.orden_id})">Reordenar</button>
+                                </div>
+                            </td>
+                        `;
+                        ordersBody.appendChild(row);
+
+                        // Añadir fila de detalles oculta
+                        const detailRow = document.createElement('tr');
+                        detailRow.classList.add('order-details-row');
+                        detailRow.style.display = 'none';
+                        detailRow.innerHTML = `
+                            <td colspan="6">
+                                <div class="order-details" id="order-details-${order.orden_id}">
+                                    <!-- Los detalles del pedido se cargarán aquí -->
+                                    <p>Cargando detalles...</p>
+                                </div>
+                            </td>
+                        `;
+                        ordersBody.appendChild(detailRow);
+                    });
+                } catch (error) {
+                    console.error('Error:', error);
+                    showNotification('Error loading orders', 'error');
+                }
+            }
+
+            // Toggle order details visibility
+            window.toggleOrderDetails = async (orderId, button) => {
+                const detailRow = document.querySelector(`#order-details-${orderId}`).closest('tr');
+                if (detailRow.style.display === 'none') {
+                    detailRow.style.display = 'table-row';
+                    await loadOrderDetails(orderId);
+                    button.textContent = 'Ocultar Detalles';
+                } else {
+                    detailRow.style.display = 'none';
+                    button.textContent = 'Ver Detalles';
+                }
+            };
+
+            // Load order details function
+            async function loadOrderDetails(orderId) {
+                try {
+                    const detailsContainer = document.getElementById(`order-details-${orderId}`);
+                    detailsContainer.innerHTML = '<p>Cargando detalles...</p>';
+
+                    const response = await fetch(`${apiOrderDetailsUrl}/orden/${orderId}`);
+                    if (!response.ok) throw new Error('Failed to fetch order details');
+
+                    const orderDetails = await response.json();
+                    let detailsHTML = '<table class="table table-hover"><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Total</th></tr></thead><tbody>';
+
+                    orderDetails.forEach(detail => {
+                        detailsHTML += `
+                            <tr>
+                                <td>${detail.Producto.nombre_producto}</td>
+                                <td>${detail.cantidad}</td>
+                                <td>$${detail.Producto.precio.toFixed(2)}</td>
+                                <td>$${(detail.cantidad * detail.Producto.precio).toFixed(2)}</td>
+                            </tr>
+                        `;
+                    });
+                    detailsHTML += '</tbody></table>';
+                    detailsContainer.innerHTML = detailsHTML;
+                } catch (error) {
+                    console.error('Error loading order details:', error);
+                    showNotification('Error loading order details', 'error');
+                }
+            }
+
+            // Reorder function
+            window.reorder = async (orderId) => {
+                try {
+                    const response = await fetch(`/api/order/${orderId}/reorder`, { method: 'POST' });
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        showNotification('Productos añadidos al carrito correctamente');
+                        updateCounters();
+                    } else {
+                        throw new Error(data.message || 'Error reordering products');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showNotification('Error al reordenar los productos', 'error');
+                }
+            };
+
+            // Initialize counters and load orders
+            updateCounters();
+            cargarOrdenes();
+        });
+    </script>
+</body>
+
+</html>

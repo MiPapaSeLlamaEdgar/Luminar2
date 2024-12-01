@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes | Luminar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <!-- ... otros enlaces ... -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
+    <style>
+        :root {
+            --primary-color: #D6266F;
+            --secondary-color: #4A2828;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+        }
+/* Información del usuario */
+.user-info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Coloca el contenido a la izquierda */
+    margin-top: 30px; /* Espacio en la parte superior de la imagen */
+    padding-top: 20px;
+    border-top: 1px solid #eee; /* Línea superior */
+}
+
+/* Imagen de perfil */
+.profile-img {
+    width: 40px; /* Tamaño más pequeño */
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px; /* Espacio entre la imagen y el nombre */
+}
+
+.user-info span {
+    color: var(--text-color);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--card-color);
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar-header h2 {
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .nav-links li a {
+            display: block;
+            padding: 15px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-links li a:hover,
+        .nav-links li a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: var(--background-color);
+        }
+
+        /* Filtros Section */
+        .filtros-section {
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filtros-section select,
+        .filtros-section input {
+            padding: 8px 15px;
+            border: 1px solid #ddd; 
+            border-radius: 5px;
+        }
+
+        .generar-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Reports Grid */
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .report-card {
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .report-card h3 {
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Export Buttons */
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .export-btn {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .export-pdf {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .export-excel {
+            background-color: #28a745;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Panel Vendedor</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/vendedor/dashboard-vendedor">Inicio</a></li>
+                <li><a href="/vendedor/ventas">Ventas</a></li>
+                <li><a href="/vendedor/clientes" >Clientes</a></li>
+                <li><a href="/vendedor/inventario">Inventario</a></li>
+                <li><a href="/vendedor/reportes" class="active">Reportes</a></li>
+            </ul>
+            <div class="user-info">
+                <img src="/images/foto.jpeg" alt="Profile" class="profile-img">
+                <span>Andres Mora</span>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h2 style="margin-bottom: 20px;">Reportes y Análisis</h2>
+
+            <!-- Filtros -->
+            <div class="filtros-section">
+                <select id="tipoReporte">
+                    <option value="">Tipo de Reporte</option>
+                    <option value="ventas">Ventas</option>
+                    <option value="inventario">Inventario</option>
+                    <option value="clientes">Clientes</option>
+                </select>
+                <input type="date" id="fechaInicio">
+                <input type="date" id="fechaFin">
+                <button class="generar-btn" onclick="generarReporte()">Generar Reporte</button>
+            </div>
+
+            <!-- Reports Grid -->
+            <div class="reports-grid">
+                <div class="report-card">
+                    <h3>Resumen de Ventas</h3>
+                    <canvas id="ventasResumenChart"></canvas>
+                    <div class="export-buttons">
+                        <button class="export-btn export-pdf">PDF</button>
+                        <button class="export-btn export-excel">Excel</button>
+                    </div>
+                </div>
+                <div class="report-card">
+                    <h3>Productos más Vendidos</h3>
+                    <canvas id="productosTopChart"></canvas>
+                    <div class="export-buttons">
+                        <button class="export-btn export-pdf">PDF</button>
+                        <button class="export-btn export-excel">Excel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <div class="chart-container">
+                    <h3>Tendencias de Ventas</h3>
+                    <canvas id="tendenciasChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Análisis de Clientes</h3>
+                    <canvas id="clientesChart"></canvas>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gráfico de Resumen de Ventas
+            const ventasResumen = new Chart(document.getElementById('ventasResumenChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Ventas Mensuales',
+                        data: [12000, 19000, 15000, 25000, 22000, 30000],
+                        borderColor: '#D6266F',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+
+            // Gráfico de Productos Top
+            const productosTop = new Chart(document.getElementById('productosTopChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Producto A', 'Producto B', 'Producto C', 'Producto D', 'Producto E'],
+                    datasets: [{
+                        label: 'Unidades Vendidas',
+                        data: [300, 250, 200, 150, 100],
+                        backgroundColor: '#4A2828'
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+
+            // Gráfico de Tendencias
+            const tendencias = new Chart(document.getElementById('tendenciasChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+                    datasets: [{
+                        label: 'Tendencia',
+                        data: [5000, 7000, 6000, 8000],
+                        borderColor: '#D6266F',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+
+            // Gráfico de Clientes
+            const clientes = new Chart(document.getElementById('clientesChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Nuevos', 'Recurrentes', 'Inactivos'],
+                    datasets: [{
+                        data: [30, 50, 20],
+                        backgroundColor: ['#D6266F', '#4A2828', '#6c757d']
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        });
+
+        function generarReporte() {
+            const tipoReporte = document.getElementById('tipoReporte').value;
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+
+            // Aquí iría la lógica para generar el reporte según los filtros seleccionados
+            console.log('Generando reporte:', { tipoReporte, fechaInicio, fechaFin });
+        }
+        // Funciones para exportar reportes
+function exportarPDF(tipoReporte) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Configuración del documento
+    doc.setFont("helvetica");
+    doc.setFontSize(20);
+    doc.setTextColor(214, 38, 111); // Color primario Luminar
+
+    // Título
+    doc.text("Reporte de " + tipoReporte.charAt(0).toUpperCase() + tipoReporte.slice(1), 20, 20);
+    
+    // Fecha del reporte
+    doc.setFontSize(12);
+    doc.setTextColor(51, 51, 51);
+    doc.text("Fecha: " + new Date().toLocaleDateString(), 20, 30);
+
+    // Datos según el tipo de reporte
+    let datos = obtenerDatosReporte(tipoReporte);
+    
+    // Generar tabla
+    doc.autoTable({
+        head: [datos.columnas],
+        body: datos.filas,
+        startY: 40,
+        styles: {
+            fontSize: 10,
+            cellPadding: 6,
+            lineColor: [221, 221, 221],
+            lineWidth: 0.1,
+        },
+        headStyles: {
+            fillColor: [214, 38, 111],
+            textColor: [255, 255, 255],
+            fontStyle: 'bold',
+        },
+        alternateRowStyles: {
+            fillColor: [245, 245, 245],
+        },
+    });
+
+    // Guardar el PDF
+    doc.save(`reporte_${tipoReporte}_${formatearFecha(new Date())}.pdf`);
+}
+
+function exportarExcel(tipoReporte) {
+    // Obtener datos según el tipo de reporte
+    let datos = obtenerDatosReporte(tipoReporte);
+    
+    // Crear libro de trabajo
+    const wb = XLSX.utils.book_new();
+    
+    // Crear hoja de cálculo con los datos
+    const ws = XLSX.utils.aoa_to_sheet([
+        datos.columnas,
+        ...datos.filas
+    ]);
+
+    // Añadir la hoja al libro
+    XLSX.utils.book_append_sheet(wb, ws, tipoReporte.charAt(0).toUpperCase() + tipoReporte.slice(1));
+
+    // Guardar el archivo
+    XLSX.writeFile(wb, `reporte_${tipoReporte}_${formatearFecha(new Date())}.xlsx`);
+}
+
+function obtenerDatosReporte(tipoReporte) {
+    let columnas = [];
+    let filas = [];
+
+    switch(tipoReporte) {
+        case 'ventas':
+            columnas = ['ID', 'Fecha', 'Cliente', 'Producto', 'Monto', 'Estado'];
+            filas = [
+                ['001', '2024-03-20', 'Juan Pérez', 'Producto A', '$1,500', 'Completado'],
+                ['002', '2024-03-19', 'María García', 'Producto B', '$2,300', 'Pendiente'],
+                // ... más datos
+            ];
+            break;
+
+        case 'inventario':
+            columnas = ['ID', 'Producto', 'Categoría', 'Stock', 'Precio', 'Estado'];
+            filas = [
+                ['001', 'Producto A', 'Categoría 1', '50', '$100', 'En stock'],
+                ['002', 'Producto B', 'Categoría 2', '30', '$150', 'Bajo stock'],
+                // ... más datos
+            ];
+            break;
+
+        case 'clientes':
+            columnas = ['ID', 'Nombre', 'Email', 'Teléfono', 'Última Compra', 'Estado'];
+            filas = [
+                ['001', 'Juan Pérez', 'juan@email.com', '1234567890', '2024-03-15', 'Activo'],
+                ['002', 'María García', 'maria@email.com', '0987654321', '2024-03-10', 'Activo'],
+                // ... más datos
+            ];
+            break;
+    }
+
+    return { columnas, filas };
+}
+
+function formatearFecha(fecha) {
+    return fecha.toISOString().split('T')[0];
+}
+
+// Modificar la función generarReporte existente
+function generarReporte() {
+    const tipoReporte = document.getElementById('tipoReporte').value;
+    const fechaInicio = document.getElementById('fechaInicio').value;
+    const fechaFin = document.getElementById('fechaFin').value;
+
+    if (!tipoReporte) {
+        alert('Por favor seleccione un tipo de reporte');
+        return;
+    }
+
+    // Crear modal de opciones de exportación
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 300px;">
+            <h3>Exportar Reporte</h3>
+            <p>Seleccione el formato de exportación:</p>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="exportarPDF('${tipoReporte}')" class="export-btn export-pdf">
+                    Exportar PDF
+                </button>
+                <button onclick="exportarExcel('${tipoReporte}')" class="export-btn export-excel">
+                    Exportar Excel
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Cerrar modal al hacer clic fuera
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+}
+    </script>
+</body>
+</html>

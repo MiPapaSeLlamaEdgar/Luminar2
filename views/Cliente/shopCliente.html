@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <title>Shop - Luminar</title>
+    <style>
+        /* Estilo para los tabs de categorías */
+        .categories {
+            padding: 20px 0;
+            background-color: #f5f5f5;
+        }
+        .categories__tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .category__tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .category__tab:hover,
+        .category__tab.active {
+            background-color: #333;
+            color: #fff;
+            border-color: #333;
+        }
+        
+    </style>
+<body>
+    <header class="header">
+        <div class="header__top">
+            <div class="header__container container">
+                <div class="header__contact">
+                    <span>luminaropa@gmail.com</span>
+                    <span>+57 3134717406</span>
+                </div>
+
+                <p class="header__alert-news">LUMINAR</p>
+
+                <a href="/" class="header__top-action">
+                    Cierre de sesión
+                </a>
+            </div>
+        </div>
+
+        <nav class="nav container">
+            <a href="/indexPortal" class="nav__logo">
+                <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
+            </a>
+
+            <div class="nav__menu" id="nav__menu">
+                <ul class="nav__list">
+                    <li class="nav__item">
+                        <a href="/indexCliente" class="nav__link active-link">INICIO</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/shopCliente" class="nav__link">Tienda</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/editarperfilCliente" class="nav__link">Mi cuenta</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/ordersCliente" class="nav__link">Pedidos</a>
+                    </li>
+                </ul>
+
+                <div class="header_search">
+                    <input type="text" placeholder="Buscar productos..." class="form__input">
+                    <button class="search__btn">
+                        <i class="fi fi-rr-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="header__user-actions">
+                <a href="/whishlistCliente" class="header__action-btn">
+                    <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
+                    <span class="count">0</span>
+                </a>
+
+                <a href="/cartCliente" class="header__action-btn">
+                    <img src="assets/img/icon-cart.svg" alt="Carrito">
+                    <span class="count">0</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- CATEGORÍAS (TABS) -->
+    <section class="categories section">
+        <div class="categories__container">
+            <ul class="categories__tabs">
+                <li class="category__tab active" data-category="all">Todos</li>
+                <li class="category__tab" data-category="blazer">Blazer</li>
+                <li class="category__tab" data-category="abrigos">Abrigos</li>
+                <li class="category__tab" data-category="faldas">Faldas</li>
+                <li class="category__tab" data-category="pantalones">Pantalones</li>
+                <li class="category__tab" data-category="chaquetas">Chaquetas</li>
+                <li class="category__tab" data-category="gabanes">Gabanes</li>
+                <li class="category__tab" data-category="tops">Tops</li>
+                <li class="category__tab" data-category="legis">Legis</li>
+                <li class="category__tab" data-category="corset">Corset</li>
+                <li class="category__tab" data-category="blusas">Blusas</li>
+                <li class="category__tab" data-category="chalecos">Chalecos</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- MAIN SHOP SECTION -->
+    <main class="main">
+        <section class="shop section">
+            <div class="shop__container container">
+                <h2 class="section__title">Tienda</h2>
+                <div class="products__container grid">
+                    <!-- Los productos se renderizan dinámicamente aquí -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__links">
+                    <h4 class="footer__title">Enlaces Útiles</h4>
+                    <ul class="footer__list">
+                        <li><a href="/shopCliente">Tienda</a></li>
+                        <li><a href="/editarperfilCliente">Mi Cuenta</a></li>
+                        <li><a href="/whishlistCliente">Lista de Deseos</a></li>
+                        <li><a href="/ordersCliente">Pedidos</a></li>
+                        <li><a href="/cartCliente">Carrito</a></li>
+                        <li><a href="privacy-policy" target="_blank">Políticas de Privacidad</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer__contact">
+                    <h4 class="footer__title">Contáctanos</h4>
+                    <p>Teléfono: +57 3134717406</p>
+                    <p>Email: luminaropa@gmail.com</p>
+                    <p>Direccion: Neos Centro, Calle 12 B, 9-40</p>
+                </div>
+
+                <div class="footer__social">
+                    <h4 class="footer__title">Síguenos</h4>
+                    <ul class="footer__social-list">
+                        <li><a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank"><i class="fi fi-rr-facebook"></i> Facebook</a></li>
+                        <li><a href="https://www.tiktok.com/@luminar.2023" target="_blank"><i class="fi fi-rr-tiktok"></i> TikTok</a></li>
+                        <li><a href="https://www.instagram.com/luminar.2023/" target="_blank"><i class="fi fi-rr-instagram"></i> Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer__bottom">
+                <p>&copy; 2024 Luminar. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MAIN JS -->
+    <script src="assets/js/main.js"></script>
+
+    <!-- Script para cargar y filtrar productos según la categoría seleccionada -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Función para cargar productos con opción de filtrar por categoría
+            async function loadProducts(category = 'all') {
+                try {
+                    const response = await fetch('/api/product');
+                    const products = await response.json();
+
+                    // Filtrar productos por categoría si se selecciona una
+                    const filteredProducts = category === 'all' ? products : products.filter(product => product.Categoria && product.Categoria.nombre_categoria.toLowerCase() === category.toLowerCase());
+
+                    // Contenedor de productos
+                    const productsContainer = document.querySelector('.products__container');
+                    productsContainer.innerHTML = '';
+
+                    // Crear HTML de cada producto
+                    filteredProducts.forEach(product => {
+                        const productHTML = `
+                            <div class="product__item">
+                                <div class="product__banner">
+                                    <a href="/detailsCliente/${product.producto_id}" class="product__images">
+                                        <img src="${product.imagenes}" alt="${product.nombre_producto}" class="product__img default">
+                                    </a>
+                                    ${product.estado === 'agotado' ? '<div class="product__badge light-red">Agotado</div>' : ''}
+                                </div>
+                                <div class="product__content">
+                                    <span class="product__category">${product.Categoria ? product.Categoria.nombre_categoria : 'Sin categoría'}</span>
+                                    <h3 class="product__title">
+                                        <a href="/detailsCliente/${product.producto_id}" style="text-decoration: none; color: inherit;">
+                                            ${product.nombre_producto}
+                                        </a>
+                                    </h3>
+                                    <div class="product__price flex">
+                                        <span class="new__price">$${product.precio}</span>
+                                    </div>
+                                    <div class="product__options">
+                                        <label for="sizeSelect-${product.producto_id}">Talla:</label>
+                                        <select id="sizeSelect-${product.producto_id}" class="product__select">
+                                            ${product.talla ? product.talla.split(',').map(size => `<option value="${size.trim()}">${size.trim()}</option>`).join('') : '<option>No disponible</option>'}
+                                        </select>
+                                        <label for="colorSelect-${product.producto_id}">Color:</label>
+                                        <select id="colorSelect-${product.producto_id}" class="product__select">
+                                            ${product.color ? product.color.split(',').map(color => `<option value="${color.trim()}" style="background-color: ${color.trim()};">${color.trim()}</option>`).join('') : '<option>No disponible</option>'}
+                                        </select>
+                                    </div>
+                                    <!-- Contador de cantidad -->
+                                    <div class="product__quantity">
+                                        <button type="button" class="quantity__button" onclick="decreaseQuantity(${product.producto_id})">-</button>
+                                        <input type="number" id="quantity-${product.producto_id}" class="quantity__input" value="1" min="1">
+                                        <button type="button" class="quantity__button" onclick="increaseQuantity(${product.producto_id})">+</button>
+                                    </div>
+                                    <!--carrito-->
+                                    <a href="#" class="action_btn cart_btn" data-product-id="${product.producto_id}" aria-label="Add To Cart" onclick="AddToCart(${product.producto_id})">card
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
+                                            <path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z"/>
+                                        </svg>
+                                    </a>
+                                    <!--List deseos -->
+                                    <a href="#" class="action_btn List_btn" data-product-id="${product.producto_id}" aria-label="Add To List" onclick="AddToList(${product.producto_id})">lista
+                                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
+                                            <path d="M440-501Zm0 381L313-234q-72-65-123.5-116t-85-96q-33.5-45-49-87T40-621q0-94 63-156.5T260-840q52 0 99 22t81 62q34-40 81-62t99-22q81 0 136 45.5T831-680h-85q-18-40-53-60t-73-20q-51 0-88 27.5T463-660h-46q-31-45-70.5-72.5T260-760q-57 0-98.5 39.5T120-621q0 33 14 67t50 78.5q36 44.5 98 104T440-228q26-23 61-53t56-50l9 9 19.5 19.5L605-283l9 9q-22 20-56 49.5T498-172l-58 52Zm280-160v-120H600v-80h120v-120h80v120h120v80H800v120h-80Z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>`;
+                        productsContainer.insertAdjacentHTML('beforeend', productHTML);
+                    });
+
+                    // Agregar event listeners a los botones de carrito
+                    document.querySelectorAll('.cart__btn').forEach(button => {
+                        button.addEventListener('click', async function(e) {
+                            e.preventDefault();
+                            const productId = this.getAttribute('data-product-id');
+
+                            try {
+                                const response = await fetch('/api/cart/add', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ producto_id: productId })
+                                });
+                                const result = await response.json();
+                                alert(result.message);
+                            } catch (error) {
+                                console.error('Error:', error);
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.error('Error al cargar productos:', error);
+                }
+            }
+
+            // Inicializar productos y categorías
+            loadProducts();
+
+            // Evento para cambiar la categoría activa y recargar productos
+            document.querySelectorAll('.category__tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.category__tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    const selectedCategory = this.getAttribute('data-category');
+                    loadProducts(selectedCategory);
+                });
+            });
+         
+            //traer contadores de carrito y de lista de deceos 
+            const clientId = localStorage.getItem("cliente_id");
+            if (clientId) {
+                contador(clientId);
+            }
+        });
+
+        //funcion que llama a los contadores de carrito y de lista de decesos  
+        async function contador(clientId) {
+            try {
+                // Obtener conteo de la lista de deseos
+                const wishlistResponse = await fetch(`/api/wishlist/count/${clientId}`);
+                const wishlistData = await wishlistResponse.json(); // Espera la respuesta JSON
+                document.querySelector(".header__user-actions .header__action-btn[href='/whishlistCliente'] .count").textContent = wishlistData.count;
+
+                // Obtener conteo del carrito
+                const cartResponse = await fetch(`/api/cart/count/${clientId}`);
+                const cartData = await cartResponse.json(); // Espera la respuesta JSON
+                document.querySelector(".header__user-actions .header__action-btn[href='/cartCliente'] .count").textContent = cartData.count;
+            } catch (error) {
+                console.error("Error al obtener conteos de lista de deseos y carrito:", error);
+            }
+        }
+
+        function increaseQuantity(productId) {
+            const quantityInput = document.getElementById(`quantity-${productId}`);
+            quantityInput.value = parseInt(quantityInput.value) + 1;
+        }
+
+        function decreaseQuantity(productId) {
+            const quantityInput = document.getElementById(`quantity-${productId}`);
+            if (quantityInput.value > 1) {
+                quantityInput.value = parseInt(quantityInput.value) - 1;
+            }
+        }
+
+        let productosEnCarrito = new Set(); 
+        
+        // Agregar a carrito
+        function AddToCart(productId) {
+            event.preventDefault();
+
+            const quantity = document.getElementById(`quantity-${productId}`).value;
+            const clientId = localStorage.getItem("cliente_id");
+
+            const sizeSelect = document.getElementById(`sizeSelect-${productId}`);
+            const colorSelect = document.getElementById(`colorSelect-${productId}`);
+            const selectedSize = sizeSelect ? sizeSelect.value : null;
+            const selectedColor = colorSelect ? colorSelect.value : null;
+
+
+            // Comprobar si el producto ya está en el carrito
+            if (productosEnCarrito.has(productId)) {
+                alert("El producto ya está en el carrito");
+                return;
+            }
+
+            const cartData = {
+                cliente_id: clientId,
+                producto_id: productId,
+                cantidad: quantity,
+                talla: selectedSize,
+                color: selectedColor,
+                fecha_agregado: new Date().toISOString()
+            };
+
+            // Realizar solicitud POST al servidor para agregar al carrito
+            fetch("/api/cart/cart", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(cartData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    contador(clientId);
+                    productosEnCarrito.add(productId);
+                    return response.json();
+                } else {
+                    return response.json().then(error => {
+                        throw new Error(error.message);
+                    });
+                }
+            })
+            .then(result => {
+                alert("Producto agregado al carrito con éxito");
+            })
+            .catch(error => {
+                if (error.message === "El producto ya está en el carrito") {
+                    alert(`${error.message}`);
+                } else {
+                    alert(`Error al agregar el producto al carrito: ${error.message}`);
+                }
+            });
+        }
+
+        //agregar a List deceos 
+        function AddToList(productId) {
+            event.preventDefault();
+
+            // Obtener elementos relevantes
+            const quantity = document.getElementById(`quantity-${productId}`).value;
+            const clientId = localStorage.getItem("cliente_id");
+          
+            // Configurar los datos para enviar al servidor
+            const cartData = {
+                cliente_id: clientId,
+                producto_id: productId,
+                fecha_agregado: new Date().toISOString()
+            };
+
+            // Realizar solicitud POST al servidor
+            fetch("/api/wishlist/List", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(cartData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    contador(clientId);
+                    return response.json();
+                } else {
+                    return response.json().then(error => {
+                        throw new Error(error.message);
+                    });
+                }
+            })
+            .then(result => {
+                alert("Producto agregado a la lista de deseos con éxito");
+            })
+            .catch(error => {
+                if(error.message == "El producto ya está en la lista de deseos"){
+                    alert(`${error.message}`);
+                }else{
+                    alert(`Error al agregar el producto: ${error.message}`);
+                }
+            });
+        }
+   
+   </script>
+</body>
+</html>

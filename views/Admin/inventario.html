@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Productos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>Dashboard de Productos</h1>
+    </header>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/dashboard-admin" class="back-button"><i class="fas fa-arrow-left"></i></a>
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="sidebar">
+                <ul class="nav-links">
+                    <li><a href="/dashboard-admin"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="/admin/usuarios"><i class="fas fa-user"></i> Usuarios</a></li>
+                    <li><a href="/admin/clientes"><i class="fas fa-users"></i> Clientes</a></li>
+                    <li><a href="/admin/ordenes"><i class="fas fa-clipboard-list"></i> Órdenes</a></li>
+                    <li><a href="/admin/inventario" class="active"><i class="fas fa-warehouse"></i> Inventario</a></li>
+                    <li><a href="/admin/reportes"><i class="fas fa-chart-line"></i> Reportes</a></li>
+                    <li><a href="/admin/config"><i class="fas fa-cogs"></i> Configuración</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar productos..." id="searchInput" onkeyup="buscarProducto()">
+                </div>
+                <div class="header__user-actions">
+                    <a href="#" class="header__action-btn"><i class="fas fa-bell"></i></a>
+                    <a href="#" class="header__action-btn"><i class="fas fa-cog"></i></a>
+                    <a href="#" class="header__action-btn"><i class="fas fa-sign-out-alt"></i></a>
+                </div>
+            </div>
+
+            <div class="productos-table">
+                <h3>Productos Disponibles</h3>
+                <button class="nuevo-producto-btn" onclick="mostrarModal()">Nuevo Producto</button>
+                <table id="productosTable">
+                    <thead>
+                        <tr>
+                            <th>ID Producto</th>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productosBody">
+                        <!-- Filas dinámicas generadas por JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal" id="productoModal">
+                <div class="modal-content">
+                    <span onclick="cerrarModal()" style="cursor:pointer;">&times;</span>
+                    <form id="productoForm">
+                        <input type="hidden" id="productoId">
+                        
+                        <div class="form-group">
+                            <label for="nombre">Nombre:</label>
+                            <input type="text" id="nombre" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="descripcion">Descripción:</label>
+                            <textarea id="descripcion"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="talla">Talla:</label>
+                            <input type="text" id="talla">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="color">Color:</label>
+                            <input type="text" id="color">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="precio">Precio:</label>
+                            <input type="number" id="precio" step=".01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="stock">Stock:</label>
+                            <input type="number" id="cantidad_stock">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="categoriaId">Categoría:</label>
+                            <select id="categoriaId" required>
+                                <!-- Opciones de categorías actualizadas -->
+                                <option value="">Seleccione una categoría</option>
+                                <option value="1">Blazer</option>
+                                <option value="2">Abrigos</option>
+                                <option value="3">Faldas</option>
+                                <option value="4">Pantalones</option>
+                                <option value="5">Chaquetas</option>
+                                <option value="6">Gabanes</option>
+                                <option value="7">Tops</option>
+                                <option value="8">Leggings</option>
+                                <option value="9">Corset</option>
+                                <option value="10">Blusas</option>
+                                <option value="11">Chalecos</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="imagenes">Imágenes:</label>
+                            <input type="file" id="imagenes" name="imagenes" accept="image/*">
+                            <img id="imagenPrevisualizacion" src="" alt="Previsualización" style="display: none; max-width: 100%; margin-top: 10px;">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="especificaciones">Especificaciones:</label>
+                            <textarea id="especificaciones"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="estado">Estado:</label>
+                            <select id="estado">
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">Inactivo</option>
+                                <option value="agotado">Agotado</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fecha_creacion">Fecha de Creación:</label>
+                            <input type="datetime-local" id="fecha_creacion">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fecha_modificacion">Fecha de Modificación:</label>
+                            <input type="datetime-local" id="fecha_modificacion">
+                        </div>
+                        
+                        <div class="modal-buttons">
+                            <button type="submit" class="save-btn">Guardar</button>
+                            <button type="button" onclick="cerrarModal()" class="cancel-btn">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <style>
+                .modal {
+                    display: none;
+                    justify-content: center;
+                    align-items: center;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.5);
+                    z-index: 1000;
+                    overflow: hidden;
+                }
+            
+                .modal-content {
+                    background-color: #fff;
+                    border-radius: 8px;
+                    max-width: 500px;
+                    width: 90%;
+                    max-height: 80%;
+                    overflow-y: auto;
+                    padding: 20px;
+                    box-sizing: border-box;
+                }
+            
+                .form-group {
+                    margin-bottom: 15px;
+                }
+            
+                .modal-buttons {
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 10px;
+                    margin-top: 20px;
+                }
+                
+            </style>
+            
+        </div>
+    </div>
+
+    <script>
+        const apiUrl = '/api/product/';
+        
+        function mostrarModal(producto = null) {
+            const modal = document.getElementById('productoModal');
+            if (producto) {
+                document.getElementById('productoId').value = producto.producto_id;
+                document.getElementById('nombre').value = producto.nombre_producto;
+                document.getElementById('descripcion').value = producto.descripcion;
+                document.getElementById('talla').value = producto.talla;
+                document.getElementById('color').value = producto.color;
+                document.getElementById('precio').value = producto.precio;
+                document.getElementById('cantidad_stock').value = producto.cantidad_stock;
+                document.getElementById('categoriaId').value = producto.categoria_id;
+                document.getElementById('especificaciones').value = producto.especificaciones;
+                document.getElementById('fecha_creacion').value = formatFecha(producto.fecha_creacion);
+                document.getElementById('fecha_modificacion').value = formatFecha(producto.fecha_modificacion);
+
+                if (producto.imagenes) {
+                    imagenPrevisualizacion.src = producto.imagenes;
+                    imagenPrevisualizacion.style.display = 'block';
+                } else {
+                    imagenPrevisualizacion.style.display = 'none';
+                }
+            } else {
+                document.getElementById('productoForm').reset();
+                document.getElementById('productoId').value = '';
+                imagenPrevisualizacion.style.display = 'none';
+            }
+            modal.style.display = 'block';
+        }
+
+        function formatFecha(fecha) {
+            const date = new Date(fecha);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
+        function cerrarModal() {
+            document.getElementById('productoModal').style.display = 'none';
+        }
+
+        async function cargarProductos() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error('Error al obtener productos');
+                const productos = await response.json();
+
+                const productosBody = document.getElementById('productosBody');
+                productosBody.innerHTML = '';
+                productos.forEach(producto => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${producto.producto_id}</td>
+                        <td>${producto.nombre_producto}</td>
+                        <td>${producto.Categoria.nombre_categoria}</td>
+                        <td>${producto.precio}</td>
+                        <td>${producto.cantidad_stock}</td>
+                        <td class="action-buttons">
+                            <button onclick='mostrarModal(${JSON.stringify(producto)})' class="editar-btn"><i class="fas fa-edit"></i> Editar</button>
+                            <button onclick='eliminarProducto(${producto.producto_id})' class="delete-btn"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                        </td>
+                    `;
+                    productosBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Error al cargar productos:", error);
+                alert('Error al cargar productos');
+            }
+        }
+
+        async function eliminarProducto(productoId) {
+            const confirmacion = confirm('¿Estás seguro de que deseas eliminar este producto?');
+            if (!confirmacion) return;
+
+            try {
+                const response = await fetch(`${apiUrl}/${productoId}`, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    cargarProductos();
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error al eliminar el producto: ${errorData.message || 'Error desconocido'}`);
+                }
+            } catch (error) {
+                alert('Error al conectar con el servidor');
+            }
+        }
+
+        function buscarProducto() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const filas = document.querySelectorAll('#productosBody tr');
+            filas.forEach(fila => {
+                const nombre = fila.children[1].textContent.toLowerCase();
+                fila.style.display = nombre.includes(input) ? '' : 'none';
+            });
+        }
+
+        document.getElementById("productoForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const productoId = document.getElementById("productoId").value;
+            const formData = new FormData();
+            formData.append("nombre_producto", document.getElementById("nombre").value);
+            formData.append("descripcion", document.getElementById("descripcion").value);
+            formData.append("talla", document.getElementById("talla").value);
+            formData.append("color", document.getElementById("color").value);
+            formData.append("precio", parseFloat(document.getElementById("precio").value));
+            formData.append("cantidad_stock", parseInt(document.getElementById("cantidad_stock").value));
+            formData.append("categoria_id", document.getElementById("categoriaId").value);
+            formData.append("especificaciones", document.getElementById("especificaciones").value);
+            formData.append("estado", document.getElementById("estado").value);
+            formData.append("fecha_creacion", document.getElementById("fecha_creacion").value);
+            formData.append("fecha_modificacion", document.getElementById("fecha_modificacion").value);
+
+            const imagenes = document.getElementById("imagenes").files[0];
+            if (imagenes) {
+                formData.append("imagenes", imagenes);
+            }
+
+            try {
+                let url = apiUrl;
+                let method = 'POST';
+
+                if (productoId) {
+                    url += `/${productoId}`;
+                    method = 'PUT';
+                }
+
+                const response = await fetch(url, {
+                    method: method,
+                    body: formData
+                });
+
+                if (response.ok) {
+                    cargarProductos();
+                    alert(`Producto ${productoId ? "actualizado" : "creado"} exitosamente.`);
+                    cerrarModal();
+                } else {
+                    const error = await response.json();
+                    cargarProductos();
+                    alert(`Error al ${productoId ? "actualizar" : "crear"} producto: ${error.message}`);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert(`Error en el servidor: ${error.message}`);
+            }
+        });
+
+        cargarProductos();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Ventas | Luminar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard-vendedor.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar (igual que en dashboard) -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Panel Vendedor</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/vendedor/dashboard-vendedor">Inicio</a></li>
+                <li><a href="/vendedor/ventas" class="active">Ventas</a></li>
+                <li><a href="/vendedor/clientes">Clientes</a></li>
+                <li><a href="/vendedor/inventario">Inventario</a></li>
+                <li><a href="/vendedor/reportes">Reportes</a></li>
+            </ul>
+            <div class="user-info">
+                <img src="/images/foto.jpeg" alt="Profile" class="profile-img">
+                <span>Andres Mora</span>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h2 style="margin-bottom: 20px;">Gestión de Ventas</h2>
+            <header class="top-bar">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar ventas...">
+                </div>
+                <div class="actions">
+                    <a href="/vendedor/nueva-venta">
+                        <button class="nueva-venta-btn">Nueva Venta</button>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Filtros de Ventas -->
+            <div class="filtros-section">
+                <select id="filtroEstado">
+                    <option value="">Estado</option>
+                    <option value="completada">Completada</option>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="cancelada">Cancelada</option>
+                </select>
+                <input type="date" id="fechaInicio">
+                <input type="date" id="fechaFin">
+                <button class="filtrar-btn">Aplicar Filtros</button>
+            </div>
+
+            <!-- Tabla de Ventas -->
+            <div class="ventas-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Venta</th>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Productos</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ventasTableBody">
+                        <!-- Datos dinámicos aquí -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Modal Nueva Venta -->
+            <div id="modalNuevaVenta" class="modal">
+                <div class="modal-content">
+                    <h2>Nueva Venta</h2>
+                    <form id="nuevaVentaForm">
+                        <div class="form-group">
+                            <label>Cliente</label>
+                            <select id="clienteSelect" required>
+                                <!-- Opciones dinámicas -->
+                            </select>
+                        </div>
+                        <div class="productos-lista">
+                            <div class="producto-item">
+                                <select class="producto-select" required>
+                                    <!-- Opciones dinámicas -->
+                                </select>
+                                <input type="number" placeholder="Cantidad" min="1" required>
+                                <button type="button" class="remover-producto">×</button>
+                            </div>
+                        </div>
+                        <button type="button" id="agregarProducto">+ Agregar Producto</button>
+                        <div class="total-section">
+                            <span>Total: $</span>
+                            <span id="totalVenta">0.00</span>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="guardar-btn">Guardar Venta</button>
+                            <button type="button" class="cancelar-btn">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar datos de ventas
+            cargarVentas();
+
+            // Event listeners
+            document.querySelector('.nueva-venta-btn').addEventListener('click', abrirModalNuevaVenta);
+            document.querySelector('.filtrar-btn').addEventListener('click', filtrarVentas);
+            
+            // Función para cargar ventas
+            async function cargarVentas() {
+                try {
+                    const query = `
+                        SELECT 
+                            o.orden_id,
+                            o.fecha_orden,
+                            CONCAT(c.nombre, ' ', c.apellido) as cliente,
+                            GROUP_CONCAT(p.nombre_producto) as productos,
+                            o.total,
+                            o.estado
+                        FROM Ordenes o
+                        JOIN Clientes c ON o.cliente_id = c.cliente_id
+                        JOIN Detalle_Ordenes do ON o.orden_id = do.orden_id
+                        JOIN Productos p ON do.producto_id = p.producto_id
+                        GROUP BY o.orden_id
+                        ORDER BY o.fecha_orden DESC
+                    `;
+                    
+                    // Aquí iría tu lógica para obtener datos de la base de datos
+                    const ventas = []; // Resultado de tu consulta
+                    actualizarTablaVentas(ventas);
+                } catch (error) {
+                    console.error('Error al cargar ventas:', error);
+                }
+            }
+
+            // Función para actualizar la tabla de ventas
+            function actualizarTablaVentas(ventas) {
+                const tbody = document.getElementById('ventasTableBody');
+                tbody.innerHTML = '';
+
+                ventas.forEach(venta => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${venta.orden_id}</td>
+                        <td>${new Date(venta.fecha_orden).toLocaleDateString()}</td>
+                        <td>${venta.cliente}</td>
+                        <td>${venta.productos}</td>
+                        <td>$${venta.total.toLocaleString()}</td>
+                        <td><span class="status ${venta.estado.toLowerCase()}">${venta.estado}</span></td>
+                        <td>
+                            <button class="ver-btn" onclick="verVenta(${venta.orden_id})">Ver</button>
+                            <button class="editar-btn" onclick="editarVenta(${venta.orden_id})">Editar</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            // Función para filtrar ventas
+            function filtrarVentas() {
+                const estado = document.getElementById('filtroEstado').value;
+                const fechaInicio = document.getElementById('fechaInicio').value;
+                const fechaFin = document.getElementById('fechaFin').value;
+                
+                // Aquí iría tu lógica de filtrado
+                cargarVentas(estado, fechaInicio, fechaFin);
+            }
+        });
+    </script>
+</body>
+</html>

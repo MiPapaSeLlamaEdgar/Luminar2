@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="assets/css/style.css">
+    <title>Shop - Luminar</title>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header__top">
+            <div class="header__container container">
+                <div class="header__contact">
+                    <span>luminaropa@gmail.com</span>
+                    <span>+57 3134717406</span>
+                </div>
+
+                <p class="header__alert-news">LUMINAR</p>
+
+                <a href="/" class="header__top-action">
+                    Iniciar sesión / Registrarse
+                </a>
+            </div>
+        </div>
+
+        <nav class="nav container">
+            <a href="/indexPortal" class="nav__logo">
+                <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
+            </a>
+
+            <div class="nav__menu" id="nav__menu">
+                <ul class="nav__list">
+                    <li class="nav__item">
+                        <a href="/indexPortal" class="nav__link active-link">INICIO</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/shopPortal" class="nav__link">Tienda</a>
+                    </li>
+                 <!--    <li class="nav__item">
+                        <a href="/editarperfilCliente" class="nav__link">Mi cuenta</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/ordersCliente" class="nav__link">Pedidos</a>
+                    </li>-->
+                </ul>
+
+                <div class="header_search">
+                    <input type="text" placeholder="Buscar productos..." class="form__input">
+                    <button class="search__btn">
+                        <i class="fi fi-rr-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="header__user-actions">
+                <a href="/" class="header__action-btn">
+                    <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
+                    <span class="count">3</span>
+                </a>
+
+                <a href="/" class="header__action-btn">
+                    <img src="assets/img/icon-cart.svg" alt="Carrito">
+                    <span class="count">3</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- MAIN SHOP SECTION -->
+    <main class="main">
+        <section class="shop section">
+            <div class="shop__container container">
+                <h2 class="section__title">Tienda</h2>
+
+                <div class="products__container grid">
+                    <!-- Product Item -->
+                    <div class="product__item">
+                        <div class="product__banner">
+                            <a href="/" class="product__images">
+                                <img src="assets/img/product-1-1.jpg" alt="Product Image" class="product__img default">
+                                <img src="assets/img/product-1-2.jpg" alt="Product Image Hover" class="product__img hover">
+                            </a>
+                            <div class="product__badge light-pink">Hot</div>
+                        </div>
+                        <div class="product__content">
+                            <span class="product__category">Clothing</span>
+                            <a href="/">
+                                <h3 class="product__title">Colorful Pattern Shirt</h3>
+                            </a>
+                            <div class="product__rating">
+                                <i class="fi fi-rs-star"></i>
+                                <i class="fi fi-rs-star"></i>
+                                <i class="fi fi-rs-star"></i>
+                                <i class="fi fi-rs-star"></i>
+                                <i class="fi fi-rs-star"></i>
+                            </div>
+                            <div class="product__price flex">
+                                <span class="new__price">$238.85</span>
+                                <span class="old__price">$245.80</span>
+                            </div>
+                            <a href="#" class="action__btn Wishlist" aria-label="Add to Wishlist">
+                                <i class="fi fi-rs-shopping-bag-add"></i>
+                            </a>
+                            <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
+                                <i class="fi fi-rs-shopping-bag-add"></i>
+                            </a><!--Boton de añadir al carrito-->
+                        </div>
+                    </div>
+                    <!-- More Product Items -->
+                    <div class="product__item">
+                        <div class="product__banner">
+                            <a href="/" class="product__images">
+                                <img src="assets/img/product-2-1.jpg" alt="Product Image" class="product__img default">
+                                <img src="assets/img/product-2-2.jpg" alt="Product Image Hover" class="product__img hover">
+                            </a>
+                            <div class="product__badge light-green">-30%</div>
+                        </div>
+                        <div class="product__content">
+                            <span class="product__category">Accessories</span>
+                            <a href="/">
+                                <h3 class="product__title">Leather Handbag</h3>
+                            </a>
+                            <div class="product__rating">
+                                <i class="fi fi-rs-star"></i>
+                                <i class="fi fi-rs-star"></i>
+                                <i class="fi fi-rs-star"></i>
+                                <i class="fi fi-rs-star"></i>
+                                <i class="fi fi-rs-star"></i>
+                            </div>
+                            <div class="product__price flex">
+                                <span class="new__price">$178.99</span>
+                                <span class="old__price">$210.50</span>
+                            </div>
+                            <a href="#" class="action__btn Wishlist" aria-label="Add to Wishlist">
+                                <i class="fi fi-rs-shopping-bag-add"></i>
+                            </a>
+                            <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
+                                <i class="fi fi-rs-shopping-bag-add"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Repeat similar product items as necessary -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__links">
+                    <h4 class="footer__title">Enlaces Útiles</h4>
+                    <ul class="footer__list">
+                        <li><a href="/shopPortal">Tienda</a></li>
+                        <li><a href="/">Mi Cuenta</a></li>
+                        <li><a href="/">Lista de Deseos</a></li>
+                        <li><a href="/">Pedidos</a></li>
+                        <li><a href="/">Carrito</a></li>
+                        <li><a href="privacy-policy" target="_blank">Políticas de Privacidad</a></li>
+                    </ul>
+                </div>
+    
+                <div class="footer__contact">
+                    <h4 class="footer__title">Contáctanos</h4>
+                    <p>Teléfono: +57 3134717406</p>
+                    <p>Email: luminaropa@gmail.com</p>
+                    <p>Direccion: Neos Centro, Calle 12 B, 9-40</p>
+                </div>
+    
+                <div class="footer__social">
+                    <h4 class="footer__title">Síguenos</h4>
+                    <ul class="footer__social-list">
+                        <li><a href="https://www.facebook.com/profile.php?id=61550964364030" target="_blank"><i class="fi fi-rr-facebook"></i> Facebook</a></li>
+                        <li><a href="https://www.tiktok.com/@luminar.2023" target="_blank"><i class="fi fi-rr-tiktok"></i> TikTok</a></li>
+                        <li><a href="https://www.instagram.com/luminar.2023/" target="_blank"><i class="fi fi-rr-instagram"></i> Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+    
+            <div class="footer__bottom">
+                <p>&copy; 2024 Luminar. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SWIPER JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<!-- SWEETALERT2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- MAIN JS -->
+<script src="assets/js/main.js"></script>
+
+<!-- Wishlist and Cart Functionality Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para mostrar notificaciones
+    const showNotification = (message, type = 'success') => {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        Toast.fire({
+            icon: type,
+            title: message
+        });
+    };
+
+    // Función para actualizar el contador de la lista de deseos
+    const updateWishlistCount = async () => {
+        try {
+            const response = await fetch('/api/wishlist/count');
+            const data = await response.json();
+            document.querySelectorAll('.count').forEach(element => {
+                element.textContent = data.count;
+            });
+        } catch (error) {
+            console.error('Error al actualizar contador:', error);
+        }
+    };
+
+    // Función para manejar el botón de lista de deseos
+    const handleWishlistButton = async (button, productName, productPrice) => {
+        try {
+            const response = await fetch('/api/wishlist/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nombre_producto: productName,
+                    precio: productPrice
+                })
+            });
+
+            const data = await response.json();
+            showNotification(data.message);
+            
+            // Actualizar el estilo del botón
+            button.classList.toggle('in-wishlist');
+            if (button.classList.contains('in-wishlist')) {
+                button.style.backgroundColor = 'var(--first-color)';
+                button.style.color = 'var(--body-color)';
+            } else {
+                button.style.backgroundColor = 'var(--first-color-alt)';
+                button.style.color = 'var(--text-color)';
+            }
+            
+            // Actualizar el contador
+            updateWishlistCount();
+
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Error al actualizar la lista de deseos', 'error');
+        }
+    };
+
+    // Función para manejar el botón de carrito
+    const handleCartButton = async (button, productName, productPrice) => {
+        try {
+            const response = await fetch('/api/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nombre_producto: productName,
+                    precio: productPrice,
+                    cantidad: 1
+                })
+            });
+
+            const data = await response.json();
+            showNotification(data.message);
+
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Error al agregar al carrito', 'error');
+        }
+    };
+
+    // Agregar event listeners a los botones
+    document.querySelectorAll('.action__btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const productCard = this.closest('.product__item');
+            const productName = productCard.querySelector('.product__title').textContent;
+            const productPrice = productCard.querySelector('.new__price').textContent.replace('$', '');
+            
+            if (this.getAttribute('aria-label') === 'Add to Wishlist') {
+                handleWishlistButton(this, productName, productPrice);
+            } else if (this.getAttribute('aria-label') === 'Add to Cart') {
+                handleCartButton(this, productName, productPrice);
+            }
+        });
+
+        // Mostrar tooltips al hover
+        button.addEventListener('mouseenter', function() {
+            const label = this.getAttribute('aria-label');
+            if (label) {
+                this.setAttribute('data-tooltip', label);
+            }
+        });
+
+        button.addEventListener('mouseleave', function() {
+            this.removeAttribute('data-tooltip');
+        });
+    });
+
+    // Inicializar contadores al cargar la página
+    updateWishlistCount();
+});
+</script>
+<!-- Antes de cerrar el body, después de los otros scripts -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Función para mostrar notificaciones
+        const showNotification = (message, type = 'success') => {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+    
+            Toast.fire({
+                icon: type,
+                title: message
+            });
+        };
+    
+        // Función para actualizar contadores
+        const updateCounters = async () => {
+            try {
+                // Actualizar contador de wishlist
+                const wishlistResponse = await fetch('/api/wishlist/count');
+                const wishlistData = await wishlistResponse.json();
+                
+                // Actualizar contador de carrito
+                const cartResponse = await fetch('/api/cart/count');
+                const cartData = await cartResponse.json();
+                
+                // Actualizar los contadores en el DOM
+                document.querySelectorAll('.header__action-btn .count').forEach(counter => {
+                    if (counter.closest('a[href="/whishlist"]')) {
+                        counter.textContent = wishlistData.count;
+                    } else if (counter.closest('a[href="/cart"]')) {
+                        counter.textContent = cartData.count;
+                    }
+                });
+            } catch (error) {
+                console.error('Error al actualizar contadores:', error);
+            }
+        };
+    
+        // Función para manejar el botón de wishlist
+        const handleWishlistButton = async (button, productName, productPrice) => {
+            try {
+                const response = await fetch('/api/wishlist/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nombre_producto: productName,
+                        precio: productPrice
+                    })
+                });
+    
+                const data = await response.json();
+                
+                // Mostrar notificación
+                showNotification(data.message);
+                
+                // Actualizar el estilo del botón
+                button.classList.toggle('in-wishlist');
+                if (button.classList.contains('in-wishlist')) {
+                    button.style.backgroundColor = 'var(--first-color)';
+                    button.style.color = 'var(--body-color)';
+                } else {
+                    button.style.backgroundColor = 'var(--first-color-alt)';
+                    button.style.color = 'var(--text-color)';
+                }
+                
+                // Actualizar contadores
+                updateCounters();
+    
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al actualizar la lista de deseos', 'error');
+            }
+        };
+    
+        // Función para manejar el botón de carrito
+        const handleCartButton = async (button, productName, productPrice) => {
+            try {
+                const response = await fetch('/api/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nombre_producto: productName,
+                        precio: productPrice,
+                        cantidad: 1
+                    })
+                });
+    
+                const data = await response.json();
+                
+                // Mostrar notificación
+                showNotification(data.message);
+                
+                // Actualizar el estilo del botón temporalmente
+                button.style.backgroundColor = 'var(--first-color)';
+                button.style.color = 'var(--body-color)';
+                
+                setTimeout(() => {
+                    button.style.backgroundColor = '';
+                    button.style.color = '';
+                }, 1000);
+                
+                // Actualizar contadores
+                updateCounters();
+    
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al agregar al carrito', 'error');
+            }
+        };
+    
+        // Agregar event listeners a los botones
+        document.querySelectorAll('.action__btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const productCard = this.closest('.product__item');
+                const productName = productCard.querySelector('.product__title').textContent;
+                const productPrice = productCard.querySelector('.new__price').textContent.replace('$', '');
+                
+                if (this.classList.contains('Wishlist__btn')) {
+                    handleWishlistButton(this, productName, productPrice);
+                } else if (this.classList.contains('cart__btn')) {
+                    handleCartButton(this, productName, productPrice);
+                }
+            });
+    
+            // Mostrar tooltips al hover
+            button.addEventListener('mouseenter', function() {
+                const label = this.getAttribute('aria-label');
+                if (label) {
+                    this.setAttribute('data-tooltip', label);
+                }
+            });
+    
+            button.addEventListener('mouseleave', function() {
+                this.removeAttribute('data-tooltip');
+            });
+        });
+    
+        // Inicializar contadores al cargar la página
+        updateCounters();
+    });
+    </script>
+</body>
+</html>

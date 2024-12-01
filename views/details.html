@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="/assets/css/details.css">
+    <title>Detalles del Producto - LUMINAR</title>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header__top">
+            <div class="header__container container">
+                <div class="header__contact">
+                    <span>luminaropa@gmail.com</span>
+                    <span>+57 3134717406</span>
+                </div>
+
+                <p class="header__alert-news">LUMINAR</p>
+
+                <a href="/" class="header__top-action">
+                    Iniciar sesión / Registrarse
+                </a>
+            </div>
+        </div>
+
+        <nav class="nav container">
+            <a href="/index" class="nav__logo">
+                <img src="assets/img/Logo-Luminar.svg" alt="Logo Luminar" class="nav__logo-img">
+            </a>
+
+            <div class="nav__menu" id="nav__menu">
+                <ul class="nav__list">
+                    <li class="nav__item">
+                        <a href="/index" class="nav__link active-link">INICIO</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/shop" class="nav__link">Tienda</a>
+                    </li>
+                </ul>
+
+                <div class="header_search">
+                    <input type="text" placeholder="Buscar productos..." class="form__input">
+                    <button class="search__btn">
+                        <i class="fi fi-rr-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="header__user-actions">
+                <a href="/" class="header__action-btn">
+                    <img src="assets/img/icon-heart.svg" alt="Lista de Deseos">
+                    <span class="count">3</span>
+                </a>
+
+                <a href="/" class="header__action-btn">
+                    <img src="assets/img/icon-cart.svg" alt="Carrito">
+                    <span class="count">3</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!--== PRODUCT DETAILS ==-->
+    <section class="product-details container section--lg">
+        <div class="breadcrumb">
+            <a href="/index">Inicio</a> / 
+            <a href="/shop">Tienda</a> / 
+            <span class="product-category">Categoría</span> / 
+            <span class="product-title">Nombre del Producto</span>
+        </div>
+
+        <div class="product-info grid">
+            <!-- Galería de Imágenes -->
+            <div class="product-gallery">
+                <div class="main-image">
+                    <img id="mainImage" src="/assets/img/product-main.jpg" alt="Producto Principal" />
+                    <div class="zoom-lens"></div>
+                </div>
+                <div class="thumbnail-images" id="thumbnailContainer">
+                    <!-- Las miniaturas se cargarán dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Información del Producto -->
+            <div class="product-info-content">
+                <div class="product-header">
+                    <h1 class="product-title"></h1>
+                    <p class="product-category"></p>
+                    
+                    <!-- Rating y Reviews -->
+                    <div class="product-rating">
+                        <div class="stars">
+                            <i class="fi fi-rr-star"></i>
+                            <i class="fi fi-rr-star"></i>
+                            <i class="fi fi-rr-star"></i>
+                            <i class="fi fi-rr-star"></i>
+                            <i class="fi fi-rr-star"></i>
+                        </div>
+                        <span class="rating-count">(0 reseñas)</span>
+                    </div>
+
+                    <!-- Precio -->
+                    <div class="product-price">
+                        <span class="new-price"></span>
+                        <span class="old-price"></span>
+                        <span class="discount-badge"></span>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="product-description">
+                    <h3>Descripción</h3>
+                    <p></p>
+                </div>
+
+                <!-- Opciones del Producto -->
+                <div class="product-options">
+                    <!-- Talla -->
+                    <div class="size-option">
+                        <h3>Talla</h3>
+                        <div class="size-buttons" id="sizeButtons">
+                            <!-- Los botones de talla se cargarán dinámicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Color -->
+                    <div class="color-option">
+                        <h3>Color</h3>
+                        <div class="color-buttons" id="colorButtons">
+                            <!-- Los botones de color se cargarán dinámicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Cantidad y Botones de Acción -->
+                    <div class="product-actions">
+                        <div class="quantity-selector">
+                            <button class="quantity-btn minus" aria-label="Reducir cantidad">-</button>
+                            <input type="number" value="1" min="1" id="quantity" aria-label="Cantidad">
+                            <button class="quantity-btn plus" aria-label="Aumentar cantidad">+</button>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="add-to-cart-btn" id="addToCart">
+                                <i class="fi fi-rr-shopping-cart"></i>
+                                Agregar al Carrito
+                            </button>
+                            <button class="wishlist-btn" id="addToWishlist">
+                                <i class="fi fi-rr-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Información de Stock -->
+                    <div class="stock-info">
+                        <i class="fi fi-rr-box-check"></i>
+                        <span class="stock-status"></span>
+                        <span class="stock-quantity"></span>
+                    </div>
+
+                    <!-- Información Adicional -->
+                    <div class="additional-info">
+                        <div class="info-item">
+                            <i class="fi fi-rr-truck-side"></i>
+                            <span>Envío gratis en pedidos superiores a $100</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fi fi-rr-shield-check"></i>
+                            <span>Garantía de devolución de 30 días</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fi fi-rr-credit-card"></i>
+                            <span>Pago seguro garantizado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs de Información Adicional -->
+        <div class="product-tabs">
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="description">Descripción</button>
+                <button class="tab-btn" data-tab="specifications">Especificaciones</button>
+                <button class="tab-btn" data-tab="reviews">Reseñas</button>
+            </div>
+            <div class="tabs-content">
+                <div class="tab-panel active" id="description">
+                    <!-- Contenido de descripción -->
+                </div>
+                <div class="tab-panel" id="specifications">
+                    <!-- Contenido de especificaciones -->
+                </div>
+                <div class="tab-panel" id="reviews">
+                    <!-- Contenido de reseñas -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Productos Relacionados -->
+        <div class="related-products">
+            <h2>Productos Relacionados</h2>
+            <div class="products-grid" id="relatedProducts">
+                <!-- Los productos relacionados se cargarán dinámicamente -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer permanece igual -->
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/details.js"></script>
+</body>
+</html>
