@@ -13,15 +13,10 @@
 
     <!--==CSS==-->
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
     <title>Página de Inicio - LUMINAR</title>
 
-
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Perfil | Luminar</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <!--link rel="stylesheet" href="/css/dashboard.css"-->
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
     <style>
         /* Profile section styling */
@@ -181,6 +176,113 @@
                 width: 100%;
             }
         }
+
+        .profile-image-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            background-color: #f9f9f9;
+            border: 3px solid #e75480;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .profile-image:hover {
+            transform: scale(1.1);
+        }
+        
+        .change-photo-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: #e75480;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease;
+        }
+        
+        .change-photo-btn:hover {
+            background-color: #bf1b5d;
+        }
+        
+        /* Estilo para el modal de recorte */
+        #cropModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        #cropper-container {
+            max-height: 60vh;
+            overflow: auto;
+        }
+
+        #cropper-container img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .modal-actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #crop-cancel-btn, #crop-save-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #crop-cancel-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        #crop-save-btn {
+            background-color: #e75480;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -252,7 +354,7 @@
                     <div class="profile-image-container">
                         <form id="uploadForm" method="post" enctype="multipart/form-data">
                             <img src="assets/img/default-profile.png" alt="Foto de perfil" class="profile-image" id="profileImagePreview">
-                            <input type="file" id="photoInput" name="profilePhoto" accept="image/*" style="display: none;" onchange="previewImage(event)">
+                            <input type="file" id="photoInput" name="profilePhoto" accept="image/*" style="display: none;" onchange="openCropModal(event)">
                             <button type="button" class="change-photo-btn" title="Cambiar foto" onclick="document.getElementById('photoInput').click()">
                                 <i class="fi fi-rr-camera"></i>
                             </button>
@@ -323,6 +425,85 @@
             </div>
         </main>
     </div>
+
+    <!-- Modal para recortar imagen -->
+    <div id="cropModal">
+        <div class="modal-content">
+            <h2>Recortar Imagen</h2>
+            <div id="cropper-container">
+                <img id="cropper-image" src="" alt="Imagen para recortar">
+            </div>
+            <div class="modal-actions">
+                <button id="crop-cancel-btn">Cancelar</button>
+                <button id="crop-save-btn">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs"></script>
+    <script>
+        let cropper; // Variable para el cropper
+        const modal = document.getElementById('cropModal');
+        const cropperImage = document.getElementById('cropper-image');
+        const profileImagePreview = document.getElementById('profileImagePreview');
+
+        function openCropModal(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    cropperImage.src = reader.result;
+                    modal.style.display = 'flex'; // Mostrar modal
+                    cropper = new Cropper(cropperImage, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        background: false
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        document.getElementById('crop-save-btn').addEventListener('click', function () {
+            const canvas = cropper.getCroppedCanvas({
+                width: 150,
+                height: 150
+            });
+
+            profileImagePreview.src = canvas.toDataURL(); // Actualizar la vista previa
+            canvas.toBlob(async function (blob) {
+                const formData = new FormData();
+                formData.append('profilePhoto', blob);
+
+                try {
+                    const response = await fetch(`/api/user/upload-photo/${usuarioId}`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        alert('Imagen actualizada con éxito');
+                    } else {
+                        alert('Error al subir la imagen');
+                    }
+                } catch (error) {
+                    console.error('Error al subir la imagen:', error);
+                    alert('Error al procesar la solicitud.');
+                }
+            });
+
+            modal.style.display = 'none';
+            cropper.destroy(); // Destruir el cropper
+        });
+
+        document.getElementById('crop-cancel-btn').addEventListener('click', function () {
+            modal.style.display = 'none'; // Ocultar modal
+            cropper.destroy(); // Destruir el cropper
+        });
+    </script>
+
+</body>
+</html>
 
     <script>
         // Recuperar el usuario_id del localStorage

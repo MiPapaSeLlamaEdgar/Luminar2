@@ -8,6 +8,171 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="css/style.css">
     <title>Lista de Deseos - LUMINAR</title>
+    <style>
+        /* Contenedor principal de la lista de deseos */
+        .wishlist.section {
+            padding: 40px 0;
+            background-color: #f9f9f9;
+        }
+
+        .section__title span {
+            color: #ff3e3e;
+            font-weight: bold;
+        }
+
+        /* Estilo para cada elemento del producto */
+        .product__item {
+            display: flex;
+            flex-direction: row; /* Cambiado a fila para organizar horizontalmente */
+            justify-content: flex-start;
+            align-items: center;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background-color: #fff;
+            padding: 20px;
+            transition: box-shadow 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 10px auto;
+            max-width: 800px;
+        }
+
+        .product__item:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .product__banner {
+            flex: 1;
+            height: 200px;
+            max-width: 200px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+        }
+
+        .product__banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .product__content {
+            flex: 2; /* Ajuste para usar más espacio horizontal */
+        }
+
+        .product__title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #333;
+            text-align: left;
+        }
+
+        .product__category {
+            font-size: 14px;
+            color: #999;
+            text-align: left;
+        }
+
+        .product__price {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ff3e3e;
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        /* Opciones de selección */
+        .product__options {
+            margin-bottom: 10px;
+        }
+
+        .product__select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #f9f9f9;
+            transition: border-color 0.3s ease;
+        }
+
+        .product__select:focus {
+            border-color: #ff3e3e;
+            outline: none;
+        }
+
+        /* Botones de acción */
+        .product__buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .action__btn {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action__btn:hover {
+            background-color: #ff3e3e;
+            color: #fff;
+            border-color: #ff3e3e;
+        }
+
+        .action__btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #333;
+        }
+
+        .action__btn:hover svg {
+            fill: #fff;
+        }
+
+        /* Mensaje de lista vacía */
+        .empty-message {
+            text-align: center;
+            color: #999;
+        }
+
+        .empty-message p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .empty-message .btn {
+            padding: 10px 20px;
+            background-color: #ff3e3e;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .empty-message .btn:hover {
+            background-color: #333;
+        }
+
+        /* Estilo del contenedor principal */
+        .products__container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+    </style>
 </head>
 <body>
     <!-- HEADER -->
@@ -63,7 +228,7 @@
                 <a href="/shopCliente" class="btn">Ir a la tienda</a>
             </div>
         </div>
-    </section>      
+    </section>
 
     <!-- FOOTER -->
     <footer class="footer">
@@ -76,138 +241,100 @@
     <script src="assets/js/main.js"></script>
 
     <script>
-    const wishlistContainer = document.getElementById('wishlistItemsBody');
-    const emptyMessage = document.getElementById('emptyWishlistMessage');
-    const clienteId = localStorage.getItem("cliente_id");
+        const wishlistContainer = document.getElementById('wishlistItemsBody');
+        const emptyMessage = document.getElementById('emptyWishlistMessage');
+        const clienteId = localStorage.getItem("cliente_id");
 
-    document.addEventListener('DOMContentLoaded', function() {
-        if (!clienteId) {
-            console.error("Cliente ID no encontrado en localStorage");
-            return;
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!clienteId) {
+                console.error("Cliente ID no encontrado en localStorage");
+                return;
+            }
 
-        async function loadWishlistItems() {
-            try {
-                const response = await fetch(`/api/wishlist/cliente/${clienteId}`);
-                if (!response.ok) throw new Error(`Error en la respuesta del servidor: ${response.status}`);
-                
-                const items = await response.json();
-
-                if (items.length === 0) {
-                    wishlistContainer.style.display = 'none';
-                    emptyMessage.style.display = 'block';
-                    return;
+            async function loadWishlistItems() {
+                try {
+                    const response = await fetch(`/api/wishlist/cliente/${clienteId}`);
+                    if (!response.ok) throw new Error(`Error en la respuesta del servidor: ${response.status}`);
+                    
+                    const items = await response.json();
+                    
+                    if (items.length === 0) {
+                        wishlistContainer.style.display = 'none';
+                        emptyMessage.style.display = 'block';
+                        return;
+                    }
+                    
+                    wishlistContainer.style.display = 'grid';
+                    emptyMessage.style.display = 'none';
+                    
+                    wishlistContainer.innerHTML = items
+                        .map(item => {
+                            const producto = item.Producto || {};
+                            const imagenUrl = producto.imagenes ? producto.imagenes.replace(/^\/+/, '') : 'https://via.placeholder.com/300x300?text=Imagen+No+Disponible';
+                            const nombreProducto = producto.nombre_producto || 'Producto desconocido';
+                            const categoria = producto.Categoria ? producto.Categoria.nombre_categoria : 'Sin categoría';
+                            const precio = producto.precio || '0.00';
+                            const tallas = producto.talla && producto.talla
+                                .split(',')
+                                .map(size => `<option value="${size.trim()}">${size.trim()}</option>`)
+                                .join('');
+                            const colores = producto.color && producto.color
+                                .split(',')
+                                .map(color => `<option value="${color.trim()}" style="background-color: ${color.trim()};">${color.trim()}</option>`)
+                                .join('');
+                            
+                            return `
+                                <div class="product__item" data-id="${item.wishlist_id}">
+                                    <div class="product__banner">
+                                        <a href="/detailsCliente/${item.producto_id}" class="product__images">
+                                            <img src="${imagenUrl}" alt="${nombreProducto}" class="product__img">
+                                        </a>
+                                    </div>
+                                    <div class="product__content">
+                                        <a href="/product/${item.producto_id}">
+                                            <h3 class="product__title">${nombreProducto}</h3>
+                                        </a>
+                                        <div class="product__price flex">
+                                            <span class="new__price">$${precio}</span>
+                                        </div>
+                                        <div class="product__options">
+                                            <label for="sizeSelect-${item.producto_id}">Talla:</label>
+                                            <select id="sizeSelect-${item.producto_id}" class="product__select">
+                                                ${tallas || '<option>No disponible</option>'}
+                                            </select>
+                                            <label for="colorSelect-${item.producto_id}">Color:</label>
+                                            <select id="colorSelect-${item.producto_id}" class="product__select">
+                                                ${colores || '<option>No disponible</option>'}
+                                            </select>
+                                        </div>
+                                        <div class="product__buttons">
+                                            <button class="action__btn remove-from-wishlist" onclick="removeFromWishlist(${item.wishlist_id})">
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
+                                                    <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
+                                                </svg>
+                                            </button>
+                                            <button class="action__btn add-to-cart" data-product-id="${item.producto_id}" onclick="AddToCart(${item.producto_id}, ${item.wishlist_id})">
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
+                                                    <path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        })
+                        .join('');
+                } catch (error) {
+                    console.error('Error al cargar items:', error);
+                    showNotification('Error al cargar la lista de deseos', 'error');
                 }
-
-                wishlistContainer.style.display = 'grid';
-                emptyMessage.style.display = 'none';
-
-                wishlistContainer.innerHTML = items.map(item => `
-                    <div class="product__item" data-id="${item.wishlist_id}">
-                        <div class="product__banner">
-                            <a href="/product/${item.producto_id}" class="product__images">
-                                <img src="${item.Producto.imagen_url}" alt="${item.Producto.nombre_producto}" class="product__img">
-                            </a>
-                            ${item.Producto.estado === 'agotado' ? '<div class="product__badge light-red">Agotado</div>' : ''}
-                        </div>
-                        <div class="product__content">
-                            <span class="product__category">${item.Producto.categoria}</span>
-                            <a href="/product/${item.producto_id}">
-                                <h3 class="product__title">${item.Producto.nombre_producto}</h3>
-                            </a>
-                            <div class="product__price flex">
-                                <span class="new__price">$${item.Producto.precio}</span>
-                            </div>
-                            <div class="product__options">
-                                <label for="sizeSelect-${item.producto_id}">Talla:</label>
-                                <select id="sizeSelect-${item.producto_id}" class="product__select">
-                                    ${item.Producto.talla ? item.Producto.talla.split(',').map(size => `<option value="${size.trim()}">${size.trim()}</option>`).join('') : '<option>No disponible</option>'}
-                                </select>
-                                <label for="colorSelect-${item.producto_id}">Color:</label>
-                                <select id="colorSelect-${item.producto_id}" class="product__select">
-                                    ${item.Producto.color ? item.Producto.color.split(',').map(color => `<option value="${color.trim()}" style="background-color: ${color.trim()};">${color.trim()}</option>`).join('') : '<option>No disponible</option>'}
-                                </select>
-                            </div>
-                            <div class="product__quantity">
-                                <button type="button" class="quantity__button" onclick="decreaseQuantity(${item.producto_id})">-</button>
-                                <input type="number" id="quantity-${item.producto_id}" class="quantity__input" value="1" min="1">
-                                <button type="button" class="quantity__button" onclick="increaseQuantity(${item.producto_id})">+</button>
-                            </div>
-                            <div class="product__buttons">
-                                <button class="action__btn remove-from-wishlist" onclick="removeFromWishlist(${item.wishlist_id})">
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
-                                        <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
-                                    </svg>
-                                </button>
-                                <button class="action__btn add-to-cart" data-product-id="${item.producto_id}" onclick="AddToCart(${item.producto_id}, ${item.wishlist_id})">
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
-                                        <path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-
-            } catch (error) {
-                console.error('Error al cargar items:', error);
-                showNotification('Error al cargar la lista de deseos', 'error');
             }
-        }
-/*
-        async function AddToCart(productId) {
-            const clientId = localStorage.getItem("cliente_id");
-            const quantity = document.getElementById(`quantity-${productId}`).value;
-            const selectedSize = document.getElementById(`sizeSelect-${productId}`).value;
-            const selectedColor = document.getElementById(`colorSelect-${productId}`).value;
+            
+            loadWishlistItems();
+            if (clienteId) contador(clienteId);
+        });
 
-            const cartData = {
-                cliente_id: clientId,
-                producto_id: productId,
-                cantidad: quantity,
-                talla: selectedSize,
-                color: selectedColor,
-                fecha_agregado: new Date().toISOString()
-            };
-
-            try {
-                const response = await fetch("/api/cart/cart", {  // Adjusted to "/api/cart" if "/api/cart/cart" was wrong
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(cartData)
-                });
-
-                if (response.ok) {
-                    contador(clientId);
-                    showNotification("Producto agregado al carrito con éxito", "success");
-                } else {
-                    console.error(`Error ${response.status}: ${response.statusText}`);
-                    showNotification("Error al agregar al carrito", "error");
-                }
-            } catch (error) {
-                console.error('Error al agregar al carrito:', error);
-                showNotification("Error al agregar el producto al carrito", "error");
-            }
-        }
-            */
-
-        const increaseQuantity = (productId) => {
-            const quantityInput = document.getElementById(`quantity-${productId}`);
-            quantityInput.value = parseInt(quantityInput.value) + 1;
-        };
-
-        const decreaseQuantity = (productId) => {
-            const quantityInput = document.getElementById(`quantity-${productId}`);
-            if (quantityInput.value > 1) {
-                quantityInput.value = parseInt(quantityInput.value) - 1;
-            }
-        };
-
-        loadWishlistItems();
-        if (clienteId) contador(clienteId);
-    });
-
-    function removeFromWishlist(wishlistId) {
+        function removeFromWishlist(wishlistId) {
             fetch(`/api/wishlist/${wishlistId}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" }
@@ -231,12 +358,14 @@
             });
         }
 
-    let productosEnCarrito = new Set(); 
+        let productosEnCarrito = new Set(); 
 
-    function AddToCart(productId, wishlistId) {
-            event.preventDefault();
+        function AddToCart(productId, wishlistId) {
+            if (event) {
+                event.preventDefault();
+            }
 
-            const quantity = document.getElementById(`quantity-${productId}`).value;
+            const quantity = 1;
             const clientId = localStorage.getItem("cliente_id");
 
             const sizeSelect = document.getElementById(`sizeSelect-${productId}`);
@@ -263,14 +392,13 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(cartData)
             })
-            .then(response => {
+            .then(async response => {
                 if (response.ok) {
                     productosEnCarrito.add(productId);
-                    return response.json();
+                    return await response.json();
                 } else {
-                    return response.json().then(error => {
-                        throw new Error(error.message);
-                    });
+                    const errorResponse = await response.json();
+                    throw new Error(errorResponse.message);
                 }
             })
             .then(result => {
@@ -283,7 +411,7 @@
             });
         }
 
-    const contador = async (clientId) => {
+        const contador = async (clientId) => {
             try {
                 const wishlistResponse = await fetch(`/api/wishlist/count/${clientId}`);
                 const wishlistData = await wishlistResponse.json();
@@ -297,17 +425,16 @@
             }
         };
 
-    const showNotification = (message, type = 'success') => {
-        Swal.fire({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            icon: type,
-            title: message
-        });
-    };
-
+        const showNotification = (message, type = 'success') => {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                icon: type,
+                title: message
+              });
+        };
     </script>
 </body>
 </html>

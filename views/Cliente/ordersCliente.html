@@ -89,6 +89,79 @@
         </div>
     </main>
 
+    <!-- Modal para CRUD -->
+    <div class="modal" id="ordenModal">
+        <div class="modal-content">
+            <span onclick="cerrarModal()" style="cursor:pointer;">&times;</span>
+            <form id="ordenForm">
+                <input type="hidden" id="ordenId">
+                <div>
+                    <label for="fechaOrden">Fecha Orden:</label>
+                    <input type="date" id="fechaOrden" required>
+                </div>
+                <div>
+                    <label for="fechaEntregaEstimada">Fecha Entrega Estimada:</label>
+                    <input type="date" id="fechaEntregaEstimada">
+                </div>
+                <div>
+                    <label for="fechaEntregaReal">Fecha Entrega Real:</label>
+                    <input type="date" id="fechaEntregaReal">
+                </div>
+                <div>
+                    <label for="subtotal">Subtotal:</label>
+                    <input type="number" step="0.01" id="subtotal" required oninput="calcularValores()">
+                </div>
+                <div>
+                    <label for="descuento">Descuento:</label>
+                    <input type="number" step="0.01" id="descuento" value="0" oninput="calcularValores()">
+                </div>
+                <div>
+                    <label for="impuestos">Impuestos (19% IVA):</label>
+                    <input type="number" step="0.01" id="impuestos" readonly>
+                </div>
+                <div>
+                    <label for="total">Total:</label>
+                    <input type="number" step="0.01" id="total" readonly>
+                </div>
+                <div>
+                    <label for="estado">Estado:</label>
+                    <select id="estado" required>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="confirmada">Confirmada</option>
+                        <option value="en proceso">En Proceso</option>
+                        <option value="enviada">Enviada</option>
+                        <option value="entregada">Entregada</option>
+                        <option value="cancelada">Cancelada</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="direccionEnvio">Dirección Envio:</label>
+                    <textarea id="direccionEnvio"></textarea>
+                </div>
+                <div>
+                    <label for="notas">Notas:</label>
+                    <textarea id="notas"></textarea>
+                </div>
+                <!-- Form fields -->
+                <div class="modal-buttons">
+                    <button type="submit" class="save-btn">Guardar</button>
+                    <button type="button" onclick="cerrarModal()" class="cancel-btn">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Detalles de la Orden -->
+    <div class="modal" id="detalleOrdenModal">
+        <div class="modal-content">
+            <span onclick="cerrarDetalleModal()" style="cursor:pointer;">&times;</span>
+            <h3>Detalles del Pedido</h3>
+            <div id="orderDetailsContent">
+                <!-- Los detalles del pedido se cargarán aquí -->
+            </div>
+        </div>
+    </div>
+
     <!--=== FOOTER ===-->
     <footer class="footer">
         <div class="container">
@@ -141,50 +214,118 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const apiUrl = '/api/order';
-            const apiOrderDetailsUrl = '/api/orderDetails';
+            const apiOrderDetailsUrl = '/api/orderDetails/orden';
 
-            // Show notification function
-            const showNotification = (message, type = 'success') => {
-                Swal.fire({
-                    toast: true,
-                    icon: type,
-                    title: message,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                });
-            };
+            function mostrarModal(orden = null) {
+                const modal = document.getElementById('ordenModal');
+                if (orden) {
+                    // Parsear los datos para llenar el formulario de edición
+                    orden = JSON.parse(decodeURIComponent(orden));
+                    document.getElementById('ordenId').value = orden.orden_id;
+                    document.getElementById('fechaOrden').value = orden.fecha_orden ? new Date(orden.fecha_orden).toISOString().slice(0, 10) : '';
+                    document.getElementById('fechaEntregaEstimada').value = orden.fecha_entrega_estimada ? new Date(orden.fecha_entrega_estimada).toISOString().slice(0, 10) : '';
+                    document.getElementById('fechaEntregaReal').value = orden.fecha_entrega_real ? new Date(orden.fecha_entrega_real).toISOString().slice(0, 10) : '';
+                    document.getElementById('subtotal').value = orden.subtotal || '';
+                    document.getElementById('descuento').value = orden.descuento || 0;
+                    calcularValores();
+                    document.getElementById('estado').value = orden.estado || 'pendiente';
+                    document.getElementById('direccionEnvio').value = orden.direccion_envio || '';
+                    document.getElementById('notas').value = orden.notas || '';
+                } else {
+                    document.getElementById('ordenForm').reset();
+                    document.getElementById('ordenId').value = '';
+                }
+                modal.style.display = 'block';
+            }
 
-            // Update wishlist and cart counters
-            const updateCounters = async () => {
+            function cerrarModal() {
+                document.getElementById('ordenModal').style.display = 'none';
+            }
+
+            function mostrarDetalleModal(orderId) {
+                const modal = document.getElementById('detalleOrdenModal');
+                cargarDetallesOrden(orderId);
+                modal.style.display = 'block';
+            }
+
+            function cerrarDetalleModal() {
+                document.getElementById('detalleOrdenModal').style.display = 'none';
+            }
+
+            async function cargarDetallesOrden(orderId) {
                 try {
-                    const clienteId = localStorage.getItem('cliente_id');
-                    if (!clienteId) {
-                        console.warn('Cliente ID not found in local storage');
-                        return;
-                    }
+                    const response = await fetch(`${apiOrderDetailsUrl}/${orderId}`);
+                    if (!response.ok) throw new Error('Failed to fetch order details');
 
-                    const [wishlistResponse, cartResponse] = await Promise.all([
-                        fetch(`/api/wishlist/count?clienteId=${clienteId}`),
-                        fetch(`/api/order/cart/count?clienteId=${clienteId}`)
-                    ]);
+                    const orderDetails = await response.json();
+                    let detailsHTML = '<table class="table table-hover"><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Total</th></tr></thead><tbody>';
 
-                    if (wishlistResponse.ok && cartResponse.ok) {
-                        const wishlistData = await wishlistResponse.json();
-                        const cartData = await cartResponse.json();
+                    orderDetails.forEach(detail => {
+                        detailsHTML += `
+                            <tr>
+                                <td>${detail.Producto.nombre_producto}</td>
+                                <td>${detail.cantidad}</td>
+                                <td>$${detail.precio_unitario.toFixed(2)}</td>
+                                <td>$${(detail.cantidad * detail.precio_unitario).toFixed(2)}</td>
+                            </tr>
+                        `;
+                    });
+                    detailsHTML += '</tbody></table>';
+                    document.getElementById('orderDetailsContent').innerHTML = detailsHTML;
+                } catch (error) {
+                    console.error('Error loading order details:', error);
+                    alert('Error loading order details');
+                }
+            }
 
-                        document.querySelector('.header__action-btn[href="/whishlistCliente"] .count').textContent = wishlistData.count || 0;
-                        document.querySelector('.header__action-btn[href="/cartCliente"] .count').textContent = cartData.count || 0;
+            function calcularValores() {
+                const subtotal = parseFloat(document.getElementById('subtotal').value) || 0;
+                const descuento = parseFloat(document.getElementById('descuento').value) || 0;
+                const impuestos = (subtotal - descuento) * 0.19;
+                const total = (subtotal - descuento) + impuestos;
+
+                document.getElementById('impuestos').value = impuestos.toFixed(2);
+                document.getElementById('total').value = total.toFixed(2);
+            }
+
+            document.getElementById('ordenForm').addEventListener('submit', async function (event) {
+                event.preventDefault();
+                const ordenId = document.getElementById('ordenId').value;
+                const method = ordenId ? 'PUT' : 'POST';
+                const url = ordenId ? `${apiUrl}/${ordenId}` : apiUrl;
+
+                const orden = {
+                    fecha_orden: document.getElementById('fechaOrden').value,
+                    fecha_entrega_estimada: document.getElementById('fechaEntregaEstimada').value,
+                    fecha_entrega_real: document.getElementById('fechaEntregaReal').value,
+                    subtotal: parseFloat(document.getElementById('subtotal').value.trim()),
+                    impuestos: parseFloat(document.getElementById('impuestos').value.trim()),
+                    descuento: parseFloat(document.getElementById('descuento').value.trim() || 0),
+                    total: parseFloat(document.getElementById('total').value.trim()),
+                    estado: document.getElementById('estado').value,
+                    direccion_envio: document.getElementById('direccionEnvio').value.trim(),
+                    notas: document.getElementById('notas').value.trim()
+                };
+
+                try {
+                    const response = await fetch(url, {
+                        method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(orden),
+                    });
+
+                    if (response.ok) {
+                        cargarOrdenes();
+                        cerrarModal();
                     } else {
-                        console.error('Error fetching wishlist or cart counts');
+                        const errorData = await response.json();
+                        alert(`Error al guardar la orden: ${errorData.message || 'Error desconocido'}`);
                     }
                 } catch (error) {
-                    console.error('Error updating counters:', error);
+                    alert('Error al conectar con el servidor');
                 }
-            };
+            });
 
-            // Load orders with details
             async function cargarOrdenes() {
                 try {
                     document.getElementById('loading').style.display = 'block';
@@ -197,110 +338,58 @@
                     const ordersBody = document.getElementById('ordersBody');
                     ordersBody.innerHTML = '';
 
-                    // Procesar órdenes y generar filas para la tabla
                     orders.forEach(order => {
-                        // Verifica si el total está definido y es un número
-                        const total = typeof order.total === 'number' ? order.total.toFixed(2) : '0.00';
-
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td><a href="#" class="fw-bold">${order.orden_id}</a></td>
+                            <td>${order.orden_id}</td>
                             <td><span class="fw-normal">${order.Detalles.map(detail => detail.Producto.nombre_producto).join(', ')}</span></td>
-                            <td><span class="fw-normal">${new Date(order.fecha_orden).toLocaleDateString()}</span></td>
-                            <td><span class="fw-bold">$${total}</span></td>
-                            <td><span class="fw-bold text-${order.estado === 'entregada' ? 'success' : 'warning'}">${order.estado}</span></td>
+                            <td>${order.fecha_orden ? new Date(order.fecha_orden).toLocaleDateString() : 'N/A'}</td>
+                            <td>$${typeof order.total === 'number' ? order.total.toFixed(2) : '0.00'}</td>
+                            <td>${order.estado || 'Pendiente'}</td>
                             <td>
-                                <div class="btn-group">
-                                    <button class="btn btn-link text-dark" onclick="toggleOrderDetails(${order.orden_id}, this)">Ver Detalles</button> |
-                                    <button class="btn btn-link text-dark" onclick="reorder(${order.orden_id})">Reordenar</button>
-                                </div>
+                                <button onclick="mostrarModal('${encodeURIComponent(JSON.stringify(order))}')">Editar</button>
+                                <button onclick="eliminarOrden(${order.orden_id})">Eliminar</button>
+                                <button onclick="mostrarDetalleModal(${order.orden_id})">Ver Detalles</button>
                             </td>
                         `;
                         ordersBody.appendChild(row);
-
-                        // Añadir fila de detalles oculta
-                        const detailRow = document.createElement('tr');
-                        detailRow.classList.add('order-details-row');
-                        detailRow.style.display = 'none';
-                        detailRow.innerHTML = `
-                            <td colspan="6">
-                                <div class="order-details" id="order-details-${order.orden_id}">
-                                    <!-- Los detalles del pedido se cargarán aquí -->
-                                    <p>Cargando detalles...</p>
-                                </div>
-                            </td>
-                        `;
-                        ordersBody.appendChild(detailRow);
                     });
                 } catch (error) {
                     console.error('Error:', error);
-                    showNotification('Error loading orders', 'error');
+                    alert('Error loading orders');
                 }
             }
 
-            // Toggle order details visibility
-            window.toggleOrderDetails = async (orderId, button) => {
-                const detailRow = document.querySelector(`#order-details-${orderId}`).closest('tr');
-                if (detailRow.style.display === 'none') {
-                    detailRow.style.display = 'table-row';
-                    await loadOrderDetails(orderId);
-                    button.textContent = 'Ocultar Detalles';
-                } else {
-                    detailRow.style.display = 'none';
-                    button.textContent = 'Ver Detalles';
-                }
-            };
+            async function eliminarOrden(ordenId) {
+                const confirmacion = confirm('¿Estás seguro de que deseas eliminar esta orden?');
+                if (!confirmacion) return;
 
-            // Load order details function
-            async function loadOrderDetails(orderId) {
                 try {
-                    const detailsContainer = document.getElementById(`order-details-${orderId}`);
-                    detailsContainer.innerHTML = '<p>Cargando detalles...</p>';
-
-                    const response = await fetch(`${apiOrderDetailsUrl}/orden/${orderId}`);
-                    if (!response.ok) throw new Error('Failed to fetch order details');
-
-                    const orderDetails = await response.json();
-                    let detailsHTML = '<table class="table table-hover"><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Total</th></tr></thead><tbody>';
-
-                    orderDetails.forEach(detail => {
-                        detailsHTML += `
-                            <tr>
-                                <td>${detail.Producto.nombre_producto}</td>
-                                <td>${detail.cantidad}</td>
-                                <td>$${detail.Producto.precio.toFixed(2)}</td>
-                                <td>$${(detail.cantidad * detail.Producto.precio).toFixed(2)}</td>
-                            </tr>
-                        `;
+                    const response = await fetch(`${apiUrl}/${ordenId}`, {
+                        method: 'DELETE',
                     });
-                    detailsHTML += '</tbody></table>';
-                    detailsContainer.innerHTML = detailsHTML;
-                } catch (error) {
-                    console.error('Error loading order details:', error);
-                    showNotification('Error loading order details', 'error');
-                }
-            }
 
-            // Reorder function
-            window.reorder = async (orderId) => {
-                try {
-                    const response = await fetch(`/api/order/${orderId}/reorder`, { method: 'POST' });
-                    const data = await response.json();
-
-                    if (response.ok && data.success) {
-                        showNotification('Productos añadidos al carrito correctamente');
-                        updateCounters();
+                    if (response.ok) {
+                        cargarOrdenes();
                     } else {
-                        throw new Error(data.message || 'Error reordering products');
+                        const errorData = await response.json();
+                        alert(`Error al eliminar la orden: ${errorData.message || 'Error desconocido'}`);
                     }
                 } catch (error) {
-                    console.error('Error:', error);
-                    showNotification('Error al reordenar los productos', 'error');
+                    alert('Error al conectar con el servidor');
                 }
-            };
+            }
 
-            // Initialize counters and load orders
-            updateCounters();
+            function buscarOrden() {
+                const input = document.getElementById('searchInput').value.toLowerCase();
+                const filas = document.querySelectorAll('#ordersBody tr');
+                filas.forEach(fila => {
+                    const cliente = fila.children[1].textContent.toLowerCase();
+                    fila.style.display = cliente.includes(input) ? '' : 'none';
+                });
+            }
+
+            // Initialize orders and load them
             cargarOrdenes();
         });
     </script>
