@@ -42,8 +42,8 @@
 
         .product__banner {
             flex: 1;
-            height: 200px;
-            max-width: 200px;
+            height: 300px; /* Aumenté la altura a 300px */
+            max-width: 300px; /* Aumenté el ancho máximo a 300px */
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -270,7 +270,7 @@
                     wishlistContainer.innerHTML = items
                         .map(item => {
                             const producto = item.Producto || {};
-                            const imagenUrl = producto.imagenes ? producto.imagenes.replace(/^\/+/, '') : 'https://via.placeholder.com/300x300?text=Imagen+No+Disponible';
+                            const imagenUrl = producto.imagenes ? producto.imagenes.replace(/^\/+/,'') : 'https://via.placeholder.com/300x300?text=Imagen+No+Disponible';
                             const nombreProducto = producto.nombre_producto || 'Producto desconocido';
                             const categoria = producto.Categoria ? producto.Categoria.nombre_categoria : 'Sin categoría';
                             const precio = producto.precio || '0.00';

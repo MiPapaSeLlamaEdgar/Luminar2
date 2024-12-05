@@ -316,7 +316,29 @@
             }
         }
 
-
+        checkoutButton.addEventListener('click', async () => {
+            try {
+                const response = await fetch(`/api/cart/checkout/${clienteid}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        usuario_id: localStorage.getItem('usuario_id'), // Puedes cambiar esto según cómo estés manejando el usuario
+                        direccion_envio: 'Dirección de ejemplo',  // Esto puede ser dinámico según la aplicación
+                        notas: 'Nota de ejemplo'
+                    })
+                });
+        
+                if (!response.ok) throw new Error('Error al proceder al pago');
+        
+                const data = await response.json();
+                Swal.fire('Éxito', 'Orden creada exitosamente', 'success');
+                window.location.href = "/ordersCliente"; // Redireccionar a la página de órdenes
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'No se pudo proceder al pago', 'error');
+            }
+        });
+        
     
     </script>
 </body>
